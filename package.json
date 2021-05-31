@@ -1,0 +1,32 @@
+{
+  "name": "api_amm_soluctions",
+  "version": "1.0.0",
+  "description": "API usada para atender o Sistema da AMM Soluctions",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon .index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PathTechBr/api_SistemaAMM.git"
+  },
+  "author": "Path Tech",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PathTechBr/api_SistemaAMM/issues"
+  },
+  "homepage": "https://github.com/PathTechBr/api_SistemaAMM#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "config": "^3.3.6",
+    "express": "^4.17.1",
+    "jsontoxml": "^1.0.1",
+    "node-firebird": "^0.9.9",
+    "path": "^0.12.7",
+    "sequelize": "^6.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
