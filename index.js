@@ -1,12 +1,17 @@
 const express = require('express')
-const router_pedido = require('./routes/pedido')
+
 const routes = require('./routes')
 const config = require('config')
 const Serialize = require('./Serialize')
+const env = require('./config/env')
+
+// Errors
 const NotFound = require('./error/NotFound')
 const InvalidField = require('./error/InvalidField')
 const DataNotProvided = require('./error/DataNotProvided')
 const FormatNotSupported = require('./error/FormatNotSupported')
+const Forbidden = require('./error/Forbidden')
+
 const { SerializeError } = require('./Serialize')
 
 const app = express()
@@ -20,17 +25,16 @@ app.use((request, response, next) => {
     }
 
     if (Serialize.formatAccepts.indexOf(formatRequest) === -1) {
-        response.status(406)
-        let error = new FormatNotSupported(formatRequest)
-        serial.serialzer({
-            message: error.message,
-            id: error.idError
-        })
-        response.end()
-        return
+        throw new FormatNotSupported(formatRequest)
     }
+
     response.setHeader('Content-Type', formatRequest)
     response.setHeader('Access-Control-Allow-Origin', '*/*')
+
+    let tokenAccess = request.header('Token-Access')
+    if (env.tokenAccepts(tokenAccess).length === 0) {
+        throw new Forbidden()
+    }
 
     next()
 
@@ -45,10 +49,11 @@ app.use((error, request, response, next) => {
         status = 400
     } else if (error instanceof FormatNotSupported) {
         status = 406
+    } else if (error instanceof Forbidden) {
+        status = 403
     }
 
-    const serial = new SerializeError(response.getHeader('Content-Type'))
-    console.log(response.getHeader('Content-Type'))
+    const serial = new SerializeError(response.getHeader('Content-Type') || 'application/json')
 
     response.status(status).send(
         serial.serialzer({
@@ -60,6 +65,6 @@ app.use((error, request, response, next) => {
 
 routes(app)
 
-app.listen(port, () => console.log('A API esta rodando!'))
+app.listen(port, () => console.log('A API esta rodando na porta: ' + port + '!'))
 
 module.exports = app;

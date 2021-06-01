@@ -1,14 +1,15 @@
 {
-    "firebird": {
-        "host": "127.0.0.1",
-        "port": 3050,
-        "databse": "C:\\xampp7\\database\\Firebird\\DADOS.001.FDB",
-        "user": "SYSDBA",
-        "password": "masterkey",
-        "role": null,
-        "lowercase_keys": false
-    },
     "api": {
         "port": 3000
-    }
+    },
+    "tokens": [
+        {
+            "token": "token-loja_1",
+            "database": "C:\\xampp7\\database\\Firebird\\DADOS.001.FDB"
+        },
+        {
+            "token": "token-loja_2",
+            "database": "C:\\xampp7\\database\\Firebird\\DADOS.002.FDB"
+        }
+    ]
 }
