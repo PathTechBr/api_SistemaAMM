@@ -1,12 +1,12 @@
-const NotFound = require('../error/NotFound')
 const PedidoItens = require('../models/PedidoItens')
 const SerializePedido = require('../Serialize').SerializePedido
 const db = require('../config/database')
 
 class PedidoItensController {
+
     static async total_vendido_Diario(req, res, next) {
         try {
-            const data_lancamento = req.params.data_lancamento;
+            const data_lancamento = req.query.data_lancamento;
             const options = db(req.header('Token-Access'))
             const pedidoItens = new PedidoItens({ DATA_LANCAMENTO: data_lancamento, options: options });
 

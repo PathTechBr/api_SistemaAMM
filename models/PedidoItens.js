@@ -1,4 +1,4 @@
-const TablePedidoItens = require("../tables/TablePedidoItens")
+const query = require("../tables/Query")
 
 class PedidoItens {
     constructor({ ID, IDPEDIDO, IDPRODUTO, DESCRICAO, QUANTIDADE, VALOR, VALOR_TOTAL, MARGEM, VALOR_REAL, DATA_LANCAMENTO, TOTVENDAS, TOTCUSTOS, TOTALMARGEM, options }) {
@@ -16,17 +16,20 @@ class PedidoItens {
         this.TOTCUSTOS = TOTCUSTOS;
         this.TOTALMARGEM = TOTALMARGEM;
         this.options = options
+
     }
 
     async total_vendido_Diario() {
-        try {
-            const result = await TablePedidoItens.get_total_vendido_Diario(this.DATA_LANCAMENTO, this.options)
-            this.TOTVENDAS = result.TOTVENDAS;
-            this.TOTCUSTOS = result.TOTCUSTOS;
-            this.TOTALMARGEM = result.TOTALMARGEM;
-        } catch (err) {
-            console.log(err)
-        }
+        let execute_query = "SELECT SUM(pi.valor_total) AS totvendas, SUM(pi.valor_real) AS totcustos, "
+            + "(SUM(pi.valor_total) - SUM(pi.valor_real)) AS totalmargem from pedido_itens pi WHERE pi.cancelado = 'N' "
+            + "AND cast(pi.data_lancamento as date) = ?;"
+
+        const result = await query.executeQuery(execute_query, this.options, [this.DATA_LANCAMENTO])
+
+        this.TOTVENDAS = result[0].TOTVENDAS;
+        this.TOTCUSTOS = result[0].TOTCUSTOS;
+        this.TOTALMARGEM = result[0].TOTALMARGEM;
+
     }
 }
 

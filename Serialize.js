@@ -67,6 +67,27 @@ class SerializePedido extends Serialize {
     }
 }
 
+class SerializeProduto extends Serialize {
+    constructor(contentType, extraFields) {
+        super()
+        this.contentType = contentType
+        this.publicFields = ['EAN13', 'DESCRICAO'].concat(extraFields || [])
+        this.tagSingular = 'produto'
+        this.tagPlural = 'produtos'
+    }
+}
+
+class SerializeFormaPagamento extends Serialize {
+    constructor(contentType, extraFields) {
+        super()
+        this.contentType = contentType
+        this.publicFields = ['TIPO_DOCUMENTO', 'DESCRICAO'].concat(extraFields || [])
+        this.tagSingular = 'forma_pagamento'
+        this.tagPlural = 'formas_pagamento'
+    }
+}
+
+
 class SerializeError extends Serialize {
     constructor(contentType, extraFields) {
         super()
@@ -80,6 +101,8 @@ class SerializeError extends Serialize {
 module.exports = {
     Serialize: Serialize,
     SerializePedido: SerializePedido,
+    SerializeProduto: SerializeProduto,
+    SerializeFormaPagamento: SerializeFormaPagamento,
     SerializeError: SerializeError,
     formatAccepts: ['application/json', 'application/xml']
 }
