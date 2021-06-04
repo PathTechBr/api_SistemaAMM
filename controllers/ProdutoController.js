@@ -15,6 +15,7 @@ class ProdutoController {
             const date_start = req.query.date_start;
             const date_end = req.query.date_end;
 
+            console.log("Request produtos mais vendidos")
             if (!ValidateController.validate([date_start, date_end])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')

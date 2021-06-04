@@ -18,5 +18,6 @@ router.options('/best_seller/', (req, resp, next) => {
 
 router.get('/total_vendido/', PedidoItensController.total_vendido_Diario)
 router.get('/best_seller/', PedidoController.bestSeller)
+router.get('/values_month/', PedidoController.valuesMonths)
 
 module.exports = router

@@ -4,7 +4,7 @@ class ValidateController {
 
     static validate(array) {
         
-        if (array.indexOf(undefined) === -1) { // Significa que nao encontrou falor nulo
+        if (array.indexOf(undefined) === -1 && array.indexOf('') === -1) { // Significa que nao encontrou falor nulo
             console.log(array)
             return true
         }

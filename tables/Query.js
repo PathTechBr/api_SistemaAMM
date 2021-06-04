@@ -10,8 +10,6 @@ const executeQuery = async (query, options, params = []) => {
                 console.log(err)
                 throw err;
             }
-            // db = DATABASE
-            console.log(query)
 
             db.query(query, params, (err, result) => {
                 // IMPORTANT: close the connection

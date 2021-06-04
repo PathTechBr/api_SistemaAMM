@@ -24,9 +24,27 @@ class Pedido {
 
         const result = await query.executeQuery(execute_query, this.options, [this.DATE_START, this.DATE_END])
         Object.assign(this, result[0]);
- 
+
         return this
 
+    }
+
+    async getValuesMonths() {
+        let execute_query = "SELECT FIRST 9 "
+            + "EXTRACT(MONTH FROM cast(p.data_pedido as date)) as mes, "
+            + "EXTRACT(YEAR FROM cast(p.data_pedido as date)) as ano, "
+            + "SUM(p.valor_total) as VALOR_TOTAL "
+            + "FROM pedido p "
+            + "WHERE "
+            + "p.cancelado = 'N' "
+            + "AND cast(p.data_pedido as date) between '01.04.2021' and '31.05.2021' "
+            + "GROUP BY  mes, ano "
+            + "ORDER BY ano ASC, mes ASC;"
+
+        const results = await query.executeQuery(execute_query, this.options, [this.DATE_START, this.DATE_END])
+        Object.assign(this, results);
+        
+        return results
     }
 }
 

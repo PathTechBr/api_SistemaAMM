@@ -18,6 +18,7 @@ class PedidoController {
             const date_start = req.query.date_start;
             const date_end = req.query.date_end;
 
+            console.log("Request Melhor Vendedor")
             if (!ValidateController.validate([date_start, date_end])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
@@ -34,6 +35,35 @@ class PedidoController {
 
             const serial = new SerializePedido(res.getHeader('Content-Type'), ['VENDEDOR', 'TOTAL', 'CUPONS', 'ITENS', 'MEDIAITENS', 'MEDIAVALOR'])
             res.status(200).send(serial.serialzer(pedido))
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async valuesMonths(req, res, next) {
+        try {
+
+            const options = db(req.header('Token-Access'))
+
+            const date_start = req.query.date_start;
+            const date_end = req.query.date_end;
+
+            console.log("Request valores mensais")
+            if (!ValidateController.validate([date_start, date_end])) {
+                let error = new DataNotProvided()
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(400).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            }
+
+            const pedido = new Pedido({ DATE_START: date_start, DATE_END: date_end, options: options });
+            const results = await pedido.getValuesMonths()
+
+            const serial = new SerializePedido(res.getHeader('Content-Type'), ['MES', 'ANO', 'VALOR_TOTAL'])
+            res.status(200).send(serial.serialzer(results))
         } catch (erro) {
             next(erro)
         }
