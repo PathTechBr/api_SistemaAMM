@@ -29,7 +29,8 @@ class FormaPagamentoController {
             const instance = new FormaPagamento({ DATE_START: date_start, DATE_END: date_end, options: options });
             const pagamentos = await instance.getRankingPayments()
 
-            const serial = new SerializeFormaPagamento(res.getHeader('Content-Type'), ['QTD'])
+            const serial = new SerializeFormaPagamento(res.getHeader('Content-Type'), ['QTD', 'TOTVENDA'])
+
             res.status(200).send(serial.serialzer(pagamentos))
 
         } catch (erro) {

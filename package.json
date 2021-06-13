@@ -1,7 +1,7 @@
 {
-  "name": "api_amm_soluctions",
+  "name": "api_amm_solutions",
   "version": "1.0.0",
-  "description": "API usada para atender o Sistema da AMM Soluctions",
+  "description": "API usada para atender o Sistema da AMM Solutions",
   "main": "index.js",
   "scripts": {
     "start": "nodemon .index.js",

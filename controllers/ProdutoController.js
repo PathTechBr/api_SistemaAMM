@@ -37,6 +37,25 @@ class ProdutoController {
             next(erro)
         }
     }
+
+
+    static async findAll(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'))
+
+            console.log("Request listar todos os produtos")
+            const instance = new Produto({ options: options });
+
+            const produtos = await instance.getAllProdutos()
+
+            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS'])
+            console.log("Tamanho retorno: " + produtos.length)
+            res.status(200).send(serial.serialzer(produtos))
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
 }
 
 module.exports = ProdutoController

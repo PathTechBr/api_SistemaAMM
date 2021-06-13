@@ -45,11 +45,10 @@ class PedidoController {
 
             const options = db(req.header('Token-Access'))
 
-            const date_start = req.query.date_start;
-            const date_end = req.query.date_end;
+            const limite = req.query.limite;
 
             console.log("Request valores mensais")
-            if (!ValidateController.validate([date_start, date_end])) {
+            if (!ValidateController.validate([limite])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
                 return res.status(400).send(
@@ -59,10 +58,10 @@ class PedidoController {
                     }))
             }
 
-            const pedido = new Pedido({ DATE_START: date_start, DATE_END: date_end, options: options });
+            const pedido = new Pedido({ limite: limite, options: options });
             const results = await pedido.getValuesMonths()
 
-            const serial = new SerializePedido(res.getHeader('Content-Type'), ['MES', 'ANO', 'VALOR_TOTAL'])
+            const serial = new SerializePedido(res.getHeader('Content-Type'), ['MES', 'ANO', 'VALOR_TOTAL', 'CUPOM'])
             res.status(200).send(serial.serialzer(results))
         } catch (erro) {
             next(erro)

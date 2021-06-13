@@ -10,7 +10,7 @@ class Pedido {
         this.MEDIAVALOR = MEDIAVALOR
         this.DATE_START = DATE_START
         this.DATE_END = DATE_END
-        this.limite = limite
+        this.LIMITE = limite
         this.options = options
     }
 
@@ -30,20 +30,20 @@ class Pedido {
     }
 
     async getValuesMonths() {
-        let execute_query = "SELECT FIRST 9 "
+        let execute_query = "SELECT FIRST ? "
+            + "COUNT(p.id) as CUPOM, "
             + "EXTRACT(MONTH FROM cast(p.data_pedido as date)) as mes, "
             + "EXTRACT(YEAR FROM cast(p.data_pedido as date)) as ano, "
             + "SUM(p.valor_total) as VALOR_TOTAL "
             + "FROM pedido p "
             + "WHERE "
             + "p.cancelado = 'N' "
-            + "AND cast(p.data_pedido as date) between '01.04.2021' and '31.05.2021' "
             + "GROUP BY  mes, ano "
             + "ORDER BY ano ASC, mes ASC;"
 
-        const results = await query.executeQuery(execute_query, this.options, [this.DATE_START, this.DATE_END])
+        const results = await query.executeQuery(execute_query, this.options, [this.LIMITE])
         Object.assign(this, results);
-        
+
         return results
     }
 }
