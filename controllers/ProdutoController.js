@@ -49,7 +49,7 @@ class ProdutoController {
 
             const produtos = await instance.getAllProdutos()
 
-            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS'])
+            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO'])
             console.log("Tamanho retorno: " + produtos.length)
             res.status(200).send(serial.serialzer(produtos))
 
@@ -123,7 +123,7 @@ class ProdutoController {
                         id: error.idError
                     }))
             } else {
-                const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'CODIGO_NCM'])
+                const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'CODIGO_NCM', 'ATIVO'])
                 res.status(200).send(serial.serialzer(produtos))
             }
         } catch (erro) {
