@@ -36,6 +36,8 @@ app.use((request, response, next) => {
         throw new Forbidden()
     }
 
+    console.log('[ ' + tokenAccess + ' ]')
+
     next()
 
 })
