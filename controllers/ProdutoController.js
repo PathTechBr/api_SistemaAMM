@@ -5,6 +5,7 @@ const SerializeError = require('../Serialize').SerializeError
 const ValidateController = require('./ValidateController')
 const DataNotProvided = require('../error/DataNotProvided')
 const NotFound = require('../error/NotFound')
+const InternalServer = require('../error/InternalServer')
 const db = require('../config/database')
 
 class ProdutoController {
@@ -123,8 +124,46 @@ class ProdutoController {
                         id: error.idError
                     }))
             } else {
-                const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'CODIGO_NCM', 'ATIVO'])
+                const serial = new SerializeProduto(res.getHeader('Content-Type'), 
+                ['ID', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 
+                'ALIQUOTA_ICMS', 'CODIGO_NCM', 'ATIVO', 'MARGEM_LUCRO', 'PESAVEL'])
                 res.status(200).send(serial.serialzer(produtos))
+            }
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async saveModel(req, res, next) {
+        try {
+            const data = req.body;
+            const options = db(req.header('Token-Access'))
+
+            console.log("Save produto")
+            const produto = new Produto(data)
+            produto.PRECO_COMPRA = produto.moneyTonumber(produto.PRECO_COMPRA);
+            produto.PRECO_VENDA = produto.moneyTonumber(produto.PRECO_VENDA);
+            produto.MARGEM_LUCRO = produto.moneyTonumber(produto.MARGEM_LUCRO);
+            produto.GRUPO = parseInt(produto.GRUPO)
+            produto.ALIQUOTA_ICMS = parseFloat(produto.ALIQUOTA_ICMS)
+            produto.ATIVO = produto.ATIVO == '0' ? 'F' : 'T';
+            produto.PESAVEL = produto.PESAVEL == '0' ? 'N' : 'S';
+
+            produto.options = options
+
+            const result = await produto.insert();
+
+            if (result.ID == null || result.ID == undefined) {
+                let error = new InternalServer()
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(500).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            } else {
+                const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID'])
+                res.status(201).send(serial.serialzer(result))
             }
         } catch (erro) {
             next(erro)

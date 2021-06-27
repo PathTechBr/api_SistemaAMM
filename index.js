@@ -30,6 +30,7 @@ app.use((request, response, next) => {
 
     response.setHeader('Content-Type', formatRequest)
     response.setHeader('Access-Control-Allow-Origin', '*/*')
+    response.setHeader('X-Powered-By', 'Rafael Bahia')
 
     let tokenAccess = request.header('Token-Access')
     if (env.tokenAccepts(tokenAccess).length === 0) {
