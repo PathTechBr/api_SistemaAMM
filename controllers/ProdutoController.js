@@ -63,7 +63,6 @@ class ProdutoController {
         try {
             const options = db(req.header('Token-Access'))
 
-            console.log("Request listar todos os produtos")
             const instance = new Produto({ options: options });
 
             const unidades = await instance.getAllUnidadeMedida()
@@ -81,7 +80,6 @@ class ProdutoController {
         try {
             const options = db(req.header('Token-Access'))
 
-            console.log("Request listar todos os produtos")
             const instance = new Produto({ options: options });
 
             const grupos = await instance.getAllGrupo()
