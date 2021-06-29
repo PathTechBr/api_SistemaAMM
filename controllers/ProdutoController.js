@@ -122,9 +122,9 @@ class ProdutoController {
                         id: error.idError
                     }))
             } else {
-                const serial = new SerializeProduto(res.getHeader('Content-Type'), 
-                ['ID', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 
-                'ALIQUOTA_ICMS', 'CODIGO_NCM', 'ATIVO', 'MARGEM_LUCRO', 'PESAVEL'])
+                const serial = new SerializeProduto(res.getHeader('Content-Type'),
+                    ['ID', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO',
+                        'ALIQUOTA_ICMS', 'CODIGO_NCM', 'ATIVO', 'MARGEM_LUCRO', 'PESAVEL'])
                 res.status(200).send(serial.serialzer(produtos))
             }
         } catch (erro) {
@@ -168,6 +168,117 @@ class ProdutoController {
         }
     }
 
+    static async updateModel(req, res, next) {
+
+        try {
+            const data = req.body
+
+            const id = req.params._id;
+
+            const options = db(req.header('Token-Access'))
+
+            console.log("Update produto: " + id)
+            if (!ValidateController.validate([id])) {
+                let error = new DataNotProvided()
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(400).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            }
+
+            const instance = new Produto({ ID: id, options: options });
+
+            const produto_old = await instance.getOneProduto()
+
+            if (produto_old.length === 0) {
+                let error = new NotFound('Produto')
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(404).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            }
+
+            const produto = new Produto(data)
+
+            const produto_new = produto.adapterModel(produto);
+
+            produto_new.options = options
+
+            const result = await produto.update();
+
+            if (result.ID == null || result.ID == undefined) {
+                let error = new InternalServer()
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(500).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            } else {
+                const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID'])
+                res.status(204).send(serial.serialzer(result))
+            }
+        } catch (erro) {
+            console.log(erro)
+            next(erro)
+        }
+    }
+
+    static async deleteModel(req, res, next) {
+        try {
+            const id = req.params._id;
+            const ean13 = req.body['0']
+
+            const options = db(req.header('Token-Access'))
+
+            console.log("Delte Produto: " + id)
+            if (!ValidateController.validate([id, ean13])) {
+                let error = new DataNotProvided()
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(400).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            }
+
+            const instance = new Produto({ ID: id, EAN13: ean13, options: options });
+
+            const produto = await instance.getOneProduto()
+
+            if (produto.length === 0) {
+                let error = new NotFound('Produto')
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(404).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            }
+
+            const result = await instance.delete()
+
+            if (result.ID == null || result.ID == undefined) {
+                let error = new InternalServer()
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(500).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            } else {
+                const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID'])
+                res.status(204).send(serial.serialzer(result))
+            }
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
 }
 
 module.exports = ProdutoController

@@ -77,6 +77,35 @@ class Produto {
         return results;
     }
 
+    async update() {
+
+        let execute_query = "UPDATE PRODUTOS " +
+            "SET EAN13 = ?, " +
+            "    DESCRICAO = ?, " +
+            "    UNIDADE = ?, " +
+            "    GRUPO = ?, " +
+            "    PRECO_COMPRA = ?, " +
+            "   PRECO_VENDA = ?, " +
+            "   CST_INTERNO = ?, " +
+            "   CFOP_INTERNO = ?, " +
+            "   ALIQUOTA_ICMS = ?, " +
+            "   CODIGO_NCM = ?, " +
+            "   ATIVO = ?, " +
+            "   MARGEM_LUCRO = ?, " +
+            "   PESAVEL = ? " +
+            "WHERE (ID = ?) RETURNING ID;"
+
+        const results = await query.executeQuery(execute_query, this.options, [this.EAN13, this.DESCRICAO, this.UNIDADE, this.GRUPO, this.PRECO_COMPRA, this.PRECO_VENDA, this.CST_INTERNO, this.CFOP_INTERNO, this.ALIQUOTA_ICMS, this.CODIGO_NCM, this.ATIVO, this.MARGEM_LUCRO, this.PESAVEL, this.ID]);
+        console.log(results)
+        return results;
+    }
+
+    async delete() {
+        let execute_query = "UPDATE PRODUTOS SET ATIVO = 'F' WHERE ID = ? AND EAN13 = ? RETURNING ID;"
+        const result = await query.executeQuery(execute_query, this.options, [this.ID, this.EAN13])
+        return result;
+    }
+
     moneyTonumber(attribute) {
         if (isNaN(attribute)) {
             attribute = attribute.replace("R$ ", "");
@@ -87,6 +116,18 @@ class Produto {
             return Number(attribute)
         }
         return attribute;
+    }
+
+    adapterModel(produto) {
+        produto.PRECO_COMPRA = produto.moneyTonumber(produto.PRECO_COMPRA);
+        produto.PRECO_VENDA = produto.moneyTonumber(produto.PRECO_VENDA);
+        produto.MARGEM_LUCRO = produto.moneyTonumber(produto.MARGEM_LUCRO);
+        produto.GRUPO = parseInt(produto.GRUPO)
+        produto.ALIQUOTA_ICMS = parseFloat(produto.ALIQUOTA_ICMS)
+        produto.ATIVO = produto.ATIVO == '0' ? 'F' : 'T';
+        produto.PESAVEL = produto.PESAVEL == '0' ? 'N' : 'S';
+
+        return produto;
     }
 }
 
