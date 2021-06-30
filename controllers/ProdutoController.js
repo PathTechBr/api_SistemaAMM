@@ -137,17 +137,31 @@ class ProdutoController {
             const data = req.body;
             const options = db(req.header('Token-Access'))
 
+            console.log(data)
+
             console.log("Save produto")
             const produto = new Produto(data)
             produto.PRECO_COMPRA = produto.moneyTonumber(produto.PRECO_COMPRA);
             produto.PRECO_VENDA = produto.moneyTonumber(produto.PRECO_VENDA);
-            produto.MARGEM_LUCRO = produto.moneyTonumber(produto.MARGEM_LUCRO);
+            produto.MARGEM_LUCRO = (produto.MARGEM_LUCRO).replace(" %", "").replace(",", ".");
             produto.GRUPO = parseInt(produto.GRUPO)
-            produto.ALIQUOTA_ICMS = parseFloat(produto.ALIQUOTA_ICMS)
+            produto.ALIQUOTA_ICMS = parseFloat(produto.ALIQUOTA_ICMS.replace(",", "."))
             produto.ATIVO = produto.ATIVO == '0' ? 'F' : 'T';
             produto.PESAVEL = produto.PESAVEL == '0' ? 'N' : 'S';
 
             produto.options = options
+
+            console.log(produto.ALIQUOTA_ICMS)
+
+            if (isNaN(produto.PRECO_COMPRA) || isNaN(produto.PRECO_VENDA)) {
+                let error = new DataNotProvided()
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(400).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            }
 
             const result = await produto.insert();
 

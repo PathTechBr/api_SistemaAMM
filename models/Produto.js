@@ -121,9 +121,9 @@ class Produto {
     adapterModel(produto) {
         produto.PRECO_COMPRA = produto.moneyTonumber(produto.PRECO_COMPRA);
         produto.PRECO_VENDA = produto.moneyTonumber(produto.PRECO_VENDA);
-        produto.MARGEM_LUCRO = produto.moneyTonumber(produto.MARGEM_LUCRO);
+        produto.MARGEM_LUCRO = (produto.MARGEM_LUCRO).replace(" %", "").replace(",", ".");
         produto.GRUPO = parseInt(produto.GRUPO)
-        produto.ALIQUOTA_ICMS = parseFloat(produto.ALIQUOTA_ICMS)
+        produto.ALIQUOTA_ICMS = parseFloat(produto.ALIQUOTA_ICMS.replace(",", "."))
         produto.ATIVO = produto.ATIVO == '0' ? 'F' : 'T';
         produto.PESAVEL = produto.PESAVEL == '0' ? 'N' : 'S';
 
