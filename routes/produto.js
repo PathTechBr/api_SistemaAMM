@@ -19,6 +19,8 @@ router.options('/', (req, resp, next) => {
 })
 router.get('/', ProdutoController.findAll)
 
+router.get('/ativado', ProdutoController.findAtivado)
+
 router.post('/', ProdutoController.saveModel)
 
 
