@@ -66,7 +66,7 @@ class ProdutoController {
             console.log("Request listar todos os produtos ativados")
             const instance = new Produto({ options: options });
 
-            const produtos = await instance.getAllProdutos()
+            const produtos = await instance.getProdutosActive()
 
             const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO'])
             console.log("Tamanho retorno: " + produtos.length)
