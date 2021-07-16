@@ -311,6 +311,89 @@ class ProdutoController {
             next(erro)
         }
     }
+
+    static async updateFast(req, res, next) {
+
+        try {
+            const data = req.body
+            const options = db(req.header('Token-Access'))
+
+            const arr = [];
+
+            for (var index in data) {
+                const model = data[index];
+
+                let id_request = model['_id']['oid'];
+                let id_produto = model['id'];
+                const instance = new Produto({ ID: id_produto, options: options });
+
+                console.log("Update produto: " + id_produto)
+                if (!ValidateController.validate([id_produto])) {
+                    let error = new DataNotProvided()
+                    const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                    return res.status(400).send(
+                        serial.serialzer({
+                            message: error.message,
+                            id: error.idError
+                        }))
+                }
+
+                const produto_old = await instance.getOneProduto();
+
+                if (produto_old.length === 0) {
+                    const myJSON = '{"_id":"' + id_request + '", "id": "' + id_produto + '", "status":"NOK", "message":"Produto nao encontrado"}';
+                    const myObj = JSON.parse(myJSON);
+                    arr.push(myObj);
+                    continue;
+                }
+
+                let produto = new Produto(produto_old[0]);
+                produto.options = options;
+
+                let atributo = model['atributo'];
+                let value = model['value'];
+
+                produto[atributo] = value;
+                produto = produto.adapterModel(produto);
+
+                const result = await produto.updateFast(atributo, value);
+
+                if (result == "NOK") {
+                    const myJSON = '{"_id":"' + id_request + '", "id": "' + id_produto + '", "status":"NOK", "message":"Erro na alteração"}';
+                    const myObj = JSON.parse(myJSON);
+                    arr.push(myObj);
+                    continue;
+                }
+
+                const myJSON = '{"_id":"' + id_request + '", "id": "' + id_produto + '", "status":"' + result + '"}';
+                const myObj = JSON.parse(myJSON);
+                arr.push(myObj);
+
+            }
+
+
+            // console.log(arr)
+
+
+            res.status(202).send(JSON.stringify(arr))
+
+            // if (result.ID == null || result.ID == undefined) {
+            //     let error = new InternalServer()
+            //     const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+            //     return res.status(500).send(
+            //         serial.serialzer({
+            //             message: error.message,
+            //             id: error.idError
+            //         }))
+            // } else {
+            //     const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID'])
+            //     res.status(204).send(serial.serialzer(result))
+            // }
+        } catch (erro) {
+            console.log(erro)
+            next(erro)
+        }
+    }
 }
 
 module.exports = ProdutoController

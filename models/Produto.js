@@ -115,6 +115,18 @@ class Produto {
         return result;
     }
 
+    async updateFast(atributo, value) {
+        try {
+            let execute_query = "UPDATE PRODUTOS SET " + atributo + " = '" + value + "' WHERE ID = ? RETURNING ID;"
+            const result = await query.executeQuery(execute_query, this.options, [this.ID])
+            console.log(result);
+        } catch (e) {
+            return "NOK";
+        }
+
+        return "OK";
+    }
+
     moneyTonumber(attribute) {
         if (isNaN(attribute)) {
             attribute = attribute.replace("R$ ", "");
@@ -128,13 +140,17 @@ class Produto {
     }
 
     adapterModel(produto) {
-        produto.PRECO_COMPRA = produto.moneyTonumber(produto.PRECO_COMPRA);
-        produto.PRECO_VENDA = produto.moneyTonumber(produto.PRECO_VENDA);
-        produto.MARGEM_LUCRO = (produto.MARGEM_LUCRO).replace(" %", "").replace(",", ".");
-        produto.GRUPO = parseInt(produto.GRUPO)
-        produto.ALIQUOTA_ICMS = parseFloat(produto.ALIQUOTA_ICMS.replace(",", "."))
-        produto.ATIVO = produto.ATIVO == '0' ? 'F' : 'T';
-        produto.PESAVEL = produto.PESAVEL == '0' ? 'N' : 'S';
+        try {
+            produto.PRECO_COMPRA = produto.moneyTonumber(produto.PRECO_COMPRA);
+            produto.PRECO_VENDA = produto.moneyTonumber(produto.PRECO_VENDA);
+            produto.MARGEM_LUCRO = (produto.MARGEM_LUCRO).replace(" %", "").replace(",", ".");
+            produto.GRUPO = parseInt(produto.GRUPO)
+            produto.ALIQUOTA_ICMS = parseFloat(produto.ALIQUOTA_ICMS.replace(",", "."))
+            produto.ATIVO = produto.ATIVO == '0' ? 'F' : 'T';
+            produto.PESAVEL = produto.PESAVEL == '0' ? 'N' : 'S';
+        } catch (e) {
+
+        }
 
         return produto;
     }

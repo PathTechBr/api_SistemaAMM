@@ -23,11 +23,20 @@ router.get('/ativado', ProdutoController.findAtivado)
 
 router.post('/', ProdutoController.saveModel)
 
+router.options('/edit_fast', (req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Methods', 'PUT')
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+    resp.status(202)
+    resp.end()
+})
+
+router.put('/edit_fast', ProdutoController.updateFast)
+
 
 router.options('/:_id', (req, resp, next) => {
     resp.setHeader('Access-Control-Allow-Methods', 'GET, PUT, DELETE')
     resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-    resp.status(204)
+    resp.status(202)
     resp.end()
 })
 router.get('/:_id', ProdutoController.findOne)
