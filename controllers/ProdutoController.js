@@ -1,4 +1,5 @@
 const Produto = require('../models/Produto')
+const Auditoria = require('../models/Auditoria')
 const SerializeProduto = require('../Serialize').SerializeProduto
 const SerializeError = require('../Serialize').SerializeError
 
@@ -68,7 +69,9 @@ class ProdutoController {
 
             const produtos = await instance.getProdutosActive()
 
-            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO'])
+            const serial = new SerializeProduto(res.getHeader('Content-Type'),
+                ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA',
+                    'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO', 'MARGEM_LUCRO', 'ESTOQUE'])
             console.log("Tamanho retorno: " + produtos.length)
             res.status(200).send(serial.serialzer(produtos))
 
@@ -77,39 +80,6 @@ class ProdutoController {
         }
     }
 
-    static async getUnidadeMedida(req, res, next) {
-        try {
-            const options = db(req.header('Token-Access'))
-
-            const instance = new Produto({ options: options });
-
-            const unidades = await instance.getAllUnidadeMedida()
-
-            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID'])
-            console.log("Unidades retornadas: " + unidades.length)
-            res.status(200).send(serial.serialzer(unidades))
-
-        } catch (erro) {
-            next(erro)
-        }
-    }
-
-    static async getGrupos(req, res, next) {
-        try {
-            const options = db(req.header('Token-Access'))
-
-            const instance = new Produto({ options: options });
-
-            const grupos = await instance.getAllGrupo()
-
-            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID'])
-            console.log("Total de grupos retornados: " + grupos.length)
-            res.status(200).send(serial.serialzer(grupos))
-
-        } catch (erro) {
-            next(erro)
-        }
-    }
 
     static async findOne(req, res, next) {
         try {
@@ -142,9 +112,11 @@ class ProdutoController {
             } else {
                 const serial = new SerializeProduto(res.getHeader('Content-Type'),
                     ['ID', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO',
-                        'ALIQUOTA_ICMS', 'CODIGO_NCM', 'ATIVO', 'MARGEM_LUCRO', 'PESAVEL'])
+                        'ALIQUOTA_ICMS', 'CODIGO_NCM', 'ATIVO', 'MARGEM_LUCRO', 'PESAVEL', 'ID_FORNECEDOR',
+                        'DATA_CADASTRO', 'DATA_ULTIMA_ALTERACAO', 'ESTOQUE'])
                 res.status(200).send(serial.serialzer(produtos))
             }
+
         } catch (erro) {
             next(erro)
         }
@@ -349,14 +321,32 @@ class ProdutoController {
 
                 let produto = new Produto(produto_old[0]);
                 produto.options = options;
+                produto.DATA_ULTIMA_ALTERACAO = model['date_inserted']
 
                 let atributo = model['atributo'];
                 let value = model['value'];
 
+                if (atributo == "ESTOQUE") {
+                    console.log('AUDITORIA - ESTOQUE')
+                    let estoque_old = produto.ESTOQUE
+                    let estoque_new = value
+                    let tipo_movimento = 0; //Saida
+
+                    if (estoque_old > estoque_new) {
+                    } else {
+                        tipo_movimento = 1; //Entrada
+                    }
+                    let auditoria = new Auditoria({ DATALANCAMENTO: model['date_inserted'], IDPRODUTO: id_produto, TIPOMOVIMENTO: tipo_movimento, QUANTIDADE: estoque_new - estoque_old,USUARIO: 'WEB_' + model['user'], options: options })
+                    var aud = await auditoria.registerMovimentoEst();
+                    if (aud.ID == null || aud.ID == undefined) {
+                        console.log('[ERR] - ERRO NA AUDITORIA')
+                    }
+                }
+
                 produto[atributo] = value;
                 produto = produto.adapterModel(produto);
 
-                const result = await produto.updateFast(atributo, value);
+                const result = await produto.updateFast(atributo, produto[atributo]);
 
                 if (result == "NOK") {
                     const myJSON = '{"_id":"' + id_request + '", "id": "' + id_produto + '", "status":"NOK", "message":"Erro na alteração"}';
@@ -368,7 +358,6 @@ class ProdutoController {
                 const myJSON = '{"_id":"' + id_request + '", "id": "' + id_produto + '", "status":"' + result + '"}';
                 const myObj = JSON.parse(myJSON);
                 arr.push(myObj);
-
             }
 
 

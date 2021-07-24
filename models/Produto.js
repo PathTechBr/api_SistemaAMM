@@ -1,7 +1,7 @@
 const query = require("../tables/Query")
 
 class Produto {
-    constructor({ ID, EAN13, DESCRICAO, DATE_START, DATE_END, UNIDADE, GRUPO, PRECO_COMPRA, PRECO_VENDA, CST_INTERNO, CFOP_INTERNO, ALIQUOTA_ICMS, CODIGO_NCM, MARGEM_LUCRO, PESAVEL, ATIVO, limite = 10, options }) {
+    constructor({ ID, EAN13, DESCRICAO, DATE_START, DATE_END, UNIDADE, GRUPO, PRECO_COMPRA, PRECO_VENDA, CST_INTERNO, CFOP_INTERNO, ALIQUOTA_ICMS, CODIGO_NCM, MARGEM_LUCRO, PESAVEL, ID_FORNECEDOR, DATA_ULTIMA_ALTERACAO, DATA_CADASTRO, ATIVO, ESTOQUE, limite = 10, options }) {
         this.ID = ID
         this.EAN13 = EAN13
         this.DESCRICAO = DESCRICAO
@@ -17,7 +17,11 @@ class Produto {
         this.CODIGO_NCM = CODIGO_NCM
         this.MARGEM_LUCRO = MARGEM_LUCRO
         this.PESAVEL = PESAVEL
+        this.ID_FORNECEDOR = ID_FORNECEDOR
+        this.DATA_ULTIMA_ALTERACAO = DATA_ULTIMA_ALTERACAO
+        this.DATA_CADASTRO = DATA_CADASTRO
         this.ATIVO = ATIVO
+        this.ESTOQUE = ESTOQUE
         this.limite = limite
         this.options = options
 
@@ -45,22 +49,8 @@ class Produto {
 
     async getProdutosActive() {
         let execute_query = "SELECT p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, g.descricao AS GRUPO, p.PRECO_COMPRA, " +
-            "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO FROM PRODUTOS p " +
+            "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO, p.MARGEM_LUCRO, p.ESTOQUE FROM PRODUTOS p " +
             "JOIN GRUPO G ON (p.grupo = G.id) WHERE p.ATIVO = 'T'"
-
-        const results = await query.executeQuery(execute_query, this.options);
-        return results;
-    }
-
-    async getAllGrupo() {
-        let execute_query = "SELECT ID, DESCRICAO  FROM GRUPO WHERE ATIVO = 'T';"
-
-        const results = await query.executeQuery(execute_query, this.options);
-        return results;
-    }
-
-    async getAllUnidadeMedida() {
-        let execute_query = "SELECT ID, DESCRICAO FROM UNIDADES;"
 
         const results = await query.executeQuery(execute_query, this.options);
         return results;
@@ -69,7 +59,7 @@ class Produto {
     async getOneProduto() {
         let execute_query = "SELECT p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, P.GRUPO, p.PRECO_COMPRA, " +
             "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO, " +
-            "p.MARGEM_LUCRO, p.PESAVEL FROM PRODUTOS p " +
+            "p.MARGEM_LUCRO, p.PESAVEL, p.ID_FORNECEDOR, p.DATA_CADASTRO, p.DATA_ULTIMA_ALTERACAO, p.ESTOQUE FROM PRODUTOS p " +
             "WHERE p.ID = ?"
 
         const results = await query.executeQuery(execute_query, this.options, [this.ID]);
@@ -79,10 +69,13 @@ class Produto {
     async insert() {
         let execute_query = "INSERT INTO PRODUTOS (EAN13, DESCRICAO, UNIDADE, GRUPO, PRECO_COMPRA, " +
             "PRECO_VENDA, CST_INTERNO, CFOP_INTERNO, ALIQUOTA_ICMS, CODIGO_NCM, ATIVO, " +
-            "MARGEM_LUCRO, PESAVEL, CONTROLAR_ESTOQUE, EDITA_DESC_PED, BENS_CONSUMO, PROD_COMPONENTE) " +
-            "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'S', 'N', 'N', 'N') RETURNING ID; ";
+            "MARGEM_LUCRO, PESAVEL, CONTROLAR_ESTOQUE, EDITA_DESC_PED, BENS_CONSUMO, PROD_COMPONENTE, ID_FORNECEDOR, DATA_CADASTRO) " +
+            "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'S', 'N', 'N', 'N', ?, ?) RETURNING ID; ";
 
-        const results = await query.executeQuery(execute_query, this.options, [this.EAN13, this.DESCRICAO, this.UNIDADE, this.GRUPO, this.PRECO_COMPRA, this.PRECO_VENDA, this.CST_INTERNO, this.CFOP_INTERNO, this.ALIQUOTA_ICMS, this.CODIGO_NCM, this.ATIVO, this.MARGEM_LUCRO, this.PESAVEL]);
+        const results = await query.executeQuery(execute_query, this.options,
+            [this.EAN13, this.DESCRICAO, this.UNIDADE, this.GRUPO, this.PRECO_COMPRA, this.PRECO_VENDA,
+            this.CST_INTERNO, this.CFOP_INTERNO, this.ALIQUOTA_ICMS, this.CODIGO_NCM, this.ATIVO,
+            this.MARGEM_LUCRO, this.PESAVEL, this.ID_FORNECEDOR, this.DATA_CADASTRO]);
         return results;
     }
 
@@ -94,17 +87,23 @@ class Produto {
             "    UNIDADE = ?, " +
             "    GRUPO = ?, " +
             "    PRECO_COMPRA = ?, " +
-            "   PRECO_VENDA = ?, " +
-            "   CST_INTERNO = ?, " +
-            "   CFOP_INTERNO = ?, " +
-            "   ALIQUOTA_ICMS = ?, " +
-            "   CODIGO_NCM = ?, " +
-            "   ATIVO = ?, " +
-            "   MARGEM_LUCRO = ?, " +
-            "   PESAVEL = ? " +
+            "    PRECO_VENDA = ?, " +
+            "    CST_INTERNO = ?, " +
+            "    CFOP_INTERNO = ?, " +
+            "    ALIQUOTA_ICMS = ?, " +
+            "    CODIGO_NCM = ?, " +
+            "    ATIVO = ?, " +
+            "    MARGEM_LUCRO = ?, " +
+            "    PESAVEL = ?, " +
+            "    ID_FORNECEDOR = ?, " +
+            "    DATA_ULTIMA_ALTERACAO = ? " +
             "WHERE (ID = ?) RETURNING ID;"
 
-        const results = await query.executeQuery(execute_query, this.options, [this.EAN13, this.DESCRICAO, this.UNIDADE, this.GRUPO, this.PRECO_COMPRA, this.PRECO_VENDA, this.CST_INTERNO, this.CFOP_INTERNO, this.ALIQUOTA_ICMS, this.CODIGO_NCM, this.ATIVO, this.MARGEM_LUCRO, this.PESAVEL, this.ID]);
+        const results = await query.executeQuery(execute_query, this.options,
+            [this.EAN13, this.DESCRICAO, this.UNIDADE, this.GRUPO, this.PRECO_COMPRA,
+            this.PRECO_VENDA, this.CST_INTERNO, this.CFOP_INTERNO, this.ALIQUOTA_ICMS,
+            this.CODIGO_NCM, this.ATIVO, this.MARGEM_LUCRO, this.PESAVEL, this.ID_FORNECEDOR, this.DATA_ULTIMA_ALTERACAO,
+            this.ID]);
         console.log(results)
         return results;
     }
@@ -117,8 +116,8 @@ class Produto {
 
     async updateFast(atributo, value) {
         try {
-            let execute_query = "UPDATE PRODUTOS SET " + atributo + " = '" + value + "' WHERE ID = ? RETURNING ID;"
-            const result = await query.executeQuery(execute_query, this.options, [this.ID])
+            let execute_query = "UPDATE PRODUTOS SET " + atributo + " = '" + value + "', DATA_ULTIMA_ALTERACAO = ? WHERE ID = ? RETURNING ID;"
+            const result = await query.executeQuery(execute_query, this.options, [this.DATA_ULTIMA_ALTERACAO, this.ID])
             console.log(result);
         } catch (e) {
             return "NOK";
@@ -145,6 +144,7 @@ class Produto {
             produto.PRECO_VENDA = produto.moneyTonumber(produto.PRECO_VENDA);
             produto.MARGEM_LUCRO = (produto.MARGEM_LUCRO).replace(" %", "").replace(",", ".");
             produto.GRUPO = parseInt(produto.GRUPO)
+            produto.ID_FORNECEDOR = parseInt(produto.ID_FORNECEDOR)
             produto.ALIQUOTA_ICMS = parseFloat(produto.ALIQUOTA_ICMS.replace(",", "."))
             produto.ATIVO = produto.ATIVO == '0' ? 'F' : 'T';
             produto.PESAVEL = produto.PESAVEL == '0' ? 'N' : 'S';

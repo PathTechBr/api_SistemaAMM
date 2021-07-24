@@ -87,6 +87,15 @@ class SerializeFormaPagamento extends Serialize {
     }
 }
 
+class SerializeUtil extends Serialize {
+    constructor(contentType, extraFields) {
+        super()
+        this.contentType = contentType
+        this.publicFields = ['ID', 'DESCRICAO'].concat(extraFields || [])
+        this.tagSingular = 'util'
+        this.tagPlural = 'utis'
+    }
+}
 
 class SerializeError extends Serialize {
     constructor(contentType, extraFields) {
@@ -104,5 +113,6 @@ module.exports = {
     SerializeProduto: SerializeProduto,
     SerializeFormaPagamento: SerializeFormaPagamento,
     SerializeError: SerializeError,
+    SerializeUtil: SerializeUtil,
     formatAccepts: ['application/json', 'application/xml']
 }
