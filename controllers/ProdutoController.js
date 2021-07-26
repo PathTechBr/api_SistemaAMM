@@ -1,12 +1,16 @@
 const Produto = require('../models/Produto')
 const Auditoria = require('../models/Auditoria')
+
+const EstoqueController = require('./EstoqueController')
+const ValidateController = require('./ValidateController')
+
 const SerializeProduto = require('../Serialize').SerializeProduto
 const SerializeError = require('../Serialize').SerializeError
 
-const ValidateController = require('./ValidateController')
 const DataNotProvided = require('../error/DataNotProvided')
 const NotFound = require('../error/NotFound')
 const InternalServer = require('../error/InternalServer')
+
 const db = require('../config/database')
 
 class ProdutoController {
@@ -40,7 +44,6 @@ class ProdutoController {
             next(erro)
         }
     }
-
 
     static async findAll(req, res, next) {
         try {
@@ -79,7 +82,6 @@ class ProdutoController {
             next(erro)
         }
     }
-
 
     static async findOne(req, res, next) {
         try {
@@ -141,8 +143,6 @@ class ProdutoController {
 
             produto.options = options
 
-            console.log(produto.ALIQUOTA_ICMS)
-
             if (isNaN(produto.PRECO_COMPRA) || isNaN(produto.PRECO_VENDA)) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
@@ -164,6 +164,9 @@ class ProdutoController {
                         id: error.idError
                     }))
             } else {
+                let estoque = await EstoqueController.atualizarEstoque(result.ID, 0, options, next)
+                console.log('Estoque: atualizado')
+
                 const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID'])
                 res.status(201).send(serial.serialzer(result))
             }
@@ -336,11 +339,14 @@ class ProdutoController {
                     } else {
                         tipo_movimento = 1; //Entrada
                     }
-                    let auditoria = new Auditoria({ DATALANCAMENTO: model['date_inserted'], IDPRODUTO: id_produto, TIPOMOVIMENTO: tipo_movimento, QUANTIDADE: estoque_new - estoque_old,USUARIO: 'WEB_' + model['user'], options: options })
+                    let auditoria = new Auditoria({ DATALANCAMENTO: model['date_inserted'], IDPRODUTO: id_produto, TIPOMOVIMENTO: tipo_movimento, QUANTIDADE: estoque_new - estoque_old, USUARIO: 'WEB_' + model['user'], options: options })
                     var aud = await auditoria.registerMovimentoEst();
                     if (aud.ID == null || aud.ID == undefined) {
                         console.log('[ERR] - ERRO NA AUDITORIA')
                     }
+
+                    let estoque = await EstoqueController.atualizarEstoque(id_produto, estoque_new, options, next)
+                    console.log('Estoque: atualizado')
                 }
 
                 produto[atributo] = value;
@@ -383,6 +389,7 @@ class ProdutoController {
             next(erro)
         }
     }
+
 }
 
 module.exports = ProdutoController
