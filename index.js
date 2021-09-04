@@ -25,12 +25,16 @@ let d = new Date();
 
 app.use((request, response, next) => {
     let tokenAccess = request.header('Token-Access')
+
+    if(tokenAccess === undefined){
+        throw new Forbidden()
+    }
+
     winston.info('[' + d.toISOString() + ']  -   [ ' + tokenAccess + ' ]    -   [' + request.originalUrl + ']');
     // console.log()
     if (env.tokenAccepts(tokenAccess).length === 0) {
         throw new Forbidden()
     }
-
 
     if (request.originalUrl.indexOf('GIq6QUue') !== -1 && tokenAccess.localeCompare(C_VARIABLE.C_TOKEN_MASTER) !== 0) {
         throw new Forbidden()
@@ -69,6 +73,9 @@ app.use((error, request, response, next) => {
 
     const serial = new SerializeError(response.getHeader('Content-Type') || 'application/json')
     let tokenAccess = request.header('Token-Access')
+    if(tokenAccess === undefined){
+        tokenAccess = 'N / A'
+    }
     winston.error('[' + d.toISOString() + ']  -   [ ' + tokenAccess + ' ]    -   [' + error.message + ']')
 
 
