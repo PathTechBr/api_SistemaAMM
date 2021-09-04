@@ -1,5 +1,5 @@
 const query = require("../tables/Query")
-const SQL_CONST = require("../util/SQL_CONST")
+const SQL_CONST = require("../util/C_UTL").SQL_CONST
 
 class Estoque {
 

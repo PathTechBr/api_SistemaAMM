@@ -14,10 +14,24 @@ const Forbidden = require('./error/Forbidden')
 
 const { SerializeError } = require('./Serialize')
 
+const C_VARIABLE = require('./util/C_UTL').VARIABLE_CONST
+
 const app = express()
 const port = config.get('api.port')
 
+let d = new Date();
+
 app.use((request, response, next) => {
+    let tokenAccess = request.header('Token-Access')
+    console.log('[' + d.toISOString() + ']  -   [ ' + tokenAccess + ' ]    -   [' + request.originalUrl + ']')
+    if (env.tokenAccepts(tokenAccess).length === 0) {
+        throw new Forbidden()
+    }
+
+
+    if (request.originalUrl.indexOf('GIq6QUue') !== -1 && tokenAccess.localeCompare(C_VARIABLE.C_TOKEN_MASTER) !== 0) {
+        throw new Forbidden()
+    }
 
     let formatRequest = request.header('Accept')
     if (formatRequest == '*/*' || formatRequest == null) {
@@ -32,12 +46,6 @@ app.use((request, response, next) => {
     response.setHeader('Access-Control-Allow-Origin', '*/*')
     response.setHeader('X-Powered-By', 'Rafael Bahia')
 
-    let tokenAccess = request.header('Token-Access')
-    if (env.tokenAccepts(tokenAccess).length === 0) {
-        throw new Forbidden()
-    }
-
-    console.log('[ ' + tokenAccess + ' ]')
 
     next()
 
@@ -57,6 +65,9 @@ app.use((error, request, response, next) => {
     }
 
     const serial = new SerializeError(response.getHeader('Content-Type') || 'application/json')
+    let tokenAccess = request.header('Token-Access')
+    console.log('[' + d.toISOString() + ']  -   [ ' + tokenAccess + ' ]    -   [' + error.message + ']')
+
 
     response.status(status).send(
         serial.serialzer({

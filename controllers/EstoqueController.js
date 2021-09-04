@@ -1,5 +1,5 @@
 const Estoque = require("../models/Estoque");
-const SQL_CONST = require("../util/SQL_CONST");
+const SQL_CONST = require("../util/C_UTL").SQL_CONST;
 
 const db = require('../config/database')
 
