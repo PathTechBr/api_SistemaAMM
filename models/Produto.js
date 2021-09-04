@@ -1,4 +1,6 @@
 const query = require("../tables/Query")
+const winston = require('../util/Log')
+
 
 class Produto {
     constructor({ ID, EAN13, DESCRICAO, DATE_START, DATE_END, UNIDADE, GRUPO, PRECO_COMPRA, PRECO_VENDA, CST_INTERNO, CFOP_INTERNO, ALIQUOTA_ICMS, CODIGO_NCM, MARGEM_LUCRO, PESAVEL, ID_FORNECEDOR, DATA_ULTIMA_ALTERACAO, DATA_CADASTRO, ATIVO, ESTOQUE, limite = 10, options }) {
@@ -104,7 +106,6 @@ class Produto {
             this.PRECO_VENDA, this.CST_INTERNO, this.CFOP_INTERNO, this.ALIQUOTA_ICMS,
             this.CODIGO_NCM, this.ATIVO, this.MARGEM_LUCRO, this.PESAVEL, this.ID_FORNECEDOR, this.DATA_ULTIMA_ALTERACAO,
             this.ID]);
-        console.log(results)
         return results;
     }
 
@@ -118,7 +119,7 @@ class Produto {
         try {
             let execute_query = "UPDATE PRODUTOS SET " + atributo + " = '" + value + "', DATA_ULTIMA_ALTERACAO = ? WHERE ID = ? RETURNING ID;"
             const result = await query.executeQuery(execute_query, this.options, [this.DATA_ULTIMA_ALTERACAO, this.ID])
-            console.log(result);
+            winston.info(result);
         } catch (e) {
             return "NOK";
         }

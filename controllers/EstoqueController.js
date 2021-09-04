@@ -3,6 +3,8 @@ const SQL_CONST = require("../util/C_UTL").SQL_CONST;
 
 const db = require('../config/database')
 
+const winston = require('../util/Log');
+
 
 class EstoqueController {
 
@@ -20,7 +22,7 @@ class EstoqueController {
 
     static async atualizarEstoque(IDPRODUTO, QUANTIDADE, options, next) {
         try {
-            console.log('ATUALIZANDO ESTOQUE')
+            winston.info('ATUALIZANDO ESTOQUE')
             let estoque = new Estoque({ IDPRODUTO: IDPRODUTO, QUANTIDADE: QUANTIDADE, IDEMPRESA: 1, MD5REGISTRO: null, options: options });
             let result = await estoque.findOne();
             if (result.length === 0) { // Se estiver vazio (Não existir) cadastrar um novo registro vinculado ao produto

@@ -6,6 +6,8 @@ const ValidateController = require('./ValidateController')
 const DataNotProvided = require('../error/DataNotProvided')
 
 const db = require('../config/database')
+const winston = require('../util/Log')
+
 
 
 class PedidoController {
@@ -18,7 +20,7 @@ class PedidoController {
             const date_start = req.query.date_start;
             const date_end = req.query.date_end;
 
-            console.log("Request Melhor Vendedor")
+            winston.info("Request Melhor Vendedor")
             if (!ValidateController.validate([date_start, date_end])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
@@ -47,7 +49,7 @@ class PedidoController {
 
             const limite = req.query.limite;
 
-            console.log("Request valores mensais")
+            winston.info("Request valores mensais")
             if (!ValidateController.validate([limite])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')

@@ -1,0 +1,31 @@
+{
+  "api": {
+    "port": 3000
+  },
+  "tokens": [
+    {
+      "token": "token-loja_1",
+      "database": "C:\\xampp7\\database\\Firebird\\DADOS.001.FDB",
+      "host": "127.0.0.1",
+      "port": 3050
+    },
+    {
+      "token": "token-loja_2",
+      "database": "C:\\xampp7\\database\\Firebird\\DADOS.002.FDB",
+      "host": "127.0.0.1",
+      "port": 3050
+    },
+    {
+      "token": "token-loja_3",
+      "database": "C:\\Lammer\\Dados\\DADOS.MG06.FDB",
+      "host": "ammsolucoes.duckdns.org",
+      "port": 3050
+    },
+    {
+      "token": "testando",
+      "database": "testedb",
+      "host": "localteste",
+      "port": 123
+    }
+  ]
+}

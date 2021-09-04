@@ -1,3 +1,6 @@
+const winston = require('../util/Log')
+
+
 class ValidateController {
     constructor() {
     }
@@ -5,7 +8,7 @@ class ValidateController {
     static validate(array) {
         
         if (array.indexOf(undefined) === -1 && array.indexOf('') === -1) { // Significa que nao encontrou falor nulo
-            console.log(array)
+            winston.info(array)
             return true
         }
         return false

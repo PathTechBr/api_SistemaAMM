@@ -2,6 +2,7 @@ const Util = require('../models/Util')
 const SerializeUtil = require('../Serialize').SerializeUtil
 
 const db = require('../config/database')
+const winston = require('../util/Log')
 
 
 class UtilController {
@@ -14,7 +15,7 @@ class UtilController {
             const unidades = await instance.getAllUnidadeMedida()
 
             const serial = new SerializeUtil(res.getHeader('Content-Type'))
-            console.log("Unidades retornadas: " + unidades.length)
+            winston.info("Unidades retornadas: " + unidades.length)
             res.status(200).send(serial.serialzer(unidades))
 
         } catch (erro) {
@@ -31,7 +32,7 @@ class UtilController {
             const grupos = await instance.getAllGrupo()
 
             const serial = new SerializeUtil(res.getHeader('Content-Type'))
-            console.log("Total de grupos retornados: " + grupos.length)
+            winston.info("Total de grupos retornados: " + grupos.length)
             res.status(200).send(serial.serialzer(grupos))
 
         } catch (erro) {
@@ -48,7 +49,7 @@ class UtilController {
             const grupos = await instance.getAllFornecedor()
 
             const serial = new SerializeUtil(res.getHeader('Content-Type'), ['NOME'])
-            console.log("Total de grupos retornados: " + grupos.length)
+            winston.info("Total de grupos retornados: " + grupos.length)
             res.status(200).send(serial.serialzer(grupos))
 
         } catch (erro) {

@@ -8,6 +8,9 @@ const InternalServer = require('../error/InternalServer')
 const DataNotProvided = require('../error/DataNotProvided')
 const ValidateController = require('./ValidateController')
 
+const winston = require('../util/Log');
+
+
 
 class FileController {
 
@@ -39,7 +42,7 @@ class FileController {
                 res.status(200).send(data)
             })
             .catch(function (err) {
-                console.log(err.message)
+                winston.error(err.message)
                 let error = new InternalServer()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
                 return res.status(500).send(
@@ -55,9 +58,9 @@ class FileController {
         const instance = new File(path.join(__dirname, '../config/default-2.json'));
         instance.writeFile(obj)
             .then(function (data) {
-                console.log(data)
+                winston.info(data)
             })
-            .catch(err => console.log(err.message))
+            .catch(err => winston.error(err.message))
     }
 }
 

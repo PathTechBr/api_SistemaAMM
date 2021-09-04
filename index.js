@@ -79,7 +79,7 @@ app.use((error, request, response, next) => {
     winston.error('[' + d.toISOString() + ']  -   [ ' + tokenAccess + ' ]    -   [' + error.message + ']')
 
 
-    response.status(status).send(
+    response.status(error.idError).send(
         serial.serialzer({
             message: error.message,
             id: error.idError

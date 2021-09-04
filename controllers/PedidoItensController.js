@@ -7,6 +7,9 @@ const ValidateController = require('./ValidateController')
 const DataNotProvided = require('../error/DataNotProvided')
 const db = require('../config/database')
 
+const winston = require('../util/Log')
+
+
 class PedidoItensController {
 
     static async total_vendido_Diario(req, res, next) {
@@ -14,7 +17,7 @@ class PedidoItensController {
             const data_lancamento = req.query.data_lancamento;
             const options = db(req.header('Token-Access'))
 
-            console.log("Request Total Vendido Diario")
+            winston.info("Request Total Vendido Diario")
             if (!ValidateController.validate([data_lancamento])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')

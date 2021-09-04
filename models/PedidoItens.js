@@ -25,8 +25,6 @@ class PedidoItens {
             + "AND cast(pi.data_lancamento as date) = ?;"
 
         const result = await query.executeQuery(execute_query, this.options, [this.DATA_LANCAMENTO])
-
-        console.log(result)
         this.TOTVENDAS = result[0].TOTVENDAS;
         this.TOTCUSTOS = result[0].TOTCUSTOS;
         this.TOTALMARGEM = result[0].TOTALMARGEM;

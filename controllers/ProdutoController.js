@@ -12,6 +12,8 @@ const NotFound = require('../error/NotFound')
 const InternalServer = require('../error/InternalServer')
 
 const db = require('../config/database')
+const winston = require('../util/Log')
+
 
 class ProdutoController {
 
@@ -22,7 +24,7 @@ class ProdutoController {
             const date_start = req.query.date_start;
             const date_end = req.query.date_end;
 
-            console.log("Request produtos mais vendidos")
+            winston.info("Request produtos mais vendidos")
             if (!ValidateController.validate([date_start, date_end])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
@@ -49,13 +51,13 @@ class ProdutoController {
         try {
             const options = db(req.header('Token-Access'))
 
-            console.log("Request listar todos os produtos")
+            winston.info("Request listar todos os produtos")
             const instance = new Produto({ options: options });
 
             const produtos = await instance.getAllProdutos()
 
             const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO'])
-            console.log("Tamanho retorno: " + produtos.length)
+            winston.info("Tamanho retorno: " + produtos.length)
             res.status(200).send(serial.serialzer(produtos))
 
         } catch (erro) {
@@ -67,7 +69,7 @@ class ProdutoController {
         try {
             const options = db(req.header('Token-Access'))
 
-            console.log("Request listar todos os produtos ativados")
+            winston.info("Request listar todos os produtos ativados")
             const instance = new Produto({ options: options });
 
             const produtos = await instance.getProdutosActive()
@@ -75,7 +77,7 @@ class ProdutoController {
             const serial = new SerializeProduto(res.getHeader('Content-Type'),
                 ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA',
                     'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO', 'MARGEM_LUCRO', 'ESTOQUE'])
-            console.log("Tamanho retorno: " + produtos.length)
+            winston.info("Tamanho retorno: " + produtos.length)
             res.status(200).send(serial.serialzer(produtos))
 
         } catch (erro) {
@@ -88,7 +90,7 @@ class ProdutoController {
             const id = req.params._id;
             const options = db(req.header('Token-Access'))
 
-            console.log("Find one produto: " + id)
+            winston.info("Find one produto: " + id)
             if (!ValidateController.validate([id])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
@@ -129,9 +131,9 @@ class ProdutoController {
             const data = req.body;
             const options = db(req.header('Token-Access'))
 
-            console.log(data)
+            winston.info(data)
 
-            console.log("Save produto")
+            winston.info("Save produto")
             const produto = new Produto(data)
             produto.PRECO_COMPRA = produto.moneyTonumber(produto.PRECO_COMPRA);
             produto.PRECO_VENDA = produto.moneyTonumber(produto.PRECO_VENDA);
@@ -165,13 +167,21 @@ class ProdutoController {
                     }))
             } else {
                 let estoque = await EstoqueController.atualizarEstoque(result.ID, 0, options, next)
-                console.log('Estoque: atualizado')
+                winston.info('Estoque: atualizado')
 
                 const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID'])
                 res.status(201).send(serial.serialzer(result))
             }
         } catch (erro) {
-            next(erro)
+            winston.info('Bato aq')
+            let error = new InternalServer()
+            const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+            res.status(error.idError).send(
+                serial.serialzer({
+                    message: error.message,
+                    id: error.idError
+                })
+            )
         }
     }
 
@@ -184,7 +194,7 @@ class ProdutoController {
 
             const options = db(req.header('Token-Access'))
 
-            console.log("Update produto: " + id)
+            winston.info("Update produto: " + id)
             if (!ValidateController.validate([id])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
@@ -230,7 +240,7 @@ class ProdutoController {
                 res.status(204).send(serial.serialzer(result))
             }
         } catch (erro) {
-            console.log(erro)
+            winston.error(erro)
             next(erro)
         }
     }
@@ -242,7 +252,7 @@ class ProdutoController {
 
             const options = db(req.header('Token-Access'))
 
-            console.log("Delte Produto: " + id)
+            winston.info("Delte Produto: " + id)
             if (!ValidateController.validate([id, ean13])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
@@ -302,7 +312,7 @@ class ProdutoController {
                 let id_produto = model['id'];
                 const instance = new Produto({ ID: id_produto, options: options });
 
-                console.log("Update produto: " + id_produto)
+                winston.info("Update produto: " + id_produto)
                 if (!ValidateController.validate([id_produto])) {
                     let error = new DataNotProvided()
                     const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
@@ -330,7 +340,7 @@ class ProdutoController {
                 let value = model['value'];
 
                 if (atributo == "ESTOQUE") {
-                    console.log('AUDITORIA - ESTOQUE')
+                    winston.info('AUDITORIA - ESTOQUE')
                     let estoque_old = produto.ESTOQUE
                     let estoque_new = value
                     let tipo_movimento = 0; //Saida
@@ -342,11 +352,11 @@ class ProdutoController {
                     let auditoria = new Auditoria({ DATALANCAMENTO: model['date_inserted'], IDPRODUTO: id_produto, TIPOMOVIMENTO: tipo_movimento, QUANTIDADE: estoque_new - estoque_old, USUARIO: 'WEB_' + model['user'], options: options })
                     var aud = await auditoria.registerMovimentoEst();
                     if (aud.ID == null || aud.ID == undefined) {
-                        console.log('[ERR] - ERRO NA AUDITORIA')
+                        winston.info('[ERR] - ERRO NA AUDITORIA')
                     }
 
                     let estoque = await EstoqueController.atualizarEstoque(id_produto, estoque_new, options, next)
-                    console.log('Estoque: atualizado')
+                    winston.info('Estoque: atualizado')
                 }
 
                 produto[atributo] = value;
@@ -367,7 +377,7 @@ class ProdutoController {
             }
 
 
-            // console.log(arr)
+            // winston.info(arr)
 
 
             res.status(202).send(JSON.stringify(arr))
@@ -385,7 +395,7 @@ class ProdutoController {
             //     res.status(204).send(serial.serialzer(result))
             // }
         } catch (erro) {
-            console.log(erro)
+            winston.error(erro)
             next(erro)
         }
     }

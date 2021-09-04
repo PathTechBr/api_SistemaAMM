@@ -7,6 +7,8 @@ const DataNotProvided = require('../error/DataNotProvided')
 
 const db = require('../config/database')
 
+const winston = require('../util/Log')
+
 class FormaPagamentoController {
 
     static async rankingPayments(req, res, next) {
@@ -15,7 +17,7 @@ class FormaPagamentoController {
             const date_start = req.query.date_start;
             const date_end = req.query.date_end;
 
-            console.log("Request formas de pagamento")
+            winston.info("Request formas de pagamento")
             if (!ValidateController.validate([date_start, date_end])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
