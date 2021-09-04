@@ -16,6 +16,8 @@ const { SerializeError } = require('./Serialize')
 
 const C_VARIABLE = require('./util/C_UTL').VARIABLE_CONST
 
+const winston = require('./util/Log');
+
 const app = express()
 const port = config.get('api.port')
 
@@ -23,7 +25,8 @@ let d = new Date();
 
 app.use((request, response, next) => {
     let tokenAccess = request.header('Token-Access')
-    console.log('[' + d.toISOString() + ']  -   [ ' + tokenAccess + ' ]    -   [' + request.originalUrl + ']')
+    winston.info('[' + d.toISOString() + ']  -   [ ' + tokenAccess + ' ]    -   [' + request.originalUrl + ']');
+    // console.log()
     if (env.tokenAccepts(tokenAccess).length === 0) {
         throw new Forbidden()
     }
@@ -66,7 +69,7 @@ app.use((error, request, response, next) => {
 
     const serial = new SerializeError(response.getHeader('Content-Type') || 'application/json')
     let tokenAccess = request.header('Token-Access')
-    console.log('[' + d.toISOString() + ']  -   [ ' + tokenAccess + ' ]    -   [' + error.message + ']')
+    winston.error('[' + d.toISOString() + ']  -   [ ' + tokenAccess + ' ]    -   [' + error.message + ']')
 
 
     response.status(status).send(
