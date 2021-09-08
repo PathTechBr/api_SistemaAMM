@@ -20,6 +20,12 @@
             "database": "C:\\Lammer\\Dados\\DADOS.MG06.FDB",
             "host": "ammsolucoes.duckdns.org",
             "port": 3050
+        },
+        {
+            "token": "6P9tpHP2_7NdxLEh6grnCH_guqdg7A7P",
+            "database": "C:\\Lammer\\Dados\\DADOS.MG06.FDB",
+            "host": "ammsolucoes.duckdns.org",
+            "port": 3050
         }
     ]
 }
