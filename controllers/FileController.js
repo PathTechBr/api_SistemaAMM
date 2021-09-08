@@ -16,27 +16,37 @@ class FileController {
 
     static newEnvironment(req, res, next) {
 
-        const new_env = req.body;
-        const token = new Token(new_env)
+        const new_env = JSON.parse(req.body[0]);
+        // console.log(JSON.parse(new_env))
 
-        if (!ValidateController.validate([token.database, token.token, token.host, token.port])) {
-            let error = new DataNotProvided()
-            const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
-            return res.status(error.idError).send(
-                serial.serialzer({
-                    message: error.message,
-                    id: error.idError
-                }))
-        }
+        let tokens_body = new Array();
 
-        let tokens
+        new_env.forEach(element => {
+            const token = new Token(element)
+            token.port = Number.parseInt(token.port)
+            if (!ValidateController.validate([token.database, token.token, token.host, token.port])) {
+                let error = new DataNotProvided()
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(error.idError).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            }
 
-        const instance = new File(path.join(__dirname, '../config/default.json'));
+            tokens_body.push(element)
+
+        });
+
+        // Coletar os DNS já registrados no documento de config
+        const instance = new File(path.join(__dirname, '../config/default-2.json'));
         instance.readFile()
             .then(function (data) {
-                tokens = data.tokens
-                tokens.push(token)
+                let tokens = data.tokens
+                tokens = tokens.concat(tokens_body)
+                data.tokens = tokens
 
+                // Escreve as novas propriedades de conexão no arquivo de config
                 FileController.writeFile(data)
 
                 res.status(200).send(data)
@@ -51,6 +61,7 @@ class FileController {
                         id: error.idError
                     }))
             })
+
     }
 
     static writeFile(obj) {
@@ -58,7 +69,7 @@ class FileController {
         const instance = new File(path.join(__dirname, '../config/default-2.json'));
         instance.writeFile(obj)
             .then(function (data) {
-                winston.info(data)
+                winston.info('[writeFile]   -     Change in config  -   ' + data)
             })
             .catch(err => winston.error(err.message))
     }

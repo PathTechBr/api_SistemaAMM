@@ -173,7 +173,7 @@ class ProdutoController {
                 res.status(201).send(serial.serialzer(result))
             }
         } catch (erro) {
-            winston.info('Bato aq')
+
             let error = new InternalServer()
             const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
             res.status(error.idError).send(

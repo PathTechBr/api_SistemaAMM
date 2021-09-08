@@ -23,9 +23,9 @@ class Serialize {
 
     serialzer(data) {
         data = this.filter(data)
-        if (this.contentType === 'application/json') {
+        if (this.contentType.includes('application/json')) {
             return this.json(data)
-        } else if (this.contentType === 'application/xml') {
+        } else if (this.contentType.includes('application/xml')) {
             return this.xml(data)
         }
 
