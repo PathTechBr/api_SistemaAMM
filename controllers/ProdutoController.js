@@ -13,6 +13,7 @@ const InternalServer = require('../error/InternalServer')
 
 const db = require('../config/database')
 const winston = require('../util/Log')
+const ConnectionRefused = require('../error/ConnectionRefused')
 
 
 class ProdutoController {
@@ -37,7 +38,9 @@ class ProdutoController {
 
             const instance = new Produto({ DATE_START: date_start, DATE_END: date_end, limite: limite, options: options });
 
-            const produtos = await instance.getRankingBestSellers()
+            const produtos = await instance.getRankingBestSellers().catch(function () {
+                throw new ConnectionRefused()
+            })
 
             const serial = new SerializeProduto(res.getHeader('Content-Type'), ['QTD'])
             res.status(200).send(serial.serialzer(produtos))
@@ -54,8 +57,9 @@ class ProdutoController {
             winston.info("Request listar todos os produtos")
             const instance = new Produto({ options: options });
 
-            const produtos = await instance.getAllProdutos()
-
+            const produtos = await instance.getAllProdutos().catch(function (err) {
+                throw new ConnectionRefused()
+            })
             const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO'])
             winston.info("Tamanho retorno: " + produtos.length)
             res.status(200).send(serial.serialzer(produtos))
@@ -72,7 +76,9 @@ class ProdutoController {
             winston.info("Request listar todos os produtos ativados")
             const instance = new Produto({ options: options });
 
-            const produtos = await instance.getProdutosActive()
+            const produtos = await instance.getProdutosActive().catch(function () {
+                throw new ConnectionRefused()
+            })
 
             const serial = new SerializeProduto(res.getHeader('Content-Type'),
                 ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA',
@@ -103,7 +109,9 @@ class ProdutoController {
 
             const instance = new Produto({ ID: id, options: options });
 
-            const produtos = await instance.getOneProduto()
+            const produtos = await instance.getOneProduto().catch(function () {
+                throw new ConnectionRefused()
+            })
 
             if (produtos.length === 0) {
                 let error = new NotFound('Produto')
@@ -155,7 +163,9 @@ class ProdutoController {
                     }))
             }
 
-            const result = await produto.insert();
+            const result = await produto.insert().catch(function () {
+                throw new ConnectionRefused()
+            });
 
             if (result.ID == null || result.ID == undefined) {
                 let error = new InternalServer()
@@ -173,15 +183,7 @@ class ProdutoController {
                 res.status(201).send(serial.serialzer(result))
             }
         } catch (erro) {
-
-            let error = new InternalServer()
-            const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
-            res.status(error.idError).send(
-                serial.serialzer({
-                    message: error.message,
-                    id: error.idError
-                })
-            )
+            next(erro)
         }
     }
 
@@ -207,7 +209,9 @@ class ProdutoController {
 
             const instance = new Produto({ ID: id, options: options });
 
-            const produto_old = await instance.getOneProduto()
+            const produto_old = await instance.getOneProduto().catch(function () {
+                throw new ConnectionRefused()
+            })
 
             if (produto_old.length === 0) {
                 let error = new NotFound('Produto')
@@ -225,7 +229,9 @@ class ProdutoController {
 
             produto_new.options = options
 
-            const result = await produto.update();
+            const result = await produto.update().catch(function () {
+                throw new ConnectionRefused()
+            });
 
             if (result.ID == null || result.ID == undefined) {
                 let error = new InternalServer()
@@ -265,7 +271,9 @@ class ProdutoController {
 
             const instance = new Produto({ ID: id, EAN13: ean13, options: options });
 
-            const produto = await instance.getOneProduto()
+            const produto = await instance.getOneProduto().catch(function () {
+                throw new ConnectionRefused()
+            })
 
             if (produto.length === 0) {
                 let error = new NotFound('Produto')
@@ -277,7 +285,9 @@ class ProdutoController {
                     }))
             }
 
-            const result = await instance.delete()
+            const result = await instance.delete().catch(function () {
+                throw new ConnectionRefused()
+            })
 
             if (result.ID == null || result.ID == undefined) {
                 let error = new InternalServer()
@@ -323,7 +333,9 @@ class ProdutoController {
                         }))
                 }
 
-                const produto_old = await instance.getOneProduto();
+                const produto_old = await instance.getOneProduto().catch(function () {
+                    throw new ConnectionRefused()
+                });
 
                 if (produto_old.length === 0) {
                     const myJSON = '{"_id":"' + id_request + '", "id": "' + id_produto + '", "status":"NOK", "message":"Produto nao encontrado"}';
@@ -350,7 +362,9 @@ class ProdutoController {
                         tipo_movimento = 1; //Entrada
                     }
                     let auditoria = new Auditoria({ DATALANCAMENTO: model['date_inserted'], IDPRODUTO: id_produto, TIPOMOVIMENTO: tipo_movimento, QUANTIDADE: estoque_new - estoque_old, USUARIO: 'WEB_' + model['user'], options: options })
-                    var aud = await auditoria.registerMovimentoEst();
+                    var aud = await auditoria.registerMovimentoEst().catch(function () {
+                        throw new ConnectionRefused()
+                    });
                     if (aud.ID == null || aud.ID == undefined) {
                         winston.info('[ERR] - ERRO NA AUDITORIA')
                     }
@@ -362,7 +376,9 @@ class ProdutoController {
                 produto[atributo] = value;
                 produto = produto.adapterModel(produto);
 
-                const result = await produto.updateFast(atributo, produto[atributo]);
+                const result = await produto.updateFast(atributo, produto[atributo]).catch(function () {
+                    throw new ConnectionRefused()
+                });
 
                 if (result == "NOK") {
                     const myJSON = '{"_id":"' + id_request + '", "id": "' + id_produto + '", "status":"NOK", "message":"Erro na alteração"}';

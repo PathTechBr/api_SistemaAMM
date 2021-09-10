@@ -33,7 +33,9 @@ class PedidoController {
 
             const pedido = new Pedido({ DATE_START: date_start, DATE_END: date_end, options: options });
 
-            await pedido.getBestSeller()
+            await pedido.getBestSeller().catch(function () {
+                throw new ConnectionRefused()
+            })
 
             const serial = new SerializePedido(res.getHeader('Content-Type'), ['VENDEDOR', 'TOTAL', 'CUPONS', 'ITENS', 'MEDIAITENS', 'MEDIAVALOR'])
             res.status(200).send(serial.serialzer(pedido))
@@ -61,7 +63,9 @@ class PedidoController {
             }
 
             const pedido = new Pedido({ limite: limite, options: options });
-            const results = await pedido.getValuesMonths()
+            const results = await pedido.getValuesMonths().catch(function () {
+                throw new ConnectionRefused()
+            })
 
             const serial = new SerializePedido(res.getHeader('Content-Type'), ['MES', 'ANO', 'VALOR_TOTAL', 'CUPOM'])
             res.status(200).send(serial.serialzer(results))

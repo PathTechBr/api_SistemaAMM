@@ -31,6 +31,12 @@ class Util {
         const results = await query.executeQuery(execute_query, this.options);
         return results;
     }
+
+    async getEnabledDB() {
+        let execute_query = "SELECT SBT FROM CONFIG;"
+        const results = await query.executeQuery(execute_query, this.options)
+        return results
+    }
 }
 
 module.exports = Util

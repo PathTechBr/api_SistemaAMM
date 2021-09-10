@@ -29,7 +29,9 @@ class FormaPagamentoController {
             }
 
             const instance = new FormaPagamento({ DATE_START: date_start, DATE_END: date_end, options: options });
-            const pagamentos = await instance.getRankingPayments()
+            const pagamentos = await instance.getRankingPayments().catch(function () {
+                throw new ConnectionRefused()
+            })
 
             const serial = new SerializeFormaPagamento(res.getHeader('Content-Type'), ['QTD', 'TOTVENDA'])
 

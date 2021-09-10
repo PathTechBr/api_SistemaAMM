@@ -17,7 +17,6 @@ class FileController {
     static newEnvironment(req, res, next) {
 
         const new_env = JSON.parse(req.body[0]);
-        // console.log(JSON.parse(new_env))
 
         let tokens_body = new Array();
 

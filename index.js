@@ -17,8 +17,11 @@ const { SerializeError } = require('./Serialize')
 const C_VARIABLE = require('./util/C_UTL').VARIABLE_CONST
 
 const winston = require('./util/Log');
+const ConnectionRefused = require('./error/ConnectionRefused')
+const NoConfigurationDB = require('./error/NoConfigurationDB')
 
 const app = express()
+
 const port = config.get('api.port')
 
 let d = new Date();
@@ -58,6 +61,8 @@ app.use((request, response, next) => {
 
 })
 
+routes(app)
+
 app.use((error, request, response, next) => {
     let status = 500
 
@@ -69,6 +74,10 @@ app.use((error, request, response, next) => {
         status = 406
     } else if (error instanceof Forbidden) {
         status = 403
+    } else if (error instanceof ConnectionRefused) {
+        status = 503
+    } else if (error instanceof NoConfigurationDB) {
+        status = 416
     }
 
     const serial = new SerializeError(response.getHeader('Content-Type') || 'application/json')
@@ -79,15 +88,13 @@ app.use((error, request, response, next) => {
     winston.error('[' + d.toISOString() + ']  -   [ ' + tokenAccess + ' ]    -   [' + error.message + ']')
 
 
-    response.status(error.idError).send(
+    response.status(status).send(
         serial.serialzer({
             message: error.message,
             id: error.idError
         })
     )
 })
-
-routes(app)
 
 app.listen(port, () => console.log('A API esta rodando na porta: ' + port + '!'))
 

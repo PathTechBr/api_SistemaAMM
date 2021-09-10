@@ -30,7 +30,9 @@ class PedidoItensController {
 
             const pedidoItens = new PedidoItens({ DATA_LANCAMENTO: data_lancamento, options: options });
 
-            await pedidoItens.total_vendido_Diario()
+            await pedidoItens.total_vendido_Diario().catch(function () {
+                throw new ConnectionRefused()
+            })
 
             const serial = new SerializePedido(res.getHeader('Content-Type'), ['TOTVENDAS', 'TOTCUSTOS', 'TOTALMARGEM'])
             res.status(200).send(serial.serialzer(pedidoItens))
