@@ -88,6 +88,24 @@ class UtilController {
             next(erro)
         }
     }
+
+    static async getLicenca(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'))
+            const instance = new Util({ options: options });
+
+            const vencimento = await instance.getLicencaDB().catch(function(err) {
+                throw err
+            })
+
+            const serial = new SerializeUtil(res.getHeader('Content-Type'), ['DATA_VENCIMENTO'])
+            res.status(200).send(serial.serialzer(vencimento))
+
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
 }
 
 

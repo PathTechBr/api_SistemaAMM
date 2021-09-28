@@ -33,4 +33,13 @@ router.options('/enabled', (req, resp, next) => {
 })
 router.get('/enabled', UtilController.getEnabled)
 
+
+router.options('/licenca', (req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Methods', 'GET')
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+    resp.status(200)
+    resp.end()
+})
+router.get('/licenca', UtilController.getLicenca)
+
 module.exports = router

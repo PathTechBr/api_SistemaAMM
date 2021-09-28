@@ -1,5 +1,6 @@
 const query = require("../tables/Query")
 
+const SQL_CONST = require("../util/C_UTL").SQL_CONST;
 
 class Util {
 
@@ -27,13 +28,19 @@ class Util {
     }
 
     async getAllFornecedor() {
-        let execute_query = "SELECT ID, NOME FROM FORNECEDORES;"
+        let execute_query = SQL_CONST.SQL_GET_FORNECEDORES
         const results = await query.executeQuery(execute_query, this.options);
         return results;
     }
 
     async getEnabledDB() {
-        let execute_query = "SELECT SBT FROM CONFIG;"
+        let execute_query = SQL_CONST.SQL_GET_SBT
+        const results = await query.executeQuery(execute_query, this.options)
+        return results
+    }
+
+    async getLicencaDB() {
+        let execute_query = SQL_CONST.SQL_GET_LICENCA
         const results = await query.executeQuery(execute_query, this.options)
         return results
     }
