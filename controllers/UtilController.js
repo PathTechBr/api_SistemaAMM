@@ -73,15 +73,17 @@ class UtilController {
             const options = db(req.header('Token-Access'))
             const instance = new Util({ options: options });
 
-            const sbt = await instance.getEnabledDB().catch(function(err) {
+            const config = await instance.getEnabledDB().catch(function(err) {
                 throw err
             })
 
-            if(sbt[0].SBT === null || sbt[0].SBT.includes('N')) {
+            console.log(config)
+
+            if(config[0].SBT === null || config[1].CONFIG.includes('N')) {
                 throw new Forbidden()
             }
-            const serial = new SerializeUtil(res.getHeader('Content-Type'), ['SBT'])
-            res.status(200).send(serial.serialzer(sbt[0]))
+            const serial = new SerializeUtil(res.getHeader('Content-Type'), ['CONFIG'])
+            res.status(200).send(serial.serialzer(config[0]))
 
 
         } catch (erro) {
