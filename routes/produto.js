@@ -10,6 +10,15 @@ router.options('/ranking/:limite', (req, resp, next) => {
 
 router.get('/ranking/:limite', ProdutoController.rankingBestSellers)
 
+router.options('/ean13/:_ean13', (req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Methods', 'GET')
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+    resp.status(202)
+    resp.end()
+})
+router.get('/ean13/:_ean13', ProdutoController.findOneByEan13)
+
+
 
 router.options('/', (req, resp, next) => {
     resp.setHeader('Access-Control-Allow-Methods', 'GET, POST')

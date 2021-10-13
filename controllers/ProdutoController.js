@@ -14,6 +14,7 @@ const InternalServer = require('../error/InternalServer')
 const db = require('../config/database')
 const winston = require('../util/Log')
 const ConnectionRefused = require('../error/ConnectionRefused')
+const NotAcceptable = require('../error/NotAcceptable')
 
 
 class ProdutoController {
@@ -141,7 +142,6 @@ class ProdutoController {
 
             winston.info(data)
 
-            winston.info("Save produto")
             const produto = new Produto(data)
             produto.PRECO_COMPRA = produto.moneyTonumber(produto.PRECO_COMPRA);
             produto.PRECO_VENDA = produto.moneyTonumber(produto.PRECO_VENDA);
@@ -153,7 +153,7 @@ class ProdutoController {
 
             produto.options = options
 
-            if (isNaN(produto.PRECO_COMPRA) || isNaN(produto.PRECO_VENDA)) {
+            if (isNaN(produto.PRECO_COMPRA) || isNaN(produto.PRECO_VENDA) || produto.EAN13.length > 13) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
                 return res.status(400).send(
@@ -163,6 +163,15 @@ class ProdutoController {
                     }))
             }
 
+            const isExists = await produto.getOneProdutoByEan13().catch(function () {
+                throw new ConnectionRefused()
+            })
+
+            if (isExists[0].COUNT > 0) {
+                throw new NotAcceptable()
+            }
+
+            winston.info("Save produto")
             const result = await produto.insert().catch(function () {
                 throw new ConnectionRefused()
             });
@@ -182,6 +191,41 @@ class ProdutoController {
                 const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID'])
                 res.status(201).send(serial.serialzer(result))
             }
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async findOneByEan13(req, res, next) {
+        try {
+            const ean13 = req.params._ean13;
+            const options = db(req.header('Token-Access'))
+
+            winston.info("Find one produto: " + ean13)
+            if (!ValidateController.validate([ean13]) || ean13.length > 13) {
+                let error = new DataNotProvided()
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(400).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            }
+
+            const instance = new Produto({ EAN13: ean13, options: options });
+
+            const produtos = await instance.getOneProdutoByEan13().catch(function () {
+                throw new ConnectionRefused()
+            })
+
+            if (produtos.length === 0 || produtos[0].COUNT === 0) {
+                throw new NotFound('Produto')
+            } else {
+                const serial = new SerializeProduto(res.getHeader('Content-Type'),
+                    ['COUNT'])
+                res.status(200).send(serial.serialzer(produtos))
+            }
+
         } catch (erro) {
             next(erro)
         }

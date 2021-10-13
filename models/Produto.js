@@ -68,6 +68,13 @@ class Produto {
         return results;
     }
 
+    async getOneProdutoByEan13() {
+        let execute_query = "SELECT COUNT(*) FROM PRODUTOS WHERE EAN13 = ? OR EAN13 = ?"
+
+        const results = await query.executeQuery(execute_query, this.options, [this.EAN13, Number.parseInt(this.EAN13)]);
+        return results;
+    }
+
     async insert() {
         let execute_query = "INSERT INTO PRODUTOS (EAN13, DESCRICAO, UNIDADE, GRUPO, PRECO_COMPRA, " +
             "PRECO_VENDA, CST_INTERNO, CFOP_INTERNO, ALIQUOTA_ICMS, CODIGO_NCM, ATIVO, " +

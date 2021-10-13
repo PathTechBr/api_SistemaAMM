@@ -19,6 +19,7 @@ const C_VARIABLE = require('./util/C_UTL').VARIABLE_CONST
 const winston = require('./util/Log');
 const ConnectionRefused = require('./error/ConnectionRefused')
 const NoConfigurationDB = require('./error/NoConfigurationDB')
+const NotAcceptable = require('./error/NotAcceptable')
 
 const app = express()
 
@@ -78,6 +79,8 @@ app.use((error, request, response, next) => {
         status = 503
     } else if (error instanceof NoConfigurationDB) {
         status = 416
+    }else if (error instanceof NotAcceptable) {
+        status = 428
     }
 
     const serial = new SerializeError(response.getHeader('Content-Type') || 'application/json')
