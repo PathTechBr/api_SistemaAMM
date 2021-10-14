@@ -42,4 +42,12 @@ router.options('/licenca', (req, resp, next) => {
 })
 router.get('/licenca', UtilController.getLicenca)
 
+router.options('/licenca', (req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Methods', 'POST')
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+    resp.status(200)
+    resp.end()
+})
+router.post('/licenca', UtilController.setLicenca)
+
 module.exports = router

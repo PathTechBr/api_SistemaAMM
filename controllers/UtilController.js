@@ -100,8 +100,30 @@ class UtilController {
                 throw err
             })
 
-            const serial = new SerializeUtil(res.getHeader('Content-Type'), ['DATA_VENCIMENTO'])
+            const serial = new SerializeUtil(res.getHeader('Content-Type'), ['DATA_VENCIMENTO','DIAS_RESET'])
             res.status(200).send(serial.serialzer(vencimento))
+
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async setLicenca(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'))
+            const data = req.body
+
+            const instance = new Util(JSON.parse(data[0]));
+            instance.options = options
+            console.log(instance)
+
+            const licenca = await instance.setLicencaDB().catch(function(err) {
+                throw err
+            })
+
+            // const serial = new SerializeUtil(res.getHeader('Content-Type'), ['DATA_VENCIMENTO','DIAS_RESET'])
+            res.status(204).send('Okays')
 
 
         } catch (erro) {

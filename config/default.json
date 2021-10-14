@@ -30,13 +30,13 @@
     {
       "token": "RU4QBurPUAOkq8s6EukoKelSjaJOBtbA",
       "database": "C:\\Lammer\\Dados\\DADOS.DESENVOLVIMENTO.FDB",
-      "host": "ammsolucoes.duckdns.org",
+      "host": "ammsolucoes.ddnsfree.com",
       "port": 3050
     },
     {
       "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd",
       "database": "C:\\Lammer\\Dados\\DADOS.MG06.FDB",
-      "host": "ammsolucoes.duckdns.org",
+      "host": "ammsolucoes.ddnsfree.com",
       "port": 3050
     }
   ]
