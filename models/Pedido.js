@@ -46,6 +46,14 @@ class Pedido {
 
         return results
     }
+
+    async getValuesCancelados() {
+        let execute_query = "SELECT COUNT(ID) AS ITENS, SUM(VALOR_TOTAL) AS TOTAL FROM PEDIDO " +
+            "WHERE CANCELADO = 'S' AND NUM_PDV IS NOT NULL ";
+        // "AND cast(data_pedido as date) = :pcurrent_date"
+        const results = await query.executeQuery(execute_query, this.options, [this.DATE_START, this.DATE_END])
+        return results
+    }
 }
 
 module.exports = Pedido;

@@ -10,9 +10,10 @@ class FormaPagamento {
     }
 
     async getRankingPayments() {
-
-        let execute_query = "SELECT fp.tipo_documento, fp.descricao,count(fp.id) as qtd, SUM(fp.valor-fp.troco) as TOTVENDA "
-            + "FROM pedido_formapag fp WHERE cast(fp.datalancamento as date) between ? and ? "
+        
+            let execute_query = "SELECT FIRST 7 fp.tipo_documento, fp.descricao,count(fp.id) as qtd, SUM(fp.valor-fp.troco) as TOTVENDA "
+            + "FROM pedido_formapag fp  "
+            // WHERE cast(fp.datalancamento as date) between ? and ?
             + "GROUP BY fp.tipo_documento,fp.descricao ORDER BY qtd DESC ;"
 
         const results = await query.executeQuery(execute_query, this.options, [this.DATE_START, this.DATE_END])

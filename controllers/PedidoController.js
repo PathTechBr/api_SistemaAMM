@@ -73,6 +73,36 @@ class PedidoController {
             next(erro)
         }
     }
+
+    static async getValuesCancelados(req, res, next) {
+        try {
+
+            const options = db(req.header('Token-Access'))
+
+            const limite = req.query.limite;
+
+            winston.info("Request valores cancelados")
+            if (!ValidateController.validate([limite])) {
+                let error = new DataNotProvided()
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(400).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            }
+
+            const pedido = new Pedido({ limite: limite, options: options });
+            const results = await pedido.getValuesCancelados().catch(function () {
+                throw new ConnectionRefused()
+            })
+
+            const serial = new SerializePedido(res.getHeader('Content-Type'), ['TOTAL', 'ITENS'])
+            res.status(200).send(serial.serialzer(results))
+        } catch (erro) {
+            next(erro)
+        }
+    }
 }
 
 module.exports = PedidoController

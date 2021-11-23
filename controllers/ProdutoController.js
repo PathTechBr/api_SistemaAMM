@@ -43,7 +43,7 @@ class ProdutoController {
                 throw new ConnectionRefused()
             })
 
-            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['QTD'])
+            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['QTD', 'VLTOTAL'])
             res.status(200).send(serial.serialzer(produtos))
 
         } catch (erro) {

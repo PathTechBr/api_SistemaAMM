@@ -20,14 +20,14 @@ class PedidoItens {
     }
 
     async total_vendido_Diario() {
-        let execute_query = "SELECT SUM(pi.valor_total) AS totvendas, SUM(pi.valor_real) AS totcustos, "
-            + "(SUM(pi.valor_total) - SUM(pi.valor_real)) AS totalmargem from pedido_itens pi WHERE pi.cancelado = 'N' "
-            + "AND cast(pi.data_lancamento as date) = ?;"
+        let execute_query = "SELECT COUNT(ID) AS QUANTIDADE, SUM(VALOR) AS TOTVENDAS, SUM(VALOR_TOTAL) AS TOTCUSTOS, SUM(DESCONTO) AS TOTALMARGEM " +
+        "FROM PEDIDO WHERE CANCELADO <> 'S' AND NUM_PDV IS NOT NULL GROUP BY IDEMPRESA;" 
 
         const result = await query.executeQuery(execute_query, this.options, [this.DATA_LANCAMENTO])
         this.TOTVENDAS = result[0].TOTVENDAS;
         this.TOTCUSTOS = result[0].TOTCUSTOS;
         this.TOTALMARGEM = result[0].TOTALMARGEM;
+        this.QUANTIDADE = result[0].QUANTIDADE;
 
     }
 }

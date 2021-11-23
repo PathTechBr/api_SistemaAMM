@@ -34,7 +34,7 @@ class PedidoItensController {
                 throw new ConnectionRefused()
             })
 
-            const serial = new SerializePedido(res.getHeader('Content-Type'), ['TOTVENDAS', 'TOTCUSTOS', 'TOTALMARGEM'])
+            const serial = new SerializePedido(res.getHeader('Content-Type'), ['QUANTIDADE', 'TOTVENDAS', 'TOTCUSTOS', 'TOTALMARGEM'])
             res.status(200).send(serial.serialzer(pedidoItens))
         } catch (erro) {
             next(erro)
