@@ -34,7 +34,7 @@ class Produto {
 
         let execute_query = "SELECT FIRST 10 PI.EAN13, PI.DESCRICAO, SUM(PI.QUANTIDADE) AS QTD, " +
             "SUM(PI.VALOR_TOTAL) AS VLTOTAL FROM PEDIDO_ITENS PI INNER JOIN PEDIDO P ON (P.ID  = PI.IDPEDIDO) " +
-            // "WHERE CAST(P.DATA_PEDIDO AS DATE) between ? and ? " +
+            "WHERE CAST(P.DATA_PEDIDO AS DATE) between ? and ? " +
             "GROUP BY pi.ean13,pi.descricao ORDER BY QTD DESC;"
 
         // let execute_query = "SELECT FIRST 7 pi.ean13,pi.descricao, SUM(pi.quantidade) as QTD, SUM(pi.valor_total) as VLTOTAL FROM pedido_itens pi "
