@@ -56,7 +56,8 @@ class ProdutoController {
             const options = db(req.header('Token-Access'))
 
             winston.info("Request listar todos os produtos")
-            const instance = new Produto({ options: options });
+            const limite = req.query.limite;
+            const instance = new Produto({ options: options, limite: limite });
 
             const produtos = await instance.getAllProdutos().catch(function (err) {
                 throw new ConnectionRefused()
@@ -70,12 +71,36 @@ class ProdutoController {
         }
     }
 
+    static async findSearchAll(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'))
+            const q = req.params._q;
+
+
+            winston.info("Request listar todos os produtos pesquisados: " + q)
+            const limite = req.query.limite;
+            const instance = new Produto({ options: options, DESCRICAO: q, EAN13: q, limite: limite });
+
+            const produtos = await instance.getSearchProdutos().catch(function (err) {
+                throw new ConnectionRefused()
+            })
+            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO', 'MARGEM_LUCRO', 'ESTOQUE'])
+            winston.info("Tamanho retorno: " + produtos.length)
+            res.status(200).send(serial.serialzer(produtos))
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
     static async findAtivado(req, res, next) {
         try {
             const options = db(req.header('Token-Access'))
 
             winston.info("Request listar todos os produtos ativados")
-            const instance = new Produto({ options: options });
+
+            const limite = req.query.limite;
+            const instance = new Produto({ options: options, limite: limite });
 
             const produtos = await instance.getProdutosActive().catch(function () {
                 throw new ConnectionRefused()

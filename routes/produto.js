@@ -54,4 +54,12 @@ router.put('/:_id', ProdutoController.updateModel)
 
 router.delete('/:_id', ProdutoController.deleteModel)
 
+router.options('/search/:_q', (req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Methods', 'GET, POST')
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+    resp.status(204)
+    resp.end()
+})
+router.get('/search/:_q', ProdutoController.findSearchAll)
+
 module.exports = router

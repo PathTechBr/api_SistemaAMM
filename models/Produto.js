@@ -47,20 +47,29 @@ class Produto {
     }
 
     async getAllProdutos() {
-        let execute_query = "SELECT p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, g.descricao AS GRUPO, p.PRECO_COMPRA, " +
+        let execute_query = "SELECT FIRST ? p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, g.descricao AS GRUPO, p.PRECO_COMPRA, " +
             "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO FROM PRODUTOS p " +
-            "JOIN GRUPO G ON (p.grupo = G.id)"
+            "JOIN GRUPO G ON (p.grupo = G.id) ORDER BY ID ASC"
 
-        const results = await query.executeQuery(execute_query, this.options);
+        const results = await query.executeQuery(execute_query, this.options, [this.limite]);
+        return results;
+    }
+
+    async getSearchProdutos() {
+        let execute_query = "SELECT FIRST ? p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, g.descricao AS GRUPO, p.PRECO_COMPRA, " +
+            "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO,  p.MARGEM_LUCRO, p.ESTOQUE FROM PRODUTOS p JOIN GRUPO G ON (p.grupo = G.id) " +
+            "WHERE p.EAN13 LIKE '%" + this.EAN13 + "%' OR p.DESCRICAO LIKE UPPER('%" + this.DESCRICAO + "%') ORDER BY ID ASC";
+
+        const results = await query.executeQuery(execute_query, this.options, [this.limite]);
         return results;
     }
 
     async getProdutosActive() {
-        let execute_query = "SELECT p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, g.descricao AS GRUPO, p.PRECO_COMPRA, " +
+        let execute_query = "SELECT FIRST ? p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, g.descricao AS GRUPO, p.PRECO_COMPRA, " +
             "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO, p.MARGEM_LUCRO, p.ESTOQUE FROM PRODUTOS p " +
             "JOIN GRUPO G ON (p.grupo = G.id) WHERE p.ATIVO = 'T'"
 
-        const results = await query.executeQuery(execute_query, this.options);
+        const results = await query.executeQuery(execute_query, this.options, [this.limite]);
         return results;
     }
 
