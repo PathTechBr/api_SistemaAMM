@@ -48,7 +48,7 @@ class Produto {
 
     async getAllProdutos() {
         let execute_query = "SELECT FIRST ? p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, g.descricao AS GRUPO, p.PRECO_COMPRA, " +
-            "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO FROM PRODUTOS p " +
+            "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO, p.ESTOQUE FROM PRODUTOS p " +
             "JOIN GRUPO G ON (p.grupo = G.id) ORDER BY ID ASC"
 
         const results = await query.executeQuery(execute_query, this.options, [this.limite]);
@@ -93,13 +93,13 @@ class Produto {
     async insert() {
         let execute_query = "INSERT INTO PRODUTOS (EAN13, DESCRICAO, UNIDADE, GRUPO, PRECO_COMPRA, " +
             "PRECO_VENDA, CST_INTERNO, CFOP_INTERNO, ALIQUOTA_ICMS, CODIGO_NCM, ATIVO, " +
-            "MARGEM_LUCRO, PESAVEL, CONTROLAR_ESTOQUE, EDITA_DESC_PED, BENS_CONSUMO, PROD_COMPONENTE, ID_FORNECEDOR, DATA_CADASTRO) " +
-            "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'S', 'N', 'N', 'N', ?, ?) RETURNING ID; ";
+            "MARGEM_LUCRO, PESAVEL, CONTROLAR_ESTOQUE, EDITA_DESC_PED, BENS_CONSUMO, PROD_COMPONENTE, ID_FORNECEDOR, DATA_CADASTRO, DATA_ULTIMA_ALTERACAO) " +
+            "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'S', 'N', 'N', 'N', ?, ?, ?) RETURNING ID; ";
 
         const results = await query.executeQuery(execute_query, this.options,
             [this.EAN13, this.DESCRICAO, this.UNIDADE, this.GRUPO, this.PRECO_COMPRA, this.PRECO_VENDA,
             this.CST_INTERNO, this.CFOP_INTERNO, this.ALIQUOTA_ICMS, this.CODIGO_NCM, this.ATIVO,
-            this.MARGEM_LUCRO, this.PESAVEL, this.ID_FORNECEDOR, this.DATA_CADASTRO]);
+            this.MARGEM_LUCRO, this.PESAVEL, this.ID_FORNECEDOR, this.DATA_CADASTRO, this.DATA_CADASTRO]);
         return results;
     }
 

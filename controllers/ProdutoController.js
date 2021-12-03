@@ -15,6 +15,8 @@ const db = require('../config/database')
 const winston = require('../util/Log')
 const ConnectionRefused = require('../error/ConnectionRefused')
 const NotAcceptable = require('../error/NotAcceptable')
+const ProdutoAliquota = require('./ProdutoAliquotaController')
+const ProdutoAliquotaController = require('./ProdutoAliquotaController')
 
 
 class ProdutoController {
@@ -62,7 +64,7 @@ class ProdutoController {
             const produtos = await instance.getAllProdutos().catch(function (err) {
                 throw new ConnectionRefused()
             })
-            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO'])
+            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO', 'ESTOQUE'])
             winston.info("Tamanho retorno: " + produtos.length)
             res.status(200).send(serial.serialzer(produtos))
 
@@ -212,6 +214,9 @@ class ProdutoController {
             } else {
                 let estoque = await EstoqueController.atualizarEstoque(result.ID, 0, options, next)
                 winston.info('Estoque: atualizado')
+
+                let aliquota = await ProdutoAliquotaController.cadastroAliquota(result.ID, options, next)
+                winston.info('Aliquota: atualizado')
 
                 const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID'])
                 res.status(201).send(serial.serialzer(result))
