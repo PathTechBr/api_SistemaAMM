@@ -20,7 +20,7 @@ class Produto {
         this.MARGEM_LUCRO = MARGEM_LUCRO
         this.PESAVEL = PESAVEL
         this.ID_FORNECEDOR = ID_FORNECEDOR
-        this.DATA_ULTIMA_ALTERACAO = DATA_ULTIMA_ALTERACAO
+        this.DATA_ULTIMA_ALTERACAO = DATA_CADASTRO
         this.DATA_CADASTRO = DATA_CADASTRO
         this.ATIVO = ATIVO
         this.ESTOQUE = ESTOQUE
@@ -93,8 +93,12 @@ class Produto {
     async insert() {
         let execute_query = "INSERT INTO PRODUTOS (EAN13, DESCRICAO, UNIDADE, GRUPO, PRECO_COMPRA, " +
             "PRECO_VENDA, CST_INTERNO, CFOP_INTERNO, ALIQUOTA_ICMS, CODIGO_NCM, ATIVO, " +
-            "MARGEM_LUCRO, PESAVEL, CONTROLAR_ESTOQUE, EDITA_DESC_PED, BENS_CONSUMO, PROD_COMPONENTE, ID_FORNECEDOR, DATA_CADASTRO, DATA_ULTIMA_ALTERACAO) " +
-            "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'S', 'N', 'N', 'N', ?, ?, ?) RETURNING ID; ";
+            "MARGEM_LUCRO, PESAVEL, CONTROLAR_ESTOQUE, EDITA_DESC_PED, BENS_CONSUMO, PROD_COMPONENTE, ID_FORNECEDOR, DATA_CADASTRO, DATA_ULTIMA_ALTERACAO, " +
+            "PROD_FINALIDADE, MOVCOMPOSTO, MOVCOMPONENTE, IMPRESSAOREMOTA, VENDACONTROLADA, PERC_DESC, PERC_COM, ALIQUOTA_IPI, QUANT_CAIXA, " +
+            "TIPOPROD, TIPO_PRODUTO, IPPT, IAT, USA_FECOEP, EXCECAO_NCM, FRACIONADO, COMBUSTIVEL, TRIBUTACAO, ORIGEM, CSOSN, CFOP_DENTRO_UF, " +
+            "CFOP_FORA_UF, ATIVARDESCONTO, ATIVOPDV, NUTRI_VALIDADE, ESTOQUEMINIMO) " +
+            "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'S', 'N', 'N', 'N', ?, ?, ?, 'N', 'N', 'N', 'N', 'N', 0, 0, 0, 1, 0, 0, 'F', 'F', 'N', 0, 'N', " +
+            "'N', 0, 0, '102', 5102, 6102, 'N', 'N', 1, 10) RETURNING ID; ";
 
         const results = await query.executeQuery(execute_query, this.options,
             [this.EAN13, this.DESCRICAO, this.UNIDADE, this.GRUPO, this.PRECO_COMPRA, this.PRECO_VENDA,

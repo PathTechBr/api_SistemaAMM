@@ -178,6 +178,9 @@ class ProdutoController {
             produto.ATIVO = produto.ATIVO == '0' ? 'F' : 'T';
             produto.PESAVEL = produto.PESAVEL == '0' ? 'N' : 'S';
 
+            if (produto.ID_FORNECEDOR == '') {
+                produto.ID_FORNECEDOR = 0;
+            }
             produto.options = options
 
             if (isNaN(produto.PRECO_COMPRA) || isNaN(produto.PRECO_VENDA) || produto.EAN13.length > 13) {
