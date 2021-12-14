@@ -24,6 +24,13 @@ class Util {
         return results;
     }
 
+    async getGrupo() {
+        let execute_query = "SELECT ID, DESCRICAO FROM GRUPO WHERE ID = ?;"
+
+        const results = await query.executeQuery(execute_query, this.options, [this.ID]);
+        return results;
+    }
+
     async getAllUnidadeMedida() {
         let execute_query = "SELECT ID, DESCRICAO FROM UNIDADES;"
 

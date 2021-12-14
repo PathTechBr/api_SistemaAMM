@@ -17,6 +17,7 @@ const ConnectionRefused = require('../error/ConnectionRefused')
 const NotAcceptable = require('../error/NotAcceptable')
 const ProdutoAliquota = require('./ProdutoAliquotaController')
 const ProdutoAliquotaController = require('./ProdutoAliquotaController')
+const Util = require('../models/Util')
 
 
 class ProdutoController {
@@ -221,7 +222,13 @@ class ProdutoController {
                 let aliquota = await ProdutoAliquotaController.cadastroAliquota(result.ID, options, next)
                 winston.info('Aliquota: atualizado')
 
-                const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID'])
+                let grupo = new Util({ ID: produto.GRUPO, options: options })
+                grupo = await grupo.getGrupo().catch(function (evt) {
+                    throw new ConnectionRefused()
+                })
+                result.GRUPO = grupo[0]['DESCRICAO']
+
+                const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'GRUPO'])
                 res.status(201).send(serial.serialzer(result))
             }
         } catch (erro) {
