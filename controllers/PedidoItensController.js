@@ -40,6 +40,36 @@ class PedidoItensController {
             next(erro)
         }
     }
+
+    static async groupGrupoItens(req, res, next) {
+        try {
+            const data_inicio = req.query.data_inicio;
+            const options = db(req.header('Token-Access'))
+
+            winston.info("Request Grupo Itens")
+            if (!ValidateController.validate([data_inicio])) {
+                let error = new DataNotProvided()
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(400).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            }
+
+            const pedidoItens = new PedidoItens({ DATA_INICIO: data_inicio, options: options });
+
+            const pedidos = await pedidoItens.groupGrupoItens().catch(function () {
+                throw new ConnectionRefused()
+            })
+
+            const serial = new SerializePedido(res.getHeader('Content-Type'), ['IDGRUPO', 'GRUPO', 'QUANTIDADE', 'TOTAL', 'TOTCUSTO', 'TOTLUCRO', 'TOTALVALORGERAL'])
+            res.status(200).send(serial.serialzer(pedidos))
+            
+        } catch (erro) {
+            next(erro)
+        }
+    }
 }
 
 module.exports = PedidoItensController
