@@ -43,7 +43,9 @@ class PedidoItensController {
 
     static async groupGrupoItens(req, res, next) {
         try {
-            const data_inicio = req.query.data_inicio;
+            let data_inicio = (req.query.data_inicio).split('.');
+            data_inicio = '01.' + data_inicio[1] + '.' + data_inicio[2]
+            console.log(data_inicio)
             const options = db(req.header('Token-Access'))
 
             winston.info("Request Grupo Itens")
