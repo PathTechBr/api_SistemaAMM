@@ -41,7 +41,6 @@ class PedidoItens {
             "GROUP BY PI.IDGRUPO,PI.GRUPO ORDER BY TOTAL DESC";
 
         const result = await query.executeQuery(execute_query, this.options, [this.DATA_INICIO, this.DATA_INICIO])
-        console.log(result)
         return result;
 
     }
