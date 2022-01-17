@@ -103,6 +103,45 @@ class PedidoController {
             next(erro)
         }
     }
+
+    static async getTicketMedio(req, res, next) {
+        try {
+
+            const options = db(req.header('Token-Access'))
+
+            winston.info("Request Ticket Medio")
+
+
+            const pedido = new Pedido({ options: options });
+            const results = await pedido.getTicketMedio().catch(function () {
+                throw new ConnectionRefused()
+            })
+
+            const serial = new SerializePedido(res.getHeader('Content-Type'), ['TKTMEDIO'])
+            res.status(200).send(serial.serialzer(results))
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async getItensCancelados(req, res, next) {
+        try {
+
+            const options = db(req.header('Token-Access'))
+
+            winston.info("Request itens cancelados")
+
+            const pedido = new Pedido({ options: options });
+            const results = await pedido.getItensCancelados().catch(function () {
+                throw new ConnectionRefused()
+            })
+
+            const serial = new SerializePedido(res.getHeader('Content-Type'), ['itenscancelados'])
+            res.status(200).send(serial.serialzer(results))
+        } catch (erro) {
+            next(erro)
+        }
+    }
 }
 
 module.exports = PedidoController

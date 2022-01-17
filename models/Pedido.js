@@ -54,6 +54,24 @@ class Pedido {
         const results = await query.executeQuery(execute_query, this.options, [this.DATE_START, this.DATE_END])
         return results
     }
+
+    async getItensCancelados() {
+        let execute_query = "SELECT COUNT(ID) AS itenscancelados FROM PEDIDO_ITENS " +
+            "WHERE CANCELADO = 'S' AND NUM_PDV IS NOT NULL ";
+        // "AND cast(data_pedido as date) = :pcurrent_date"
+        const results = await query.executeQuery(execute_query, this.options)
+        return results
+    }
+
+
+    async getTicketMedio() {
+        let execute_query = "SELECT (SUM(P.VALOR_TOTAL)/COUNT(P.ID)) AS TKTMEDIO FROM PEDIDO P " +
+            "WHERE CANCELADO <> 'S' " +
+            //AND CAST(DATA_PEDIDO AS DATE) = :PCURRENT_DATE AND IDEMPRESA = :PIDEMPRESA " +
+            "AND NUM_PDV IS NOT NULL";
+        const results = await query.executeQuery(execute_query, this.options);
+        return results;
+    }
 }
 
 module.exports = Pedido;

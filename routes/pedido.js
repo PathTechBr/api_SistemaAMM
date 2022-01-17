@@ -29,4 +29,20 @@ router.options('/groupGrupoItens/', (req, resp, next) => {
 })
 router.get('/groupGrupoItens/', PedidoItensController.groupGrupoItens)
 
+router.options('/ticketmedio/', (req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Methods', 'GET')
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+    resp.status(204)
+    resp.end()
+})
+router.get('/ticketmedio/', PedidoController.getTicketMedio)
+
+router.options('/itens_cancelados/', (req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Methods', 'GET')
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+    resp.status(204)
+    resp.end()
+})
+router.get('/itens_cancelados/', PedidoController.getItensCancelados)
+
 module.exports = router
