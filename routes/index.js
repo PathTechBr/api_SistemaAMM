@@ -11,6 +11,7 @@ const config = require('./config')
 
 const fornecedores = require('./v2/fornecedores')
 
+
 module.exports = app => {
     app.use(bodyParser.urlencoded({ extended: true })),
         app.use(express.json()),

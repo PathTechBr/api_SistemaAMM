@@ -29,15 +29,28 @@
     },
     {
       "token": "RU4QBurPUAOkq8s6EukoKelSjaJOBtbA",
-      "database": "C:\\Lammer\\Dados\\DADOS.DESENVOLVIMENTO.FDB",
-      "host": "ammsolucoes.ddnsfree.com",
+      "database": "C:\\xampp7\\database\\Firebird\\DADOS.DESENVOLVIMENTO.FDB",
+      "host": "127.0.0.1",
       "port": 3050
     },
     {
       "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd",
-      "database": "C:\\Lammer\\Dados\\DADOS.MG06.FDB",
-      "host": "ammsolucoes.ddnsfree.com",
+      "database": "C:\\xampp7\\database\\Firebird\\DADOS.MG06.FDB",
+      "host": "127.0.0.1",
       "port": 3050
+    },
+    {
+      "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd1",
+      "database": "C:\\Lammer\\Dados\\DADOS.BOMPRECIN.FDB",
+      "host": "http://novaerasrv.ddns.me",
+      "port": 3050
+    },
+    {
+      "token": "testeV2",
+      "database": "db-teste",
+      "host": "localhost",
+      "user": "root",
+      "password": ""
     }
   ]
 }

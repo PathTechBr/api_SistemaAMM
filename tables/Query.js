@@ -51,15 +51,13 @@ const executeQueryMysql = async (query, options, params = []) => {
             console.log('Connection established!')
         })
 
-        con.query(query, (err, rows) => {
+        con.query(query, params, (err, res) => {
             if (err) {
                 winston.error(err)
                 reject(new NoConfigurationDB())
                 return new NoConfigurationDB()
             }
-        
-            console.log('Authors: ', rows, '\n\n')
-            resolve(rows);
+            resolve(res);
         })
 
         con.end((err) => {
