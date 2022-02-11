@@ -13,7 +13,8 @@ module.exports = (token_access, banco = "") => {
             database: db,
             password: password,
             role: null,
-            lowercase_keys: false
+            lowercase_keys: false,
+            rule: token_access
         }
     } else {
         let db = env.tokenAccepts(token_access)[0].database
@@ -27,7 +28,8 @@ module.exports = (token_access, banco = "") => {
             user: 'SYSDBA',
             password: 'masterkey',
             role: null,
-            lowercase_keys: false
+            lowercase_keys: false,
+            rule: token_access
         }
     }
 }

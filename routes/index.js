@@ -10,7 +10,7 @@ const estoque = require('./estoque')
 const config = require('./config')
 
 const fornecedores = require('./v2/fornecedores')
-
+const produto_v2 = require('./v2/produto_v2')
 
 module.exports = app => {
     app.use(bodyParser.urlencoded({ extended: true })),
@@ -26,4 +26,5 @@ module.exports = app => {
 
         // V2
         app.use('/api/v2/fornecedores', fornecedores)
+        app.use('/api/v2/produto', produto_v2)
 }
