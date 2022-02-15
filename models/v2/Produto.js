@@ -34,9 +34,9 @@ class Produto {
     async getAllProdutos() {
         let execute_query = "SELECT FIRST ? p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, g.descricao AS GRUPO, p.PRECO_COMPRA, " +
             "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO, p.ESTOQUE FROM PRODUTOS p " +
-            "JOIN GRUPO G ON (p.grupo = G.id) ORDER BY ID ASC"
+            "JOIN GRUPO G ON (p.grupo = G.id) ORDER BY ID ASC LIMIT ?"
 
-        const results = await query.executeQuery(execute_query, this.options, [this.limite]);
+        const results = await query.executeQueryMysql(execute_query, this.options, [this.limite]);
         return results;
     }
 

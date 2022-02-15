@@ -32,9 +32,9 @@ class ProdutoController {
 
             produto.PRECO_COMPRA = produto.moneyTonumber(produto.PRECO_COMPRA);
             produto.PRECO_VENDA = produto.moneyTonumber(produto.PRECO_VENDA);
-            produto.MARGEM_LUCRO = (produto.MARGEM_LUCRO).replace(" %", "").replace(",", ".");
+            // produto.MARGEM_LUCRO = (produto.MARGEM_LUCRO).replace(" %", "").replace(",", ".");
             produto.GRUPO = parseInt(produto.GRUPO)
-            produto.ALIQUOTA_ICMS = parseFloat(produto.ALIQUOTA_ICMS.replace(",", "."))
+            // produto.ALIQUOTA_ICMS = parseFloat(produto.ALIQUOTA_ICMS.replace(",", "."))
             produto.ATIVO = produto.ATIVO == '0' ? 'F' : 'T';
             produto.PESAVEL = produto.PESAVEL == '0' ? 'N' : 'S';
 
@@ -84,6 +84,26 @@ class ProdutoController {
             //     const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'GRUPO'])
             //     res.status(201).send(serial.serialzer(result))
             // }
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async findAll(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'), "mysql")
+
+            winston.info("Request listar todos os produtos")
+            const limite = req.query.limite;
+            const instance = new Produto({ options: options, limite: limite });
+
+            const produtos = await instance.getAllProdutos().catch(function (err) {
+                throw new ConnectionRefused()
+            })
+            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO', 'ESTOQUE'])
+            winston.info("Tamanho retorno: " + produtos.length)
+            res.status(200).send(serial.serialzer(produtos))
+
         } catch (erro) {
             next(erro)
         }

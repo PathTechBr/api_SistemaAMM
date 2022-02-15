@@ -1,7 +1,7 @@
 const query = require("../../tables/Query")
 
 
-class Produto {
+class Grupo {
     constructor({ ID, DESCRICAO, ATIVO, ATIVO_VENDA, ICMS_POR_DENTRO, limite = 10, options }) {
         this.ID = ID
         this.DESCRICAO = DESCRICAO
@@ -41,4 +41,4 @@ class Produto {
     }
 }
 
-module.exports = Produto;
+module.exports = Grupo;

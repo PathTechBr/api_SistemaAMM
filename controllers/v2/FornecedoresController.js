@@ -19,6 +19,8 @@ class FornecedoresController {
                 throw new ConnectionRefused()
             })
 
+            console.log(fornecedores)
+
             const serial = new SerializeFornecedor(res.getHeader('Content-Type'))
             res.status(200).send(serial.serialzer(fornecedores))
 

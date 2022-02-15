@@ -56,7 +56,7 @@ class GrupoController {
         try {
             const options = db(req.header('Token-Access'), "mysql")
 
-            winston.info("Request listar todos os produtos")
+            winston.info("Request listar todos os grupos")
             const limite = req.query.limite;
             const instance = new Grupo({ options: options, limite: limite });
 
