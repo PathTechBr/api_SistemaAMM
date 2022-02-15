@@ -117,6 +117,16 @@ class SerializeFornecedor extends Serialize {
     }
 }
 
+class SerializeGrupo extends Serialize {
+    constructor(contentType, extraFields) {
+        super()
+        this.contentType = contentType
+        this.publicFields = ['ID', 'DESCRICAO', 'ATIVO'].concat(extraFields || [])
+        this.tagSingular = 'grupo'
+        this.tagPlural = 'grupos'
+    }
+}
+
 module.exports = {
     Serialize: Serialize,
     SerializePedido: SerializePedido,
@@ -125,5 +135,6 @@ module.exports = {
     SerializeError: SerializeError,
     SerializeUtil: SerializeUtil,
     SerializeFornecedor: SerializeFornecedor,
+    SerializeGrupo: SerializeGrupo,
     formatAccepts: ['application/json', 'application/xml']
 }

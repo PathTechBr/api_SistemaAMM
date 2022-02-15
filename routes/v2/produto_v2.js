@@ -8,7 +8,7 @@ router.options('/', (req, resp, next) => {
     resp.end()
 })
 
-// router.get('/', ProdutoController.find)
+router.get('/', ProdutoController.findAll)
 router.post('/', ProdutoController.saveModel)
 
 // router.options('/:code', (req, resp, next) => {
