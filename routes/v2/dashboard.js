@@ -11,6 +11,11 @@ router.options('/', (req, resp, next) => {
 router.get('/card', DashboardController.getCard)
 router.post('/card', DashboardController.saveCard)
 
+
+// router.get('/forma_pag', DashboardController.getFormaPag)
+router.post('/forma_pag', DashboardController.saveFormaPag)
+
+
 // router.options('/:code', (req, resp, next) => {
 //     resp.setHeader('Access-Control-Allow-Methods', 'GET, DELETE, PUT')
 //     resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')

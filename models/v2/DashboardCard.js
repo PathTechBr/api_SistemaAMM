@@ -1,7 +1,7 @@
 const query = require("../../tables/Query")
 
 
-class Dashboard {
+class DashboardCard {
     constructor({ ID, TOTVENDAS, QTD_CLIENTE, QTD_CANCELADO, TKTMEDIO, VALUE_CANCELADO, limite = 10, options }) {
         this.ID = ID
         this.TOTVENDAS = TOTVENDAS
@@ -50,4 +50,4 @@ class Dashboard {
     }
 }
 
-module.exports = Dashboard;
+module.exports = DashboardCard;

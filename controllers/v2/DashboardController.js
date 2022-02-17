@@ -1,6 +1,6 @@
 const db = require('../../config/database')
 
-const { SerializeError, SerializeCard } = require('../../Serialize');
+const { SerializeError, SerializeCard, SerializeFormaPagamento } = require('../../Serialize');
 
 const winston = require('../../util/Log')
 const ConnectionRefused = require('../../error/ConnectionRefused')
@@ -8,7 +8,9 @@ const InternalServer = require('../../error/InternalServer');
 const NotAcceptable = require('../../error/NotAcceptable');
 const DataNotProvided = require('../../error/DataNotProvided');
 
-const Dashboard = require('../../models/v2/Dashboard');
+const DashboardCard = require('../../models/v2/DashboardCard');
+const DashboardFormaPag = require('../../models/v2/DashboardFormaPag');
+
 const ValidateController = require('../ValidateController');
 
 
@@ -18,7 +20,7 @@ class DashboardController {
         try {
             const data = req.body;
 
-            const dash = new Dashboard(data)
+            const dash = new DashboardCard(data)
             dash.options = db(req.header('Token-Access'), "mysql")
 
             Object.keys(dash).forEach(async function (key, index) {
@@ -52,7 +54,7 @@ class DashboardController {
             const options = db(req.header('Token-Access'), "mysql")
 
             winston.info("Request listar cards")
-            const dash = new Dashboard({ options: options });
+            const dash = new DashboardCard({ options: options });
 
             var itemsProcessed = 0;
 
@@ -86,8 +88,37 @@ class DashboardController {
         }
     }
 
-    sendMessage(res, obj) {
+    static async saveFormaPag(req, res, next) {
+        try {
+            const data = req.body;
 
+            const dash = new DashboardFormaPag(data)
+            dash.options = db(req.header('Token-Access'), "mysql")
+
+            // Limpando valores para o ranking ficar atualizado
+            await dash.clearValues()
+            
+            const isExists = await dash.getFormaPagToDoc().catch(function () {
+                throw new ConnectionRefused()
+            })
+
+            if (isExists[0].COUNT > 0) {
+                await dash.update().catch(function () {
+                    throw new ConnectionRefused()
+                });
+            } else {
+                winston.info("Save forma pagamento")
+                await dash.insert().catch(function () {
+                    throw new ConnectionRefused()
+                });
+            }
+
+            const serial = new SerializeFormaPagamento(res.getHeader('Content-Type'), ['QTD', 'TOTVENDA'])
+            res.status(201).send(serial.serialzer(dash))
+
+        } catch (erro) {
+            next(erro)
+        }
     }
 }
 
