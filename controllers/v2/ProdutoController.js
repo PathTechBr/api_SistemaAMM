@@ -94,7 +94,7 @@ class ProdutoController {
             const options = db(req.header('Token-Access'), "mysql")
 
             winston.info("Request listar todos os produtos")
-            const limite = req.query.limite;
+            const limite = Number.parseInt(req.query.limite);
             const instance = new Produto({ options: options, limite: limite });
 
             const produtos = await instance.getAllProdutos().catch(function (err) {

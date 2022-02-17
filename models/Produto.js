@@ -47,7 +47,7 @@ class Produto {
     }
 
     async getAllProdutos() {
-        let execute_query = "SELECT FIRST ? p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, g.descricao AS GRUPO, p.PRECO_COMPRA, " +
+        let execute_query = "SELECT p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, g.descricao AS GRUPO, p.PRECO_COMPRA, " +
             "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO, p.ESTOQUE FROM PRODUTOS p " +
             "JOIN GRUPO G ON (p.grupo = G.id) ORDER BY ID ASC"
 

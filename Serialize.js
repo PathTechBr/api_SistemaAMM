@@ -127,6 +127,17 @@ class SerializeGrupo extends Serialize {
     }
 }
 
+class SerializeCard extends Serialize {
+    constructor(contentType, extraFields) {
+        super()
+        this.contentType = contentType
+        this.publicFields = ['ID', 'TOTVENDAS', 'QTD_CLIENTE', 'QTD_CANCELADO', 'TKTMEDIO', 'VALUE_CANCELADO'].concat(extraFields || [])
+        this.tagSingular = 'card'
+        this.tagPlural = 'cards'
+    }
+}
+
+
 module.exports = {
     Serialize: Serialize,
     SerializePedido: SerializePedido,
@@ -136,5 +147,6 @@ module.exports = {
     SerializeUtil: SerializeUtil,
     SerializeFornecedor: SerializeFornecedor,
     SerializeGrupo: SerializeGrupo,
+    SerializeCard: SerializeCard,
     formatAccepts: ['application/json', 'application/xml']
 }
