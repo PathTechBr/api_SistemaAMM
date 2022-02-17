@@ -12,7 +12,7 @@ router.get('/card', DashboardController.getCard)
 router.post('/card', DashboardController.saveCard)
 
 
-// router.get('/forma_pag', DashboardController.getFormaPag)
+router.get('/forma_pag', DashboardController.getFormaPag)
 router.post('/forma_pag', DashboardController.saveFormaPag)
 
 

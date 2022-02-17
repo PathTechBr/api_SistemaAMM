@@ -1,22 +1,20 @@
 const query = require("../../tables/Query")
 
 class DashboardFormaPag {
-    constructor({ TIPO_DOCUMENTO, DESCRICAO, QTD, TOTVENDA, options }) {
+    constructor({ TIPO_DOCUMENTO, DESCRICAO, QTD, TOTVENDA, limite = 10, options }) {
         this.TIPO_DOCUMENTO = TIPO_DOCUMENTO
         this.DESCRICAO = DESCRICAO
         this.QTD = QTD
         this.TOTVENDA = TOTVENDA
+        this.limite = limite
         this.options = options
     }
 
     async getRankingPayments() {
 
-        let execute_query = "SELECT FIRST 7 fp.tipo_documento, fp.descricao,count(fp.id) as qtd, SUM(fp.valor-fp.troco) as TOTVENDA "
-            + "FROM pedido_formapag fp  "
-            // WHERE cast(fp.datalancamento as date) between ? and ?
-            + "GROUP BY fp.tipo_documento,fp.descricao ORDER BY qtd DESC ;"
+        let execute_query = "SELECT * FROM FORMA_PAG ORDER BY qtd DESC LIMIT ?;"
 
-        const results = await query.executeQuery(execute_query, this.options, [this.DATE_START, this.DATE_END])
+        const results = await query.executeQueryMysql(execute_query, this.options, [Number.parseInt(this.limite)])
         return results
 
     }

@@ -36,7 +36,7 @@ class Produto {
             "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO, p.ESTOQUE FROM PRODUTOS p " +
             "JOIN GRUPO G ON (p.grupo = G.id) ORDER BY ID ASC LIMIT ?"
 
-        const results = await query.executeQueryMysql(execute_query, this.options, [this.limite]);
+        const results = await query.executeQueryMysql(execute_query, this.options, [Number.parseInt(this.limite)]);
         return results;
     }
 

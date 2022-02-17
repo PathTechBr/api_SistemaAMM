@@ -120,6 +120,27 @@ class DashboardController {
             next(erro)
         }
     }
+
+    static async getFormaPag(req, res, next) {
+        try {
+
+            const options = db(req.header('Token-Access'), "mysql")
+            const limite = req.query.limite
+
+            const dash = new DashboardFormaPag({options: options, limite: limite})
+
+            const formas = await dash.getRankingPayments().catch(function () {
+                throw new ConnectionRefused()
+            });
+
+
+            const serial = new SerializeFormaPagamento(res.getHeader('Content-Type'), ['QTD', 'TOTVENDA'])
+            res.status(200).send(serial.serialzer(formas))
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
 }
 
 module.exports = DashboardController
