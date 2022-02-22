@@ -34,7 +34,7 @@
       "port": 3050
     },
     {
-      "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd",
+      "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd2",
       "database": "C:\\xampp7\\database\\Firebird\\DADOS.MG06.FDB",
       "host": "127.0.0.1",
       "port": 3050
@@ -48,6 +48,13 @@
     {
       "token": "testeV2",
       "database": "db-teste",
+      "host": "localhost",
+      "user": "root",
+      "password": ""
+    },
+    {
+      "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd",
+      "database": "setryh",
       "host": "localhost",
       "user": "root",
       "password": ""

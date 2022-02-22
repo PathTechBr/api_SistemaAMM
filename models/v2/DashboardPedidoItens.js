@@ -21,8 +21,7 @@ class DashboardPedidoItens {
     }
 
     async clearValues() {
-        let execute_query = "UPDATE GRUPO_VENDA SET QUANTIDADE = 0, TOTAL = 0, " + 
-        "TOTCUSTO = 0, TOTLUCRO = 0, TOTALVALORGERAL = 0 WHERE 1 = 1";
+        let execute_query = "UPDATE GRUPO_VENDA SET SINCRONIZADO = 'N' WHERE 1 = 1";
 
         await query.executeQueryMysql(execute_query, this.options, [])
     }
@@ -54,7 +53,7 @@ class DashboardPedidoItens {
 
     async getRankingGrupos() {
 
-        let execute_query = "SELECT * FROM GRUPO_VENDA ORDER BY TOTAL DESC LIMIT ?;"
+        let execute_query = "SELECT * FROM GRUPO_VENDA WHERE SINCRONIZADO = 'S' ORDER BY TOTAL DESC LIMIT ?;"
 
         const results = await query.executeQueryMysql(execute_query, this.options, [Number.parseInt(this.limite)])
         return results

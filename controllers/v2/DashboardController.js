@@ -97,7 +97,7 @@ class DashboardController {
             dash.options = db(req.header('Token-Access'), "mysql")
 
             // Limpando valores para o ranking ficar atualizado
-            await dash.clearValues()
+            // await dash.clearValues()
             
             const isExists = await dash.getFormaPagToDoc().catch(function () {
                 throw new ConnectionRefused()
@@ -161,7 +161,7 @@ class DashboardController {
             }
 
             // Limpando valores para o ranking ficar atualizado
-            await grupo.clearValues()
+            // await grupo.clearValues()
             
             const isExists = await grupo.getGrupoToId().catch(function () {
                 throw new ConnectionRefused()
