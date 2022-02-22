@@ -17,6 +17,7 @@ router.options('/best_seller/', (req, resp, next) => {
 })
 
 router.get('/total_vendido/', PedidoItensController.total_vendido_Diario)
+router.get('/total_cliente/', PedidoItensController.total_cliente)
 router.get('/best_seller/', PedidoController.bestSeller)
 router.get('/values_cancelados/', PedidoController.getValuesCancelados)
 

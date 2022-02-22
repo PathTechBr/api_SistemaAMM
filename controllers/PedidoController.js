@@ -77,7 +77,7 @@ class PedidoController {
     static async getValuesCancelados(req, res, next) {
         try {
 
-            const options = db(req.header('Token-Access'))
+            const options = db(req.header('Token-Access'), "mysql")
 
             const limite = req.query.limite;
 
@@ -93,12 +93,14 @@ class PedidoController {
             }
 
             const pedido = new Pedido({ limite: limite, options: options });
-            const results = await pedido.getValuesCancelados().catch(function () {
+            await pedido.getValuesCancelados().catch(function () {
                 throw new ConnectionRefused()
             })
 
-            const serial = new SerializePedido(res.getHeader('Content-Type'), ['TOTAL', 'ITENS'])
-            res.status(200).send(serial.serialzer(results))
+            const serial = new SerializePedido(res.getHeader('Content-Type'), ['TOTAL', 'ITENS', 'CUPONS_CANC'])
+            res.status(200).send(serial.serialzer(pedido))
+            console.log(serial.serialzer(pedido))
+
         } catch (erro) {
             next(erro)
         }

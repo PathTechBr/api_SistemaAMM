@@ -22,15 +22,21 @@ class PedidoItens {
     }
 
     async total_vendido_Diario() {
-        let execute_query = "SELECT COUNT(ID) AS QUANTIDADE, SUM(VALOR) AS TOTVENDAS, SUM(VALOR_TOTAL) AS TOTCUSTOS, SUM(DESCONTO) AS TOTALMARGEM " +
-            "FROM PEDIDO WHERE CANCELADO <> 'S' AND NUM_PDV IS NOT NULL GROUP BY IDEMPRESA;"
+        let execute_query = "SELECT VALUE FROM PARAM WHERE NAME = 'TOTVENDAS' AND LOJA = ?;";
 
-        const result = await query.executeQuery(execute_query, this.options, [this.DATA_LANCAMENTO])
-        this.TOTVENDAS = result[0].TOTVENDAS;
-        this.TOTCUSTOS = result[0].TOTCUSTOS;
-        this.TOTALMARGEM = result[0].TOTALMARGEM;
-        this.QUANTIDADE = result[0].QUANTIDADE;
+        const result = await query.executeQueryMysql(execute_query, this.options, [this.options.rule])
+        this.TOTVENDAS = (result.length == 0 ? 0 : result[0].VALUE)
+        this.TOTCUSTOS = 1000;
+        this.TOTALMARGEM = 1000;
+        
+    }
 
+    async total_cliente() {
+        let execute_query = "SELECT VALUE FROM PARAM WHERE NAME = 'QTD_CLIENTE' AND LOJA = ?;";
+
+        const result = await query.executeQueryMysql(execute_query, this.options, [this.options.rule])
+        this.QUANTIDADE = (result.length == 0 ? 0 : result[0].VALUE)
+        
     }
 
     async groupGrupoItens() {

@@ -14,7 +14,6 @@ class Fornecedores {
         let execute_query = 'SELECT * FROM FORNECEDORES;'
 
         const result = await query.executeQueryMysql(execute_query, this.options);
-
         return result;
     }
 

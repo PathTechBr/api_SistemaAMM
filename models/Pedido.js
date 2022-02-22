@@ -1,10 +1,11 @@
 const query = require("../tables/Query")
 
 class Pedido {
-    constructor({ VENDEDOR, TOTAL, CUPONS, ITENS, MEDIAITENS, MEDIAVALOR, DATE_START, DATE_END, options, limite = 1 }) {
+    constructor({ VENDEDOR, TOTAL, CUPONS, CUPONS_CANC, ITENS, MEDIAITENS, MEDIAVALOR, DATE_START, DATE_END, options, limite = 1 }) {
         this.VENDEDOR = VENDEDOR
         this.TOTAL = TOTAL
         this.CUPONS = CUPONS
+        this.CUPONS_CANC = CUPONS_CANC
         this.ITENS = ITENS
         this.MEDIAITENS = MEDIAITENS
         this.MEDIAVALOR = MEDIAVALOR
@@ -48,11 +49,10 @@ class Pedido {
     }
 
     async getValuesCancelados() {
-        let execute_query = "SELECT COUNT(ID) AS ITENS, SUM(VALOR_TOTAL) AS TOTAL FROM PEDIDO " +
-            "WHERE CANCELADO = 'S' AND NUM_PDV IS NOT NULL ";
-        // "AND cast(data_pedido as date) = :pcurrent_date"
-        const results = await query.executeQuery(execute_query, this.options, [this.DATE_START, this.DATE_END])
-        return results
+        let execute_query = "SELECT VALUE FROM PARAM WHERE NAME = 'VALUE_CANCELADO' AND LOJA = ?;";
+
+        const result = await query.executeQueryMysql(execute_query, this.options, [this.options.rule])
+        this.CUPONS_CANC = (result.length == 0 ? 0 : result[0].VALUE)
     }
 
     async getItensCancelados() {
