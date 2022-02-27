@@ -1,6 +1,6 @@
-const query = require("../tables/Query")
+const query = require("../../tables/Query")
 
-const SQL_CONST = require("../util/C_UTL").SQL_CONST;
+const SQL_CONST = require("../../util/C_UTL").SQL_CONST;
 
 class Util {
 
@@ -47,26 +47,26 @@ class Util {
     }
 
     async getEnabledDB() {
-        let execute_query = SQL_CONST.SQL_GET_SBT
-        const results = await query.executeQuery(execute_query, this.options)
+        let execute_query = "SELECT A.* FROM (SELECT DATA_VENCIMENTO as CONFIG FROM LAMMER_LIC ORDER BY CODIGO DESC LIMIT 1) A UNION SELECT SBT FROM CONFIG;"
+        const results = await query.executeQueryMysql(execute_query, this.options)
         return results
     }
 
     async getLicencaDB() {
-        let execute_query = SQL_CONST.SQL_GET_LICENCA
-        const results = await query.executeQuery(execute_query, this.options)
+        let execute_query = "SELECT DATA_VENCIMENTO, DIAS_RESET FROM LAMMER_LIC ORDER BY CODIGO DESC LIMIT 1;"
+        const results = await query.executeQueryMysql(execute_query, this.options)
         return results
     }
 
     async setLicencaDB() {
         let execute_query = SQL_CONST.SQL_SET_LICENCA
-        const results = await query.executeQuery(execute_query, this.options, [this.DATA_ATIVACAO, this.DIAS_RESET, this.DATA_VENCIMENTO, this.DATA_ATIVACAO])
+        const results = await query.executeQueryMysql(execute_query, this.options, [this.DATA_ATIVACAO, this.DIAS_RESET, this.DATA_VENCIMENTO, this.DATA_ATIVACAO])
         return results
     }
 
     async setLammerLicenca() {
         let execute_query = SQL_CONST.SQL_SET_LAMMER_LIC
-        const results = await query.executeQuery(execute_query, this.options, [this.CNPJ_EMPRESA, this.ID_TERMINAL, this.DATA_ATIVACAO, this.DIAS_RESET, this.DATA_VENCIMENTO, this.DATA_PAGAMENTO])
+        const results = await query.executeQueryMysql(execute_query, this.options, [this.CNPJ_EMPRESA, this.ID_TERMINAL, this.DATA_ATIVACAO, this.DIAS_RESET, this.DATA_VENCIMENTO, this.DATA_PAGAMENTO])
         return results
     }
 }

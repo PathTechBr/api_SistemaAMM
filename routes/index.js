@@ -15,6 +15,7 @@ const fornecedores = require('./v2/fornecedores')
 const produto_v2 = require('./v2/produto_v2')
 const grupo_v2 = require('./v2/grupo')
 const dashboard_v2 = require('./v2/dashboard')
+const util_v2 = require('./v2/util')
 
 module.exports = app => {
     app.use(bodyParser.urlencoded({ extended: true })),
@@ -33,4 +34,5 @@ module.exports = app => {
         app.use('/api/v2/produto', produto_v2)
         app.use('/api/v2/grupo', grupo_v2)
         app.use('/api/v2/dashboard', dashboard_v2)
+        app.use('/api/v2/util/', util_v2)
 }
