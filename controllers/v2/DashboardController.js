@@ -1,6 +1,6 @@
 const db = require('../../config/database')
 
-const { SerializeError, SerializeCard, SerializeFormaPagamento, SerializeGrupo, SerializeGrupoVenda } = require('../../Serialize');
+const { SerializeError, SerializeCard, SerializeFormaPagamento, SerializeGrupo, SerializeGrupoVenda, SerializeProduto } = require('../../Serialize');
 
 const winston = require('../../util/Log')
 const ConnectionRefused = require('../../error/ConnectionRefused')
@@ -194,13 +194,34 @@ class DashboardController {
 
             const dash = new DashboardPedidoItens({options: options, limite: limite})
 
-            const formas = await dash.getRankingGrupos().catch(function () {
+            const grupos = await dash.getRankingGrupos().catch(function () {
                 throw new ConnectionRefused()
             });
 
 
-            const serial = new SerializeGrupoVenda(res.getHeader('Content-Type'))
-            res.status(200).send(serial.serialzer(formas))
+            const serial = new SerializeGrupoVenda(res.getHeader('Content-Type'), ['GRUPO'])
+            res.status(200).send(serial.serialzer(grupos))
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async getProdutosVendido(req, res, next) {
+        try {
+
+            const options = db(req.header('Token-Access'), "mysql")
+            const limite = req.params.limite
+
+            const dash = new DashboardPedidoItens({options: options, limite: limite})
+
+            const grupos = await dash.getRankingProduto().catch(function () {
+                throw new ConnectionRefused()
+            });
+
+
+            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['VALOR_TOTAL', 'QUANTIDADE'])
+            res.status(200).send(serial.serialzer(grupos))
 
         } catch (erro) {
             next(erro)

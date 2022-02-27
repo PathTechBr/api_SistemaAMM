@@ -53,7 +53,16 @@ class DashboardPedidoItens {
 
     async getRankingGrupos() {
 
-        let execute_query = "SELECT * FROM GRUPO_VENDA WHERE SINCRONIZADO = 'S' ORDER BY TOTAL DESC LIMIT ?;"
+        let execute_query = "SELECT gv.*, gp.DESCRICAO AS GRUPO FROM GRUPO_VENDA gv JOIN grupo gp ON (gv.IDGRUPO = gp.ID) WHERE gv.SINCRONIZADO = 'S' ORDER BY gv.TOTAL DESC LIMIT ?;"
+
+        const results = await query.executeQueryMysql(execute_query, this.options, [Number.parseInt(this.limite)])
+        return results
+
+    }
+
+    async getRankingProduto() {
+
+        let execute_query = "SELECT * FROM `pedido_itens` ORDER BY QUANTIDADE DESC LIMIT ?;"
 
         const results = await query.executeQueryMysql(execute_query, this.options, [Number.parseInt(this.limite)])
         return results

@@ -19,6 +19,8 @@ router.post('/forma_pag', DashboardController.saveFormaPag)
 router.post('/groupGrupoItens', DashboardController.setGroupGrupoItens)
 router.get('/groupGrupoItens', DashboardController.getGroupGrupoItens)
 
+router.get('/produtoVendido/:limite', DashboardController.getProdutosVendido)
+
 
 // router.options('/:code', (req, resp, next) => {
 //     resp.setHeader('Access-Control-Allow-Methods', 'GET, DELETE, PUT')
