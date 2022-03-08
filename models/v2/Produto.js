@@ -2,7 +2,7 @@ const query = require("../../tables/Query")
 
 
 class Produto {
-    constructor({ ID, EAN13, DESCRICAO, DATE_START, DATE_END, UNIDADE, GRUPO, PRECO_COMPRA, PRECO_VENDA, CST_INTERNO, CFOP_INTERNO, ALIQUOTA_ICMS, CODIGO_NCM, MARGEM_LUCRO, PESAVEL, ID_FORNECEDOR, DATA_ULTIMA_ALTERACAO, DATA_CADASTRO, ATIVO, ESTOQUE, VLTOTAL, limite = 10, options }) {
+    constructor({ ID, EAN13, DESCRICAO, DATE_START, DATE_END, UNIDADE, GRUPO, PRECO_COMPRA, PRECO_VENDA, CST_INTERNO, CFOP_INTERNO, ALIQUOTA_ICMS, CODIGO_NCM, MARGEM_LUCRO, PESAVEL, ID_FORNECEDOR, DATA_ULTIMA_ALTERACAO, DATA_CADASTRO, ATIVO, ESTOQUE = 10, VLTOTAL, limite = 10, options }) {
         this.ID = ID
         this.EAN13 = EAN13
         this.DESCRICAO = DESCRICAO
@@ -62,6 +62,59 @@ class Produto {
             [this.EAN13, this.DESCRICAO, this.UNIDADE, this.GRUPO, this.PRECO_COMPRA, this.PRECO_VENDA,
             this.CST_INTERNO, this.CFOP_INTERNO, this.ALIQUOTA_ICMS, this.CODIGO_NCM, this.ATIVO,
             this.MARGEM_LUCRO, this.PESAVEL, this.ID_FORNECEDOR, this.DATA_CADASTRO, this.DATA_CADASTRO, this.ESTOQUE]);
+        return results;
+    }
+
+    async getOneProduto() {
+        let execute_query = "SELECT p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, P.GRUPO, p.PRECO_COMPRA, " +
+            "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO, " +
+            "p.MARGEM_LUCRO, p.PESAVEL, p.ID_FORNECEDOR, p.DATA_CADASTRO, p.DATA_ULTIMA_ALTERACAO, p.ESTOQUE FROM PRODUTOS p " +
+            "WHERE p.ID = ?"
+
+        const results = await query.executeQueryMysql(execute_query, this.options, [this.ID]);
+        return results;
+    }
+
+    async update() {
+
+        let execute_query = "UPDATE PRODUTOS " +
+            "SET EAN13 = ?, " +
+            "    DESCRICAO = ?, " +
+            "    UNIDADE = ?, " +
+            "    GRUPO = ?, " +
+            "    PRECO_COMPRA = ?, " +
+            "    PRECO_VENDA = ?, " +
+            "    CST_INTERNO = ?, " +
+            "    CFOP_INTERNO = ?, " +
+            "    ALIQUOTA_ICMS = ?, " +
+            "    CODIGO_NCM = ?, " +
+            "    ATIVO = ?, " +
+            "    MARGEM_LUCRO = ?, " +
+            "    PESAVEL = ?, " +
+            "    ID_FORNECEDOR = ?, " +
+            "    DATA_ULTIMA_ALTERACAO = ? " +
+            "WHERE ID = ?;"
+
+        const results = await query.executeQueryMysql(execute_query, this.options,
+            [this.EAN13, this.DESCRICAO, this.UNIDADE, this.GRUPO, this.PRECO_COMPRA,
+            this.PRECO_VENDA, this.CST_INTERNO, this.CFOP_INTERNO, this.ALIQUOTA_ICMS,
+            this.CODIGO_NCM, this.ATIVO, this.MARGEM_LUCRO, this.PESAVEL, this.ID_FORNECEDOR, this.DATA_ULTIMA_ALTERACAO,
+            this.ID]);
+        return this.ID;
+    }
+
+    async delete() {
+        let execute_query = "UPDATE PRODUTOS SET ATIVO = 'F' WHERE ID = ? AND EAN13 = ?;"
+        const result = await query.executeQueryMysql(execute_query, this.options, [this.ID, this.EAN13])
+        return this.ID;
+    }
+
+    async getSearchProdutos() {
+        let execute_query = "SELECT p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, g.descricao AS GRUPO, p.PRECO_COMPRA, " +
+            "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO,  p.MARGEM_LUCRO, p.ESTOQUE FROM PRODUTOS p JOIN GRUPO G ON (p.grupo = G.id) " +
+            "WHERE p.EAN13 LIKE '%" + this.EAN13 + "%' OR p.DESCRICAO LIKE UPPER('%" + this.DESCRICAO + "%') ORDER BY ID ASC LIMIT ?";
+
+        const results = await query.executeQueryMysql(execute_query, this.options, [Number.parseInt(this.limite)]);
         return results;
     }
 

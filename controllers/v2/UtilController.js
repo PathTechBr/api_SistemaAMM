@@ -13,7 +13,7 @@ const NoConfigurationDB = require('../../error/NoConfigurationDB')
 class UtilController {
     static async getUnidadeMedida(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options = db(req.header('Token-Access'), "mysql")
 
             const instance = new Util({ options: options });
 
@@ -32,7 +32,7 @@ class UtilController {
 
     static async getGrupos(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options = db(req.header('Token-Access'), "mysql")
 
             const instance = new Util({ options: options });
 
@@ -51,7 +51,7 @@ class UtilController {
 
     static async getFornecedor(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options = db(req.header('Token-Access'), "mysql")
 
             const instance = new Util({ options: options });
 

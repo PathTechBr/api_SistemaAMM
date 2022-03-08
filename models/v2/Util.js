@@ -22,27 +22,27 @@ class Util {
     async getAllGrupo() {
         let execute_query = "SELECT ID, DESCRICAO  FROM GRUPO WHERE ATIVO = 'T';"
 
-        const results = await query.executeQuery(execute_query, this.options);
+        const results = await query.executeQueryMysql(execute_query, this.options);
         return results;
     }
 
     async getGrupo() {
         let execute_query = "SELECT ID, DESCRICAO FROM GRUPO WHERE ID = ?;"
 
-        const results = await query.executeQuery(execute_query, this.options, [this.ID]);
+        const results = await query.executeQueryMysql(execute_query, this.options, [this.ID]);
         return results;
     }
 
     async getAllUnidadeMedida() {
         let execute_query = "SELECT ID, DESCRICAO FROM UNIDADES;"
 
-        const results = await query.executeQuery(execute_query, this.options);
+        const results = await query.executeQueryMysql(execute_query, this.options);
         return results;
     }
 
     async getAllFornecedor() {
         let execute_query = SQL_CONST.SQL_GET_FORNECEDORES
-        const results = await query.executeQuery(execute_query, this.options);
+        const results = await query.executeQueryMysql(execute_query, this.options);
         return results;
     }
 
