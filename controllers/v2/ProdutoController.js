@@ -9,6 +9,7 @@ const NotAcceptable = require('../../error/NotAcceptable');
 const DataNotProvided = require('../../error/DataNotProvided');
 
 const Produto = require('../../models/v2/Produto');
+const Util = require('../../models/v2/Util');
 const ValidateController = require('../ValidateController');
 
 
@@ -62,28 +63,31 @@ class ProdutoController {
             }
 
             winston.info("Save produto")
-            const result = await produto.insert().catch(function () {
+            await produto.insert().catch(function () {
                 throw new ConnectionRefused()
             });
 
+            const last_id = await produto.getLastIdInsert().catch(function () {
+                throw new ConnectionRefused()
+            });
+
+            produto.ID = last_id[0].ID
+
+            let grupo = new Util({ ID: produto.GRUPO, options: options })
+            grupo = await grupo.getGrupo().catch(function (evt) {
+                throw new ConnectionRefused()
+            })
+            produto.GRUPO = grupo[0]['DESCRICAO']
+
             const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'GRUPO'])
             res.status(201).send(serial.serialzer(produto))
-            // else {
+
             //     let estoque = await EstoqueController.atualizarEstoque(result.ID, 0, options, next)
             //     winston.info('Estoque: atualizado')
 
             //     let aliquota = await ProdutoAliquotaController.cadastroAliquota(result.ID, options, next)
             //     winston.info('Aliquota: atualizado')
 
-            //     let grupo = new Util({ ID: produto.GRUPO, options: options })
-            //     grupo = await grupo.getGrupo().catch(function (evt) {
-            //         throw new ConnectionRefused()
-            //     })
-            //     result.GRUPO = grupo[0]['DESCRICAO']
-
-            //     const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'GRUPO'])
-            //     res.status(201).send(serial.serialzer(result))
-            // }
         } catch (erro) {
             next(erro)
         }
@@ -289,6 +293,7 @@ class ProdutoController {
             })
             const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO', 'MARGEM_LUCRO', 'ESTOQUE'])
             winston.info("Tamanho retorno: " + produtos.length)
+            console.log(serial.serialzer(produtos))
             res.status(200).send(serial.serialzer(produtos))
 
         } catch (erro) {

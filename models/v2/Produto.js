@@ -56,12 +56,13 @@ class Produto {
             "TIPOPROD, TIPO_PRODUTO, IPPT, IAT, USA_FECOEP, EXCECAO_NCM, FRACIONADO, COMBUSTIVEL, TRIBUTACAO, ORIGEM, CSOSN, CFOP_DENTRO_UF, " +
             "CFOP_FORA_UF, ATIVARDESCONTO, ATIVOPDV, NUTRI_VALIDADE, ESTOQUEMINIMO, SINCRONIZADO, ESTOQUE) " +
             "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'S', 'N', 'N', 'N', ?, ?, ?, 'N', 'N', 'N', 'N', 'N', 0, 0, 0, 1, 0, 0, 'F', 'F', 'N', 0, 'N', " +
-            "'N', 0, 0, '102', 5102, 6102, 'N', 'N', 1, 10, 'S', ?);";
+            "'N', 0, 0, '102', 5102, 6102, 'N', 'N', 1, 10, 'S', 10);";
 
         const results = await query.executeQueryMysql(execute_query, this.options,
             [this.EAN13, this.DESCRICAO, this.UNIDADE, this.GRUPO, this.PRECO_COMPRA, this.PRECO_VENDA,
             this.CST_INTERNO, this.CFOP_INTERNO, this.ALIQUOTA_ICMS, this.CODIGO_NCM, this.ATIVO,
-            this.MARGEM_LUCRO, this.PESAVEL, this.ID_FORNECEDOR, this.DATA_CADASTRO, this.DATA_CADASTRO, this.ESTOQUE]);
+            this.MARGEM_LUCRO, this.PESAVEL, this.ID_FORNECEDOR, this.DATA_CADASTRO, this.DATA_CADASTRO]);
+
         return results;
     }
 
@@ -115,6 +116,13 @@ class Produto {
             "WHERE p.EAN13 LIKE '%" + this.EAN13 + "%' OR p.DESCRICAO LIKE UPPER('%" + this.DESCRICAO + "%') ORDER BY ID ASC LIMIT ?";
 
         const results = await query.executeQueryMysql(execute_query, this.options, [Number.parseInt(this.limite)]);
+        return results;
+    }
+
+    async getLastIdInsert() {
+        let execute_query = "SELECT ID FROM PRODUTOS WHERE EAN13 = ? OR EAN13 = ?"
+
+        const results = await query.executeQueryMysql(execute_query, this.options, [this.EAN13, Number.parseInt(this.EAN13)]);
         return results;
     }
 
