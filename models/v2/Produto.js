@@ -119,11 +119,32 @@ class Produto {
         return results;
     }
 
+    async getProdutosActive() {
+        let execute_query = "SELECT p.ID, p.EAN13, p.DESCRICAO, p.UNIDADE, g.descricao AS GRUPO, p.PRECO_COMPRA, " +
+            "p.PRECO_VENDA, p.CST_INTERNO, p.CFOP_INTERNO, p.ALIQUOTA_ICMS, p.CODIGO_NCM, p.ATIVO, p.MARGEM_LUCRO, p.ESTOQUE FROM PRODUTOS p " +
+            "JOIN GRUPO G ON (p.grupo = G.id) WHERE p.ATIVO = 'T' LIMIT ?"
+
+        const results = await query.executeQueryMysql(execute_query, this.options, [Number.parseInt(this.limite)]);
+        return results;
+    }
+
     async getLastIdInsert() {
         let execute_query = "SELECT ID FROM PRODUTOS WHERE EAN13 = ? OR EAN13 = ?"
 
         const results = await query.executeQueryMysql(execute_query, this.options, [this.EAN13, Number.parseInt(this.EAN13)]);
         return results;
+    }
+
+    async updateFast(atributo, value) {
+        try {
+            let execute_query = "UPDATE PRODUTOS SET " + atributo + " = '" + value + "', DATA_ULTIMA_ALTERACAO = ? WHERE ID = ?;"
+            const result = await query.executeQueryMysql(execute_query, this.options, [this.DATA_ULTIMA_ALTERACAO, this.ID])
+            winston.info(result);
+        } catch (e) {
+            return "NOK";
+        }
+
+        return "OK";
     }
 
     moneyTonumber(attribute) {

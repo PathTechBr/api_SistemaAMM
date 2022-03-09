@@ -7,10 +7,13 @@ const ConnectionRefused = require('../../error/ConnectionRefused')
 const InternalServer = require('../../error/InternalServer');
 const NotAcceptable = require('../../error/NotAcceptable');
 const DataNotProvided = require('../../error/DataNotProvided');
+const NotFound = require('../../error/NotFound');
 
 const Produto = require('../../models/v2/Produto');
 const Util = require('../../models/v2/Util');
 const ValidateController = require('../ValidateController');
+const Auditoria = require('../../models/v2/Auditoria');
+const EstoqueController = require('./EstoqueController');
 
 
 class ProdutoController {
@@ -297,6 +300,143 @@ class ProdutoController {
             res.status(200).send(serial.serialzer(produtos))
 
         } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async findAtivado(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'), "mysql")
+
+            winston.info("Request listar todos os produtos ativados")
+
+            const limite = req.query.limite;
+            const instance = new Produto({ options: options, limite: limite });
+
+            const produtos = await instance.getProdutosActive().catch(function () {
+                throw new ConnectionRefused()
+            })
+
+            const serial = new SerializeProduto(res.getHeader('Content-Type'),
+                ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA',
+                    'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO', 'MARGEM_LUCRO', 'ESTOQUE'])
+
+            winston.info("Tamanho retorno: " + produtos.length)
+            res.status(200).send(serial.serialzer(produtos))
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async updateFast(req, res, next) {
+
+        try {
+            const data = req.body
+            const options = db(req.header('Token-Access'), "mysql")
+
+            const arr = [];
+
+            for (var index in data) {
+                const model = data[index];
+
+                let id_request = model['_id']['oid'];
+                let id_produto = model['id'];
+                const instance = new Produto({ ID: id_produto, options: options });
+
+                winston.info("Update produto: " + id_produto)
+                if (!ValidateController.validate([id_produto])) {
+                    let error = new DataNotProvided()
+                    const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                    return res.status(400).send(
+                        serial.serialzer({
+                            message: error.message,
+                            id: error.idError
+                        }))
+                }
+
+                const produto_old = await instance.getOneProduto().catch(function () {
+                    throw new ConnectionRefused()
+                });
+
+                if (produto_old.length === 0) {
+                    const myJSON = '{"_id":"' + id_request + '", "id": "' + id_produto + '", "status":"NOK", "message":"Produto nao encontrado"}';
+                    const myObj = JSON.parse(myJSON);
+                    arr.push(myObj);
+                    continue;
+                }
+
+                let produto = new Produto(produto_old[0]);
+                produto.options = options;
+                produto.DATA_ULTIMA_ALTERACAO = model['date_inserted']
+
+                let atributo = model['atributo'];
+                let value = model['value'];
+
+                if (atributo == "ESTOQUE") {
+                    winston.info('AUDITORIA - ESTOQUE')
+                    let estoque_old = produto.ESTOQUE
+                    let estoque_new = value
+                    let tipo_movimento = 0; //Saida
+
+                    if (estoque_old > estoque_new) {
+                    } else {
+                        tipo_movimento = 1; //Entrada
+                    }
+
+                    let auditoria = new Auditoria({ DATALANCAMENTO: model['date_inserted'], IDPRODUTO: id_produto, TIPOMOVIMENTO: tipo_movimento, QUANTIDADE: estoque_new - estoque_old, USUARIO: 'WEB_' + model['user'], options: options })
+
+                    var aud = await auditoria.registerMovimentoEst().catch(function () {
+                        throw new ConnectionRefused()
+                    });
+
+                    if (aud == null || aud == undefined) {
+                        winston.info('[ERR] - ERRO NA AUDITORIA')
+                    }
+
+                    let estoque = await EstoqueController.atualizarEstoque(id_produto, estoque_new, options, next)
+                    winston.info('Estoque: atualizado')
+                }
+
+                produto[atributo] = value;
+                produto = produto.adapterModel(produto);
+
+                const result = await produto.updateFast(atributo, produto[atributo]).catch(function () {
+                    throw new ConnectionRefused()
+                });
+
+                if (result == "NOK") {
+                    const myJSON = '{"_id":"' + id_request + '", "id": "' + id_produto + '", "status":"NOK", "message":"Erro na alteração"}';
+                    const myObj = JSON.parse(myJSON);
+                    arr.push(myObj);
+                    continue;
+                }
+
+                const myJSON = '{"_id":"' + id_request + '", "id": "' + id_produto + '", "status":"' + result + '"}';
+                const myObj = JSON.parse(myJSON);
+                arr.push(myObj);
+            }
+
+
+            // winston.info(arr)
+
+
+            res.status(202).send(JSON.stringify(arr))
+
+            // if (result.ID == null || result.ID == undefined) {
+            //     let error = new InternalServer()
+            //     const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+            //     return res.status(500).send(
+            //         serial.serialzer({
+            //             message: error.message,
+            //             id: error.idError
+            //         }))
+            // } else {
+            //     const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID'])
+            //     res.status(204).send(serial.serialzer(result))
+            // }
+        } catch (erro) {
+            winston.error(erro)
             next(erro)
         }
     }
