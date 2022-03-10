@@ -38,7 +38,7 @@ class FileController {
         });
 
         // Coletar os DNS já registrados no documento de config
-        const instance = new File(path.join(__dirname, '../config/default-2.json'));
+        const instance = new File(path.join(__dirname, '../config/default.json'));
         instance.readFile()
             .then(function (data) {
                 let tokens = data.tokens
@@ -65,7 +65,7 @@ class FileController {
 
     static writeFile(obj) {
 
-        const instance = new File(path.join(__dirname, '../config/default-2.json'));
+        const instance = new File(path.join(__dirname, '../config/default.json'));
         instance.writeFile(obj)
             .then(function (data) {
                 winston.info('[writeFile]   -     Change in config  -   ' + data)
