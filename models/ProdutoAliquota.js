@@ -18,13 +18,13 @@ class ProdutoAliquota {
 
     async insert() {
         let execute_query = SQL_CONST.SQL_PRODUTO_ALIQUOTA_INSERT
-        const result = await query.executeQuery(execute_query, this.options, [this.IDPRODUTO, this.UF, this.CST, this.CFOP, this.ALIQUOTA, this.REDUCAO_BASE, this.ALIQUOTA_FECOEP]);
+        const result = await query.executeQueryMysql(execute_query, this.options, [this.IDPRODUTO, this.UF, this.CST, this.CFOP, this.ALIQUOTA, this.REDUCAO_BASE, this.ALIQUOTA_FECOEP]);
         return result;
     }
 
     async findOne() {
         let execute_query = SQL_CONST.SQL_PRODUTO_ALIQUOTA_FIND
-        const result = await query.executeQuery(execute_query, this.options, [this.IDPRODUTO]);
+        const result = await query.executeQueryMysql(execute_query, this.options, [this.IDPRODUTO]);
 
         return result;
     }

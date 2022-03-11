@@ -14,6 +14,7 @@ const Util = require('../../models/v2/Util');
 const ValidateController = require('../ValidateController');
 const Auditoria = require('../../models/v2/Auditoria');
 const EstoqueController = require('./EstoqueController');
+const ProdutoAliquotaController = require('../ProdutoAliquotaController');
 
 
 class ProdutoController {
@@ -82,14 +83,14 @@ class ProdutoController {
             })
             produto.GRUPO = grupo[0]['DESCRICAO']
 
+            let estoque = await EstoqueController.atualizarEstoque(produto.ID, 10, options, next)
+            winston.info('Estoque: atualizado')
+
+            let aliquota = await ProdutoAliquotaController.cadastroAliquota(produto.ID, options, next)
+            winston.info('Aliquota: atualizado')
+
             const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'GRUPO'])
             res.status(201).send(serial.serialzer(produto))
-
-            //     let estoque = await EstoqueController.atualizarEstoque(result.ID, 0, options, next)
-            //     winston.info('Estoque: atualizado')
-
-            //     let aliquota = await ProdutoAliquotaController.cadastroAliquota(result.ID, options, next)
-            //     winston.info('Aliquota: atualizado')
 
         } catch (erro) {
             next(erro)
@@ -165,6 +166,8 @@ class ProdutoController {
             const data = req.body
 
             const id = req.params.code;
+
+            console.log(data)
 
             const options = db(req.header('Token-Access'), "mysql")
 

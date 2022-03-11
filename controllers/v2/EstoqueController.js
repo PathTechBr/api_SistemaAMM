@@ -30,7 +30,7 @@ class EstoqueController {
             });
 
             if (result.length === 0) { // Se estiver vazio (Não existir) cadastrar um novo registro vinculado ao produto
-                estoque.QUANTIDADE = 0
+                //estoque.QUANTIDADE = 0
                 result = await estoque.insert().catch(function () {
                     throw new ConnectionRefused()
                 });
