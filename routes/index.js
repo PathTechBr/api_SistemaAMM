@@ -16,9 +16,11 @@ const produto_v2 = require('./v2/produto_v2')
 const grupo_v2 = require('./v2/grupo')
 const dashboard_v2 = require('./v2/dashboard')
 const util_v2 = require('./v2/util')
+const generic = require('./v2/generic')
 
 module.exports = app => {
     app.use(bodyParser.urlencoded({ extended: true })),
+    app.use(bodyParser.json({limit: '50mb'}));
         app.use(express.json()),
         app.use('/api/pedido/', pedido),
         app.use('/api/produto/', produto),
@@ -35,4 +37,5 @@ module.exports = app => {
         app.use('/api/v2/grupo', grupo_v2)
         app.use('/api/v2/dashboard', dashboard_v2)
         app.use('/api/v2/util/', util_v2)
+        app.use('/api/v2/generic/', generic)
 }

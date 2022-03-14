@@ -108,7 +108,7 @@ class ProdutoController {
             const produtos = await instance.getAllProdutos().catch(function (err) {
                 throw new ConnectionRefused()
             })
-            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO', 'ESTOQUE'])
+            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['DATA_CADASTRO', 'DATA_ULTIMA_ALTERACAO', 'ID_FORNECEDOR'])
             winston.info("Tamanho retorno: " + produtos.length)
             res.status(200).send(serial.serialzer(produtos))
 

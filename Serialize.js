@@ -71,7 +71,7 @@ class SerializeProduto extends Serialize {
     constructor(contentType, extraFields) {
         super()
         this.contentType = contentType
-        this.publicFields = ['EAN13', 'DESCRICAO'].concat(extraFields || [])
+        this.publicFields = ['EAN13', 'DESCRICAO', 'ID', 'CODIGO_NCM', 'UNIDADE', 'GRUPO', 'PRECO_COMPRA', 'PRECO_VENDA', 'CST_INTERNO', 'CFOP_INTERNO', 'ALIQUOTA_ICMS', 'ATIVO', 'ESTOQUE'].concat(extraFields || [])
         this.tagSingular = 'produto'
         this.tagPlural = 'produtos'
     }

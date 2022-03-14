@@ -25,6 +25,8 @@ const app = express()
 
 const port = config.get('api.port')
 
+require('events').EventEmitter.setMaxListeners(0)
+
 let d = new Date();
 
 app.use((request, response, next) => {
