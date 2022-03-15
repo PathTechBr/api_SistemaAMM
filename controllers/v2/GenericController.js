@@ -5,11 +5,15 @@ const { SerializeFornecedor } = require('../../Serialize');
 const { SerializeError } = require('../../Serialize');
 
 const winston = require('../../util/Log')
+
 const NotFound = require('../../error/NotFound');
+const NotAcceptable = require('../../error/NotAcceptable');
+const ConnectionRefused = require('../../error/ConnectionRefused');
+
+
 const NoConfigurationDB = require('../../error/NoConfigurationDB');
 
 const Mysql = require('mysql');
-const ConnectionRefused = require('../../error/ConnectionRefused');
 
 class GenericController {
 
@@ -55,19 +59,22 @@ class GenericController {
                 console.log(err)
                 next(new ConnectionRefused)
             })
-            console.log(fields)
 
             const con_db = Mysql.createConnection(options)
             generic.CONNECTION_DB = con_db
 
             console.log('Connection established!')
 
+            if (!Array.isArray(data)) {
+                next(new NotAcceptable())
+            }
+
             var filt = []
             filt = data.slice(0, 2)
             // console.log(filt)
             const promises = filt.map(async (element, idx) => {
                 var obj = JSON.parse(JSON.stringify(element))
-                obj.DATA_ULTIMA_ALTERACAO = 'NULL'
+                obj.DATA_ULTIMA_ALTERACAO = new Date().toISOString()
 
                 if (obj.MD5 == null) {
                     next(new NotAcceptable())
@@ -75,23 +82,24 @@ class GenericController {
 
                 generic.MD5 = obj.MD5
 
+                // Prepara o objeto de acordo com a tabela de destino
+                obj = GenericController.prepareObject(fields, obj)
+
                 await generic.findOne()
                     // Se a consulta ocorrer com sucesso
                     .then(async function (item) {
                         let isExists = item.length
 
-                        // Prepara o objeto de acordo com a tabela de destino
-                        item = GenericController.prepareObject(fields, obj)
-
                         // Se nao existir registro tem que inserir
                         if (isExists == 0) {
-                            await generic.insert(item).catch(function (err) {
+                            await generic.insert(obj).catch(function (err) {
                                 console.log(err)
                                 next(new ConnectionRefused())
                             })
                         } else {
                             // Se existir validar se o ID é o mesmo e as informações restantes
-                            console.log('Existe')
+                            console.log("Item banco: " + item[0].ID)
+                            console.log("Item request: " + obj.ID)
                         }
                     }).catch(function (err) {
                         console.log(err)
