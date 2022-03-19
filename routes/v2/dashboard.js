@@ -20,6 +20,7 @@ router.post('/groupGrupoItens', DashboardController.setGroupGrupoItens)
 router.get('/groupGrupoItens', DashboardController.getGroupGrupoItens)
 
 router.get('/produtoVendido/:limite', DashboardController.getProdutosVendido)
+router.post('/produtoVendido/', DashboardController.setProdutosVendido)
 
 
 // router.options('/:code', (req, resp, next) => {

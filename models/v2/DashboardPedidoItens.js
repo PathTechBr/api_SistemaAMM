@@ -1,13 +1,13 @@
 const query = require("../../tables/Query")
 
 class DashboardPedidoItens {
-    constructor({ IDGRUPO, QUANTIDADE, TOTAL, TOTCUSTO, TOTLUCRO, TOTALVALORGERAL, limite = 10, options }) {
+    constructor({ IDGRUPO, DESCRICAO, QUANTIDADE, TOTAL, TOTCUSTO, TOTLUCRO, limite = 10, options }) {
         this.IDGRUPO = IDGRUPO
+        this.DESCRICAO = DESCRICAO
         this.QUANTIDADE = QUANTIDADE
         this.TOTAL = TOTAL
         this.TOTCUSTO = TOTCUSTO;
         this.TOTLUCRO = TOTLUCRO;
-        this.TOTALVALORGERAL = TOTALVALORGERAL;
         this.limite = limite;
         this.options = options
 
@@ -21,7 +21,7 @@ class DashboardPedidoItens {
     }
 
     async clearValues() {
-        let execute_query = "UPDATE GRUPO_VENDA SET SINCRONIZADO = 'N' WHERE 1 = 1";
+        let execute_query = "UPDATE GRUPO_VENDA SET QUANTIDADE = 0, TOTAL = 0, SINCRONIZADO = 'N' WHERE 1 = 1";
 
         await query.executeQueryMysql(execute_query, this.options, [])
     }
@@ -35,25 +35,25 @@ class DashboardPedidoItens {
 
     async update() {
         let execute_query = "UPDATE GRUPO_VENDA SET QUANTIDADE = ?, TOTAL = ?, " + 
-        "TOTCUSTO = ?, TOTLUCRO = ?, TOTALVALORGERAL = ? WHERE IDGRUPO = ?";
+        "TOTCUSTO = ?, TOTLUCRO = ?, DESCRICAO = ?, SINCRONIZADO = 'S' WHERE IDGRUPO = ?";
 
         const results = await query.executeQueryMysql(execute_query, this.options,
-            [this.QUANTIDADE, this.TOTAL, this.TOTCUSTO, this.TOTLUCRO, this.TOTALVALORGERAL, this.IDGRUPO]);
+            [this.QUANTIDADE, this.TOTAL, this.TOTCUSTO, this.TOTLUCRO, this.DESCRICAO, this.IDGRUPO]);
         return results;
     }
 
     async insert() {
-        let execute_query = "INSERT INTO GRUPO_VENDA (IDGRUPO, QUANTIDADE, TOTAL, TOTCUSTO, TOTLUCRO, TOTALVALORGERAL) " +
-            "VALUES (?, ?, ?, ?, ?, ?);";
+        let execute_query = "INSERT INTO GRUPO_VENDA (IDGRUPO, QUANTIDADE, TOTAL, TOTCUSTO, TOTLUCRO, DESCRICAO, SINCRONIZADO) " +
+            "VALUES (?, ?, ?, ?, ?, ?, 'S');";
 
         const results = await query.executeQueryMysql(execute_query, this.options,
-            [this.IDGRUPO, this.QUANTIDADE, this.TOTAL, this.TOTCUSTO, this.TOTLUCRO, this.TOTALVALORGERAL]);
+            [this.IDGRUPO, this.QUANTIDADE, this.TOTAL, this.TOTCUSTO, this.TOTLUCRO, this.DESCRICAO]);
         return results;
     }
 
     async getRankingGrupos() {
 
-        let execute_query = "SELECT gv.*, gp.DESCRICAO AS GRUPO FROM GRUPO_VENDA gv JOIN grupo gp ON (gv.IDGRUPO = gp.ID) WHERE gv.SINCRONIZADO = 'S' ORDER BY gv.TOTAL DESC LIMIT ?;"
+        let execute_query = "SELECT gv.* FROM GRUPO_VENDA gv WHERE gv.SINCRONIZADO = 'S' AND gv.QUANTIDADE > 0 ORDER BY gv.TOTAL DESC LIMIT ?;"
 
         const results = await query.executeQueryMysql(execute_query, this.options, [Number.parseInt(this.limite)])
         return results

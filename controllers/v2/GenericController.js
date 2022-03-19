@@ -65,14 +65,14 @@ class GenericController {
 
             console.log('Connection established!')
 
+            var filt = []
+
             if (!Array.isArray(data)) {
                 next(new NotAcceptable())
             }
 
-            var filt = []
-            filt = data.slice(0, 2)
-            // console.log(filt)
-            const promises = filt.map(async (element, idx) => {
+            // filt = data.slice(0, 2)
+            const promises = data.map(async (element, idx) => {
                 var obj = JSON.parse(JSON.stringify(element))
                 obj.DATA_ULTIMA_ALTERACAO = new Date().toISOString()
 
@@ -89,7 +89,6 @@ class GenericController {
                     // Se a consulta ocorrer com sucesso
                     .then(async function (item) {
                         let isExists = item.length
-
                         // Se nao existir registro tem que inserir
                         if (isExists == 0) {
                             await generic.insert(obj).catch(function (err) {

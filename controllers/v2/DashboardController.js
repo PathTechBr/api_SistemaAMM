@@ -13,6 +13,7 @@ const DashboardFormaPag = require('../../models/v2/DashboardFormaPag');
 
 const ValidateController = require('../ValidateController');
 const DashboardPedidoItens = require('../../models/v2/DashboardPedidoItens');
+const DashboardProduto = require('../../models/v2/DashboardProduto');
 
 
 class DashboardController {
@@ -22,10 +23,16 @@ class DashboardController {
             const data = req.body;
 
             const dash = new DashboardCard(data)
+
+            for (var i = 0; i < data.length; i++) {
+                var key = data[i]['DASH_CARD']
+                var value = data[i]['DASH_VALUE']
+                dash[key] = value
+            }
+
             dash.options = db(req.header('Token-Access'), "mysql")
 
             Object.keys(dash).forEach(async function (key, index) {
-                // console.log(dash[key])
                 if ((dash[key] != null) && (key != 'options' && key != 'limite')) {
                     const isExists = await dash.getParam(key).catch(function () {
                         throw new ConnectionRefused()
@@ -71,7 +78,7 @@ class DashboardController {
                         dash[key] = param[0].VALUE
                     }
 
-                    itemsProcessed ++;
+                    itemsProcessed++;
 
                     if (itemsProcessed === (array.length - 2)) {
                         const serial = new SerializeCard(res.getHeader('Content-Type'))
@@ -93,29 +100,37 @@ class DashboardController {
         try {
             const data = req.body;
 
-            const dash = new DashboardFormaPag(data)
-            dash.options = db(req.header('Token-Access'), "mysql")
+            const dash = new DashboardFormaPag({ options: db(req.header('Token-Access'), "mysql") })
 
             // Limpando valores para o ranking ficar atualizado
-            // await dash.clearValues()
-            
-            const isExists = await dash.getFormaPagToDoc().catch(function () {
-                throw new ConnectionRefused()
-            })
+            await dash.clearValues()
 
-            if (isExists[0].COUNT > 0) {
-                await dash.update().catch(function () {
+            for (var i = 0; i < data.length; i++) {
+                dash.DESCRICAO = data[i]['DESCRICAO']
+                dash.QTD = data[i]['QTD']
+                dash.TIPO_DOCUMENTO = data[i]['TIPO_DOCUMENTO']
+                dash.TOTVENDA = data[i]['TOTVENDA']
+
+
+
+                const isExists = await dash.getFormaPagToDoc().catch(function () {
                     throw new ConnectionRefused()
-                });
-            } else {
-                winston.info("Save forma pagamento")
-                await dash.insert().catch(function () {
-                    throw new ConnectionRefused()
-                });
+                })
+
+                if (isExists[0].COUNT > 0) {
+                    await dash.update().catch(function () {
+                        throw new ConnectionRefused()
+                    });
+                } else {
+                    winston.info("Save forma pagamento")
+                    await dash.insert().catch(function () {
+                        throw new ConnectionRefused()
+                    });
+                }
             }
 
             const serial = new SerializeFormaPagamento(res.getHeader('Content-Type'), ['QTD', 'TOTVENDA'])
-            res.status(201).send(serial.serialzer(dash))
+            res.status(201).send()
 
         } catch (erro) {
             next(erro)
@@ -128,7 +143,7 @@ class DashboardController {
             const options = db(req.header('Token-Access'), "mysql")
             const limite = req.query.limite
 
-            const dash = new DashboardFormaPag({options: options, limite: limite})
+            const dash = new DashboardFormaPag({ options: options, limite: limite })
 
             const formas = await dash.getRankingPayments().catch(function () {
                 throw new ConnectionRefused()
@@ -146,41 +161,38 @@ class DashboardController {
     static async setGroupGrupoItens(req, res, next) {
         try {
             const data = req.body;
-            const grupo = new DashboardPedidoItens(data)
-
-            grupo.options = db(req.header('Token-Access'), "mysql")
-
-            if (!ValidateController.validate([grupo.IDGRUPO])) {
-                let error = new DataNotProvided()
-                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
-                return res.status(400).send(
-                    serial.serialzer({
-                        message: error.message,
-                        id: error.idError
-                    }))
-            }
+            const grupo = new DashboardPedidoItens({options: db(req.header('Token-Access'), "mysql")})
 
             // Limpando valores para o ranking ficar atualizado
-            // await grupo.clearValues()
-            
-            const isExists = await grupo.getGrupoToId().catch(function () {
-                throw new ConnectionRefused()
-            })
+            await grupo.clearValues()
 
-            if (isExists[0].COUNT > 0) {
-                await grupo.update().catch(function () {
+            for (var i = 0; i < data.length; i++) {
+                grupo.IDGRUPO = data[i]['IDGRUPO']
+                grupo.DESCRICAO = data[i]['DESCRICAO']
+                grupo.QUANTIDADE = data[i]['QUANTIDADE']
+                grupo.TOTAL = data[i]['TOTAL']
+                grupo.TOTCUSTO = data[i]['TOTCUSTO']
+                grupo.TOTLUCRO = data[i]['TOTLUCRO']
+
+                const isExists = await grupo.getGrupoToId().catch(function () {
                     throw new ConnectionRefused()
-                });
-            } else {
-                winston.info("Save grupo vendas")
-                await grupo.insert().catch(function () {
-                    throw new ConnectionRefused()
-                });
+                })
+
+                if (isExists[0].COUNT > 0) {
+                    await grupo.update().catch(function () {
+                        throw new ConnectionRefused()
+                    });
+                } else {
+                    winston.info("Save grupo vendas")
+                    await grupo.insert().catch(function () {
+                        throw new ConnectionRefused()
+                    });
+                }
             }
 
             const serial = new SerializeGrupo(res.getHeader('Content-Type'), ['IDGRUPO', 'TOTAL'])
-            res.status(201).send(serial.serialzer(grupo))
-            
+            res.status(201).send()
+
         } catch (erro) {
             next(erro)
         }
@@ -192,15 +204,52 @@ class DashboardController {
             const options = db(req.header('Token-Access'), "mysql")
             const limite = req.query.limite
 
-            const dash = new DashboardPedidoItens({options: options, limite: limite})
+            const dash = new DashboardPedidoItens({ options: options, limite: limite })
 
             const grupos = await dash.getRankingGrupos().catch(function () {
                 throw new ConnectionRefused()
             });
 
 
-            const serial = new SerializeGrupoVenda(res.getHeader('Content-Type'), ['GRUPO'])
+            const serial = new SerializeGrupoVenda(res.getHeader('Content-Type'), ['DESCRICAO'])
             res.status(200).send(serial.serialzer(grupos))
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async setProdutosVendido(req, res, next) {
+        try {
+            const data = req.body;
+            const produto = new DashboardProduto({options: db(req.header('Token-Access'), "mysql")})
+
+            // Limpando valores para o ranking ficar atualizado
+            await produto.clearValues()
+
+            for (var i = 0; i < data.length; i++) {
+                produto.DESCRICAO = data[i]['DESCRICAO']
+                produto.VLUNIT = data[i]['VLUNIT']
+                produto.VLTOTAL = data[i]['VLTOTAL']
+                produto.QTD = data[i]['QTD']
+
+                const isExists = await produto.getProdutotoDesc().catch(function () {
+                    throw new ConnectionRefused()
+                })
+
+                if (isExists[0].COUNT > 0) {
+                    await produto.update().catch(function () {
+                        throw new ConnectionRefused()
+                    });
+                } else {
+                    winston.info("Save produto mais vendidos")
+                    await produto.insert().catch(function () {
+                        throw new ConnectionRefused()
+                    });
+                }
+            }
+
+            res.status(201).send()
 
         } catch (erro) {
             next(erro)
@@ -213,14 +262,16 @@ class DashboardController {
             const options = db(req.header('Token-Access'), "mysql")
             const limite = req.params.limite
 
-            const dash = new DashboardPedidoItens({options: options, limite: limite})
+            console.log('1Get produto')
 
-            const grupos = await dash.getRankingProduto().catch(function () {
+            const dash = new DashboardProduto({ options: options, limite: limite })
+
+            const grupos = await dash.getAllProduto().catch(function () {
                 throw new ConnectionRefused()
             });
 
 
-            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['VALOR_TOTAL', 'QUANTIDADE'])
+            const serial = new SerializeProduto(res.getHeader('Content-Type'), ['QTD', 'VLTOTAL', 'VLUNIT'])
             res.status(200).send(serial.serialzer(grupos))
 
         } catch (erro) {

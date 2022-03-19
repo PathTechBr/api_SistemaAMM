@@ -12,7 +12,7 @@ class DashboardFormaPag {
 
     async getRankingPayments() {
 
-        let execute_query = "SELECT * FROM FORMA_PAG ORDER BY qtd DESC LIMIT ?;"
+        let execute_query = "SELECT * FROM FORMA_PAG WHERE QTD > 0 ORDER BY TOTVENDA DESC LIMIT ?;"
 
         const results = await query.executeQueryMysql(execute_query, this.options, [Number.parseInt(this.limite)])
         return results
