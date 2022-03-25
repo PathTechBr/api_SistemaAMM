@@ -4,7 +4,7 @@ const SQL_CONST = require("../../util/C_UTL").SQL_CONST;
 
 class Util {
 
-    constructor({ ID, EAN13, DESCRICAO, DATA_ATIVACAO, DIAS_RESET, DATA_VENCIMENTO, DATA_PAGAMENTO, CNPJ_EMPRESA, ID_TERMINAL, limite = 10, options }) {
+    constructor({ ID, EAN13, DESCRICAO, DATA_ATIVACAO, DIAS_RESET, DATA_VENCIMENTO, DATA_PAGAMENTO, CNPJ_EMPRESA, ID_TERMINAL, ULTIMO_SERIAL, limite = 10, options }) {
         this.ID = ID
         this.EAN13 = EAN13
         this.DESCRICAO = DESCRICAO
@@ -14,9 +14,43 @@ class Util {
         this.DATA_PAGAMENTO = DATA_PAGAMENTO
         this.CNPJ_EMPRESA = CNPJ_EMPRESA
         this.ID_TERMINAL = ID_TERMINAL
+        this.ULTIMO_SERIAL = ULTIMO_SERIAL
         this.limite = limite
         this.options = options
 
+    }
+
+    descriptoDate(char) {
+
+        const dic = [];
+
+        dic["$"] = "0";
+        dic["%"] = "1";
+        dic["&"] = "2";
+        dic["'"] = "3";
+        dic['"'] = "6";
+        dic[","] = "8";
+        dic["-"] = "9";
+
+        return dic[char];
+    }
+
+    descriptoSerial(char) {
+
+        const dic = [];
+
+        dic["0"] = "T";
+        dic["1"] = "U";
+        dic["2"] = "V";
+        dic["3"] = "W";
+        dic["4"] = "P";
+        dic["5"] = "Q";
+        dic["6"] = "R";
+        dic["8"] = "\\";
+        dic["9"] = "]";
+        dic["-"] = "I";
+
+        return dic[char];
     }
 
     async getAllGrupo() {
@@ -53,14 +87,14 @@ class Util {
     }
 
     async getLicencaDB() {
-        let execute_query = "SELECT DATA_VENCIMENTO, DIAS_RESET FROM LAMMER_LIC ORDER BY CODIGO DESC LIMIT 1;"
+        let execute_query = "SELECT DATA_VENCIMENTO, DIAS_RESET, ID_TERMINAL FROM LAMMER_LIC ORDER BY CODIGO DESC LIMIT 1;"
         const results = await query.executeQueryMysql(execute_query, this.options)
         return results
     }
 
     async setLicencaDB() {
         let execute_query = SQL_CONST.SQL_SET_LICENCA
-        const results = await query.executeQueryMysql(execute_query, this.options, [this.DATA_ATIVACAO, this.DIAS_RESET, this.DATA_VENCIMENTO, this.DATA_ATIVACAO])
+        const results = await query.executeQueryMysql(execute_query, this.options, [this.DATA_ATIVACAO, this.DIAS_RESET, this.DATA_VENCIMENTO, this.DATA_ATIVACAO, this.ULTIMO_SERIAL])
         return results
     }
 

@@ -137,6 +137,31 @@ class UtilController {
             licenca.options = options
             console.log(licenca)
 
+            // Get id_terminal
+            const terminal = await licenca.getLicencaDB().catch(function(err) {
+                throw err
+            })
+
+            var id_terminal = (terminal[0]['ID_TERMINAL']).split("");
+            console.log(id_terminal.length)
+            // console.log(licenca.descriptoDate(id_terminal))
+
+            var parteA = ""
+            var ultimo_serialCripto = ""
+
+            for(var i = 0; i < id_terminal.length; i++) {
+                parteA += (licenca.descriptoDate(id_terminal[i])).toString()
+            }
+
+            var ultimo_serial = ""
+            ultimo_serial = parteA + "-" + licenca.ULTIMO_SERIAL
+
+            for(var i = 0; i < ultimo_serial.length; i++) {
+                ultimo_serialCripto += (licenca.descriptoSerial(ultimo_serial[i]))
+            }
+
+            licenca.ULTIMO_SERIAL = ultimo_serialCripto
+
             await licenca.setLicencaDB().catch(function(err) {
                 throw err
             })
