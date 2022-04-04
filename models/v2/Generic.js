@@ -3,10 +3,11 @@ const query = require("../../tables/Query")
 
 class Generic {
 
-    constructor({ TABLENAME, DATA_ULTIMA_ALTERACAO, MD5, CONNECTION_DB, options }) {
+    constructor({ TABLENAME, DATA_ULTIMA_ALTERACAO, MD5, FIELDSEARCH,CONNECTION_DB, options }) {
         this.TABLENAME = TABLENAME
         this.DATA_ULTIMA_ALTERACAO = DATA_ULTIMA_ALTERACAO
         this.MD5 = MD5
+        this.FIELDSEARCH = FIELDSEARCH
         this.CONNECTION_DB = CONNECTION_DB
         this.options = options
 
@@ -27,10 +28,24 @@ class Generic {
         return result;
     }
 
+    async findOneExternal(field) {
+        let execute_query = 'SELECT * FROM ' + this.TABLENAME + ' WHERE ' + this.FIELDSEARCH + ' = ?;'
+        const result = await query.executeQueryMysql(execute_query, this.options, [field]);
+
+        return result;
+    }
+
     async insert(obj) {
         let execute_query = 'INSERT INTO ' + this.TABLENAME + ' SET ?;'
 
         const result = await query.executeQueryInsertBasic(this.CONNECTION_DB, execute_query, [obj]);
+
+        return result;
+    }
+
+    async getMD5() {
+        let execute_query = 'SELECT UUID()'
+        const result = await query.executeQueryMysql(execute_query, this.options, [])
 
         return result;
     }

@@ -28,12 +28,6 @@
       "port": 3050
     },
     {
-      "token": "RU4QBurPUAOkq8s6EukoKelSjaJOBtbA",
-      "database": "C:\\xampp7\\database\\Firebird\\DADOS.DESENVOLVIMENTO.FDB",
-      "host": "127.0.0.1",
-      "port": 3050
-    },
-    {
       "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd2",
       "database": "C:\\xampp7\\database\\Firebird\\DADOS.MG06.FDB",
       "host": "127.0.0.1",
@@ -54,8 +48,32 @@
     },
     {
       "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd",
-      "database": "setryh",
+      "database": "db-teste",
       "host": "localhost",
+      "user": "root",
+      "password": ""
+    },
+    {
+      "token": "BQJke2eeBj5PcN7IZRgN5U4eZT0U69hy",
+      "database": "db-teste",
+      "host": "localhost",
+      "port": 3050,
+      "user": "root",
+      "password": ""
+    },
+    {
+      "token": "NlA0ZDqsQMS7IvARFdEozbkbHPx6kF0k",
+      "database": "db-teste",
+      "host": "localhost",
+      "port": 3050,
+      "user": "root",
+      "password": ""
+    },
+    {
+      "token": "RU4QBurPUAOkq8s6EukoKelSjaJOBtbA",
+      "database": "webservice",
+      "host": "localhost",
+      "port": 3050,
       "user": "root",
       "password": ""
     }

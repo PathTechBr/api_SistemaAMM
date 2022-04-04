@@ -173,6 +173,41 @@ class GenericController {
         }
     }
 
+    static async findOneExternal(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'), "mysql")
+            const tablename = req.query.tablename
+            const fieldSearch = req.query.fieldSearch
+            let field = req.params._id
+
+            const generic = new Generic({ TABLENAME: tablename, options: options });
+            generic.FIELDSEARCH = fieldSearch
+
+            const data = await generic.findOneExternal(field).catch(function (err) {
+                throw new ConnectionRefused()
+            })
+
+            console.log(data)
+
+            if (data.length === 0) {
+                let error = new NotFound(tablename)
+                const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
+                return res.status(404).send(
+                    serial.serialzer({
+                        message: error.message,
+                        id: error.idError
+                    }))
+            }
+
+            // const serial = new SerializeFornecedor(res.getHeader('Content-Type'))
+            res.status(200).send(JSON.stringify(data))
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+
     // static async delete(req, res, next) {
     //     try {
     //         const options = db(req.header('Token-Access'), "mysql")

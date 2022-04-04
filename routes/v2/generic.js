@@ -18,6 +18,6 @@ router.options('/:_id', (req, resp, next) => {
     resp.end()
 })
 
-router.get('/:_id', GenericController.findOne)
+router.get('/:_id', GenericController.findOneExternal)
 
 module.exports = router
