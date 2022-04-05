@@ -103,6 +103,13 @@ class Util {
         const results = await query.executeQueryMysql(execute_query, this.options, [this.CNPJ_EMPRESA, this.ID_TERMINAL, this.DATA_ATIVACAO, this.DIAS_RESET, this.DATA_VENCIMENTO, this.DATA_PAGAMENTO])
         return results
     }
+
+    async createDataBase() {
+        let execute_query = "CREATE DATABASE TESTANDO;"
+
+        const results = await query.executeQueryMysql(execute_query, this.options);
+        return results;
+    }
 }
 
 module.exports = Util

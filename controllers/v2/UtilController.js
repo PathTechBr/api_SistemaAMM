@@ -73,11 +73,11 @@ class UtilController {
             const options = db(req.header('Token-Access'), "mysql")
             const instance = new Util({ options: options });
 
-            const config = await instance.getEnabledDB().catch(function(err) {
+            const config = await instance.getEnabledDB().catch(function (err) {
                 throw err
             })
 
-            if(config[0].SBT === null || config[1].CONFIG.includes('N')) {
+            if (config[0].SBT === null || config[1].CONFIG.includes('N')) {
                 throw new Forbidden()
             }
             const serial = new SerializeUtil(res.getHeader('Content-Type'), ['CONFIG'])
@@ -94,11 +94,11 @@ class UtilController {
             const options = db(req.header('Token-Access'), "mysql")
             const instance = new Util({ options: options });
 
-            const vencimento = await instance.getLicencaDB().catch(function(err) {
+            const vencimento = await instance.getLicencaDB().catch(function (err) {
                 throw err
             })
 
-            const serial = new SerializeUtil(res.getHeader('Content-Type'), ['DATA_VENCIMENTO','DIAS_RESET'])
+            const serial = new SerializeUtil(res.getHeader('Content-Type'), ['DATA_VENCIMENTO', 'DIAS_RESET'])
             res.status(200).send(serial.serialzer(vencimento))
 
 
@@ -119,7 +119,7 @@ class UtilController {
                 throw new ConnectionRefused()
             })
 
-            const serial = new SerializeUtil(res.getHeader('Content-Type'), ['DATA_VENCIMENTO','DIAS_RESET', 'CNPJ_EMPRESA'])
+            const serial = new SerializeUtil(res.getHeader('Content-Type'), ['DATA_VENCIMENTO', 'DIAS_RESET', 'CNPJ_EMPRESA'])
             res.status(201).send(serial.serialzer(licenca))
 
 
@@ -138,7 +138,7 @@ class UtilController {
             console.log(licenca)
 
             // Get id_terminal
-            const terminal = await licenca.getLicencaDB().catch(function(err) {
+            const terminal = await licenca.getLicencaDB().catch(function (err) {
                 throw err
             })
 
@@ -149,26 +149,43 @@ class UtilController {
             var parteA = ""
             var ultimo_serialCripto = ""
 
-            for(var i = 0; i < id_terminal.length; i++) {
+            for (var i = 0; i < id_terminal.length; i++) {
                 parteA += (licenca.descriptoDate(id_terminal[i])).toString()
             }
 
             var ultimo_serial = ""
             ultimo_serial = parteA + "-" + licenca.ULTIMO_SERIAL
 
-            for(var i = 0; i < ultimo_serial.length; i++) {
+            for (var i = 0; i < ultimo_serial.length; i++) {
                 ultimo_serialCripto += (licenca.descriptoSerial(ultimo_serial[i]))
             }
 
             licenca.ULTIMO_SERIAL = ultimo_serialCripto
 
-            await licenca.setLicencaDB().catch(function(err) {
+            await licenca.setLicencaDB().catch(function (err) {
                 throw err
             })
 
-            const serial = new SerializeUtil(res.getHeader('Content-Type'), ['DATA_VENCIMENTO','DIAS_RESET', 'CNPJ_EMPRESA'])
+            const serial = new SerializeUtil(res.getHeader('Content-Type'), ['DATA_VENCIMENTO', 'DIAS_RESET', 'CNPJ_EMPRESA'])
             res.status(204).send(serial.serialzer(licenca))
 
+
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async setNewDataBase(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'), "mysql")
+            const instance = new Util({ options: options });
+
+            await instance.createDataBase().catch(function (err) {
+                throw err
+            })
+
+            res.status(200).send('Okay')
 
 
         } catch (erro) {
