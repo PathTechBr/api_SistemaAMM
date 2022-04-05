@@ -262,7 +262,7 @@ class DashboardController {
             const options = db(req.header('Token-Access'), "mysql")
             const limite = req.params.limite
 
-            console.log('1Get produto')
+            console.log('get Produtos Vendido')
 
             const dash = new DashboardProduto({ options: options, limite: limite })
 
