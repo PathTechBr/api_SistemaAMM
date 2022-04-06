@@ -104,11 +104,18 @@ class Util {
         return results
     }
 
-    async createDataBase() {
-        let execute_query = "CREATE DATABASE TESTANDO;"
+    async createDataBase(database) {
+        let execute_query = "CREATE DATABASE ??;"
 
-        const results = await query.executeQueryMysql(execute_query, this.options);
+        const results = await query.executeQueryMysql(execute_query, this.options, [database]);
         return results;
+    }
+
+    async prepareDataBase(conexion, execsql) {
+
+        await query.executeQueryBasic(conexion, execsql, []);
+
+        return true;
     }
 }
 

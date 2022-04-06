@@ -3,10 +3,13 @@ const SerializeUtil = require('../../Serialize').SerializeUtil
 
 const db = require('../../config/database')
 const winston = require('../../util/Log')
+const Mysql = require('mysql');
 
 const Forbidden = require('../../error/Forbidden')
 const ConnectionRefused = require('../../error/ConnectionRefused')
 const NoConfigurationDB = require('../../error/NoConfigurationDB')
+const { spawn } = require('child_process')
+const fs = require('fs')
 
 
 
@@ -181,16 +184,68 @@ class UtilController {
             const options = db(req.header('Token-Access'), "mysql")
             const instance = new Util({ options: options });
 
-            await instance.createDataBase().catch(function (err) {
-                throw err
+            console.log('Criando banco de dados!')
+            await instance.createDataBase('testando').catch(function (err) {
+                next(err)
             })
 
-            res.status(200).send('Okay')
+            console.log('Banco de dados criado!')
+            options.database = 'testando'
+
+            var file = []
+
+            console.log('Preparando Banco de Dados!')
+            var data = await UtilController.readFile('./assets/script_new_client.sql')
+            data = data.toString()
+            file = data.split(";")
+
+
+            const con_db = Mysql.createConnection(options)
+            console.log('Connection established!')
+
+            const promises = file.map(async (element, idx) => {
+                if (element != "") {
+                    await instance.prepareDataBase(con_db, element)
+                }
+            });
+
+            await Promise.all(promises);
+
+            console.log('Banco de Dados preparado!')
+
+            con_db.end((err) => {
+                if (err) {
+                    winston.error(err)
+                    reject(new NoConfigurationDB())
+                    return new NoConfigurationDB()
+                }
+                console.log('Connection closed!')
+            })
+
+
+            res.status(201).send()
 
 
         } catch (erro) {
+            console.log(erro)
             next(erro)
         }
+    }
+
+    static async readFile(filename) {
+        return new Promise((resolve, reject) => {
+            fs.readFile(filename, (err, fileData) => {
+                if (err) {
+                    reject(err)
+                }
+                try {
+                    resolve(fileData)
+                    return fileData
+                } catch (err) {
+                    reject(err)
+                }
+            })
+        })
     }
 }
 
