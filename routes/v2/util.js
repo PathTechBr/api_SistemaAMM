@@ -26,12 +26,13 @@ router.options('/fornecedor', (req, resp, next) => {
 router.get('/fornecedor', UtilController.getFornecedor)
 
 router.options('/enabled', (req, resp, next) => {
-    resp.setHeader('Access-Control-Allow-Methods', 'GET')
+    resp.setHeader('Access-Control-Allow-Methods', 'GET, POST')
     resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')
     resp.status(204)
     resp.end()
 })
 router.get('/enabled', UtilController.getEnabled)
+router.post('/enabled', UtilController.setEnabled)
 
 
 router.options('/licenca', (req, resp, next) => {

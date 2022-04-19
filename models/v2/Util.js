@@ -81,8 +81,14 @@ class Util {
     }
 
     async getEnabledDB() {
-        let execute_query = "SELECT A.* FROM (SELECT DATA_VENCIMENTO as CONFIG FROM LAMMER_LIC ORDER BY CODIGO DESC LIMIT 1) A UNION SELECT SBT FROM CONFIG;"
+        let execute_query = SQL_CONST.SQL_GET_SBT
         const results = await query.executeQueryMysql(execute_query, this.options)
+        return results
+    }
+
+    async setEnabledDB(value) {
+        let execute_query = 'UPDATE CONFIG SET SBT = ? WHERE 1 = 1';
+        const results = await query.executeQueryMysql(execute_query, this.options, [value])
         return results
     }
 

@@ -80,11 +80,30 @@ class UtilController {
                 throw err
             })
 
-            if (config[0].SBT === null || config[1].CONFIG.includes('N')) {
+            if (config[1].CONFIG === null || config[1].CONFIG.includes('N')) {
                 throw new Forbidden()
             }
             const serial = new SerializeUtil(res.getHeader('Content-Type'), ['CONFIG'])
             res.status(200).send(serial.serialzer(config[0]))
+
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async setEnabled(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'), "mysql")
+            const instance = new Util({ options: options });
+
+            const data = JSON.parse(req.body[0]);
+            const config = await instance.setEnabledDB(data['SBT']).catch(function (err) {
+                throw err
+            })
+
+            const serial = new SerializeUtil(res.getHeader('Content-Type'))
+            res.status(200).send()
 
 
         } catch (erro) {
