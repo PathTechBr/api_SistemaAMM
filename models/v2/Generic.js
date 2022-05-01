@@ -14,7 +14,7 @@ class Generic {
     }
 
     async findDate() {
-        let execute_query = 'SELECT * FROM ' + this.TABLENAME + ' WHERE DATA_ULTIMA_ALTERACAO >= ?;'
+        let execute_query = 'SELECT * FROM ' + this.TABLENAME + ' WHERE DATA_ULTIMA_ALTERACAO > ?;'
         // console.log(md5('').toString())
         const result = await query.executeQueryMysql(execute_query, this.options, [this.DATA_ULTIMA_ALTERACAO]);
         return result;
@@ -42,6 +42,23 @@ class Generic {
 
         return result;
     }
+
+    async delete(md5) {
+        let execute_query = 'DELETE FROM ' + this.TABLENAME + ' WHERE MD5 = ?;'
+
+        // const result = await query.executeQueryBasic(this.CONNECTION_DB, execute_query, [this.MD5]);
+        const result = await query.executeQueryMysql(execute_query, this.options, [md5]);
+
+        return result;
+    }
+
+    async update(filedname = 'ID', value) {
+        let execute_query = 'UPDATE ' + this.TABLENAME + ' SET ' + filedname + ' = (SELECT MAX(' + filedname + ') + 1 FROM ' + this.TABLENAME + ') WHERE ' + filedname + ' = ?;'
+        const result = await query.executeQueryBasic(this.CONNECTION_DB, execute_query, [value]);
+
+        return result;
+    }
+
 
     async getMD5() {
         let execute_query = 'SELECT UUID()'

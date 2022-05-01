@@ -20,6 +20,7 @@ const winston = require('./util/Log');
 const ConnectionRefused = require('./error/ConnectionRefused')
 const NoConfigurationDB = require('./error/NoConfigurationDB')
 const NotAcceptable = require('./error/NotAcceptable')
+const GenericError = require('./error/GenericError')
 
 const app = express()
 
@@ -83,6 +84,8 @@ app.use((error, request, response, next) => {
         status = 416
     }else if (error instanceof NotAcceptable) {
         status = 428
+    }else if (error instanceof GenericError) {
+        status = 502
     }
 
     const serial = new SerializeError(response.getHeader('Content-Type') || 'application/json')

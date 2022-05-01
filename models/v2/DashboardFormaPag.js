@@ -35,9 +35,9 @@ class DashboardFormaPag {
     }
 
     async getFormaPagToDoc() {
-        let execute_query = "SELECT COUNT(*) AS COUNT FROM forma_pag WHERE TIPO_DOCUMENTO = ? AND DESCRICAO = ?"
+        let execute_query = "SELECT COUNT(*) AS COUNT FROM forma_pag WHERE TIPO_DOCUMENTO = ?"
 
-        const results = await query.executeQueryMysql(execute_query, this.options, [this.TIPO_DOCUMENTO, this.DESCRICAO]);
+        const results = await query.executeQueryMysql(execute_query, this.options, [this.TIPO_DOCUMENTO]);
         return results;
     }
 

@@ -44,7 +44,8 @@
       "database": "db-teste",
       "host": "localhost",
       "user": "root",
-      "password": ""
+      "password": "",
+      "timezone": "UTC"
     },
     {
       "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd",
