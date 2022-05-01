@@ -14,7 +14,8 @@ module.exports = (token_access, banco = "") => {
             password: password,
             role: null,
             lowercase_keys: false,
-            rule: token_access
+            rule: token_access,
+            timezone: "UTC+0",
         }
     } else {
         let db = env.tokenAccepts(token_access)[0].database

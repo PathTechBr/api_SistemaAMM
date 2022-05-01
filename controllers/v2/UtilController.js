@@ -80,9 +80,13 @@ class UtilController {
                 throw err
             })
 
-            if (config[1].CONFIG === null || config[1].CONFIG.includes('N')) {
+            if (config[0].CONFIG === null || config[0].CONFIG.includes('N')) {
                 throw new Forbidden()
             }
+
+            console.log('CONFIG - ' + JSON.stringify(config[0].CONFIG))
+            
+
             const serial = new SerializeUtil(res.getHeader('Content-Type'), ['CONFIG'])
             res.status(200).send(serial.serialzer(config[0]))
 
