@@ -63,7 +63,7 @@
     },
     {
       "token": "NlA0ZDqsQMS7IvARFdEozbkbHPx6kF0k",
-      "database": "db-teste",
+      "database": "bd2",
       "host": "localhost",
       "port": 3050,
       "user": "root",
