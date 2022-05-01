@@ -14,6 +14,7 @@ const ConnectionRefused = require('../../error/ConnectionRefused');
 const NoConfigurationDB = require('../../error/NoConfigurationDB');
 
 const Mysql = require('mysql');
+const GenericError = require('../../error/GenericError');
 
 class GenericController {
 
@@ -27,12 +28,14 @@ class GenericController {
             if (data_ultima_alteracao == null) {
                 data_ultima_alteracao = 'NULL'
             }
+
+            data_ultima_alteracao.replace("%20", " ");
             const instance = new Generic({ TABLENAME: tablename, DATA_ULTIMA_ALTERACAO: data_ultima_alteracao, options: options });
             const data = await instance.findDate().catch(function (err) {
                 throw new ConnectionRefused()
             })
 
-            console.log(data)
+            console.log(JSON.stringify(data))
 
             // const serial = new SerializeFornecedor(res.getHeader('Content-Type'))
             res.status(200).send(JSON.stringify(data))
@@ -51,6 +54,8 @@ class GenericController {
             var data = req.body;
             var data_length = data.length
             console.log('tamanho recebido: ' + data_length)
+
+            let fiedlSearch = 'ID'
 
             const generic = new Generic({ TABLENAME: tablename, options: options });
 
@@ -71,24 +76,34 @@ class GenericController {
                 next(new NotAcceptable())
             }
 
+            if (JSON.stringify(data) == '{}') {
+                winston.error('Requisicao sem dados!')
+                throw new GenericError('Requisicao sem dados!')
+            }
+
             // filt = data.slice(0, 2)
             const promises = data.map(async (element, idx) => {
                 var obj = JSON.parse(JSON.stringify(element))
-                obj.DATA_ULTIMA_ALTERACAO = new Date().toISOString()
+                // obj.DATA_ULTIMA_ALTERACAO = new Date().toISOString()
+
+                if (obj.DATA_ULTIMA_ALTERACAO == null) {
+                    obj.DATA_ULTIMA_ALTERACAO = new Date().toISOString()
+                }
 
                 if (obj.MD5 == null) {
                     next(new NotAcceptable())
                 }
 
-                generic.MD5 = obj.MD5
-
                 // Prepara o objeto de acordo com a tabela de destino
                 obj = GenericController.prepareObject(fields, obj)
+
+                generic.MD5 = obj.MD5
 
                 await generic.findOne()
                     // Se a consulta ocorrer com sucesso
                     .then(async function (item) {
                         let isExists = item.length
+
                         // Se nao existir registro tem que inserir
                         if (isExists == 0) {
                             await generic.insert(obj).catch(function (err) {
@@ -97,8 +112,46 @@ class GenericController {
                             })
                         } else {
                             // Se existir validar se o ID é o mesmo e as informações restantes
-                            console.log("Item banco: " + item[0].ID)
-                            console.log("Item request: " + obj.ID)
+                            // if (generic.TABLENAME == 'LAMMER_LIC') {
+                            //     item[0].ID = item[0].CODIGO
+                            //     obj.ID = obj.CODIGO
+                            // }
+
+                            if (item[0].ID == obj.ID && obj.ID != undefined) { // Se forem iguais faz um delete e um insert
+
+                                await generic.delete(obj.MD5).catch(function (err) {
+                                    console.log(err)
+                                    next(new ConnectionRefused())
+                                })
+
+                                await generic.insert(obj).catch(function (err) {
+                                    console.log(err)
+                                    next(new ConnectionRefused())
+                                })
+
+                            } else if (item[0].CODIGO == obj.CODIGO && obj.CODIGO != undefined) {
+                                await generic.delete(obj.MD5).catch(function (err) {
+                                    console.log(err)
+                                    next(new ConnectionRefused())
+                                })
+
+                                await generic.insert(obj).catch(function (err) {
+                                    console.log(err)
+                                    next(new ConnectionRefused())
+                                })
+
+                            } else { // Se for diferente tem que dar Update no id
+                                await generic.update(fiedlSearch, item[0].ID).catch(function (err) {
+                                    console.log(err)
+                                    next(new ConnectionRefused())
+                                })
+
+                                await generic.insert(obj).catch(function (err) {
+                                    console.log(err)
+                                    next(new ConnectionRefused())
+                                })
+
+                            }
                         }
                     }).catch(function (err) {
                         console.log(err)
@@ -186,8 +239,6 @@ class GenericController {
             const data = await generic.findOneExternal(field).catch(function (err) {
                 throw new ConnectionRefused()
             })
-
-            console.log(data)
 
             if (data.length === 0) {
                 let error = new NotFound(tablename)
