@@ -24,21 +24,63 @@ class GenericController {
 
             const tablename = req.query.tablename
             let data_ultima_alteracao = req.query.data_ultima_alteracao
+            let cargatotal = req.query.cargatotal
 
             if (data_ultima_alteracao == null) {
                 data_ultima_alteracao = 'NULL'
             }
 
-            data_ultima_alteracao.replace("%20", " ");
             const instance = new Generic({ TABLENAME: tablename, DATA_ULTIMA_ALTERACAO: data_ultima_alteracao, options: options });
+
+            let operator = 'AND'
+            if (cargatotal == 'S') { // Se for carga total coloca todos os registros como sincronizado N
+                await instance.updateSINCNot().catch(function (err) {
+                    console.log(err)
+                    next(new ConnectionRefused())
+                })
+            } else { // Se nao for carga total coloca todos os registros como sincronizado de C para S
+                await instance.updateSINCCarga().catch(function (err) {
+                    console.log(err)
+                    next(new ConnectionRefused())
+                })
+
+            }
+
+            data_ultima_alteracao.replace("%20", " ");
             const data = await instance.findDate().catch(function (err) {
                 throw new ConnectionRefused()
             })
 
-            console.log(JSON.stringify(data))
+            console.log('[' + tablename + '] - Tamanho enviado: ' + data.length)
 
             // const serial = new SerializeFornecedor(res.getHeader('Content-Type'))
-            res.status(200).send(JSON.stringify(data))
+
+            const con_db = Mysql.createConnection(options)
+            instance.CONNECTION_DB = con_db
+
+            const promises = data.map(async (element, idx) => {
+                var obj = JSON.parse(JSON.stringify(element))
+
+                data[idx].SINCRONIZADO = 'S'
+                await instance.updateSINC(obj.MD5).catch(function (err) {
+                    console.log(err)
+                    next(new ConnectionRefused())
+                })
+            });
+
+            let data_send = JSON.stringify(data)
+            res.status(200).send(data_send)
+
+            await Promise.all(promises);
+            // Fechar conexao
+            con_db.end((err) => {
+                if (err) {
+                    winston.error(err)
+                    reject(new NoConfigurationDB())
+                    return new NoConfigurationDB()
+                }
+                console.log('Connection closed!')
+            })
 
         } catch (erro) {
             next(erro)
@@ -50,12 +92,19 @@ class GenericController {
             const options = db(req.header('Token-Access'), "mysql")
 
             const tablename = req.query.tablename
+            let cargatotal = req.query.cargatotal
 
             var data = req.body;
             var data_length = data.length
-            console.log('tamanho recebido: ' + data_length)
+            console.log('[' + tablename + '] - Tamanho recebido: ' + data_length)
 
             let fiedlSearch = 'ID'
+            let sincronizado = 'S'
+
+            if (cargatotal == 'S') {
+                sincronizado = 'X'
+            }
+
 
             const generic = new Generic({ TABLENAME: tablename, options: options });
 
@@ -68,7 +117,7 @@ class GenericController {
             const con_db = Mysql.createConnection(options)
             generic.CONNECTION_DB = con_db
 
-            console.log('Connection established!')
+            // console.log('Connection established!')
 
             var filt = []
 
@@ -106,6 +155,7 @@ class GenericController {
 
                         // Se nao existir registro tem que inserir
                         if (isExists == 0) {
+                            obj.SINCRONIZADO = sincronizado
                             await generic.insert(obj).catch(function (err) {
                                 console.log(err)
                                 next(new ConnectionRefused())
@@ -124,6 +174,7 @@ class GenericController {
                                     next(new ConnectionRefused())
                                 })
 
+                                obj.SINCRONIZADO = sincronizado
                                 await generic.insert(obj).catch(function (err) {
                                     console.log(err)
                                     next(new ConnectionRefused())
@@ -146,6 +197,7 @@ class GenericController {
                                     next(new ConnectionRefused())
                                 })
 
+                                obj.SINCRONIZADO = sincronizado
                                 await generic.insert(obj).catch(function (err) {
                                     console.log(err)
                                     next(new ConnectionRefused())
@@ -180,6 +232,10 @@ class GenericController {
             console.log(erro)
             next(erro)
         }
+    }
+
+    static async convertCtoS() {
+
     }
 
     static prepareObject(fields, obj, next) {

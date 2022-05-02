@@ -3,7 +3,7 @@ const query = require("../../tables/Query")
 
 class Generic {
 
-    constructor({ TABLENAME, DATA_ULTIMA_ALTERACAO, MD5, FIELDSEARCH,CONNECTION_DB, options }) {
+    constructor({ TABLENAME, DATA_ULTIMA_ALTERACAO, MD5, FIELDSEARCH, CONNECTION_DB, options }) {
         this.TABLENAME = TABLENAME
         this.DATA_ULTIMA_ALTERACAO = DATA_ULTIMA_ALTERACAO
         this.MD5 = MD5
@@ -14,7 +14,7 @@ class Generic {
     }
 
     async findDate() {
-        let execute_query = 'SELECT * FROM ' + this.TABLENAME + ' WHERE DATA_ULTIMA_ALTERACAO > ?;'
+        let execute_query = 'SELECT * FROM ' + this.TABLENAME + ' WHERE DATA_ULTIMA_ALTERACAO > ? AND SINCRONIZADO = "N";'
         // console.log(md5('').toString())
         const result = await query.executeQueryMysql(execute_query, this.options, [this.DATA_ULTIMA_ALTERACAO]);
         return result;
@@ -59,6 +59,26 @@ class Generic {
         return result;
     }
 
+    async updateSINC(value) {
+        let execute_query = 'UPDATE ' + this.TABLENAME + ' SET SINCRONIZADO = "S" WHERE MD5 = ?;'
+        const result = await query.executeQueryBasic(this.CONNECTION_DB, execute_query, [value]);
+
+        return result;
+    }
+
+    async updateSINCNot() {
+        let execute_query = 'UPDATE ' + this.TABLENAME + ' SET SINCRONIZADO = "N" WHERE SINCRONIZADO != "X";'
+        const result = await query.executeQueryMysql(execute_query, this.options, []);
+
+        return result;
+    }
+
+    async updateSINCCarga() {
+        let execute_query = 'UPDATE ' + this.TABLENAME + ' SET SINCRONIZADO = "S" WHERE SINCRONIZADO = "X";'
+        const result = await query.executeQueryMysql(execute_query, this.options, []);
+
+        return result;
+    }
 
     async getMD5() {
         let execute_query = 'SELECT UUID()'

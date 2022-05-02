@@ -85,7 +85,7 @@ class UtilController {
             }
 
             console.log('CONFIG - ' + JSON.stringify(config[0].CONFIG))
-            
+
 
             const serial = new SerializeUtil(res.getHeader('Content-Type'), ['CONFIG'])
             res.status(200).send(serial.serialzer(config[0]))
@@ -224,7 +224,7 @@ class UtilController {
 
 
             const con_db = Mysql.createConnection(options)
-            console.log('Connection established!')
+            // console.log('Connection established!')
 
             const promises = file.map(async (element, idx) => {
                 if (element != "") {

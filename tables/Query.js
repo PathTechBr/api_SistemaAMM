@@ -117,7 +117,7 @@ const executeQueryMysql = async (query, options, params = []) => {
                 console.log('Erro connecting to database...', err)
                 return
             }
-            console.log('Connection established!')
+            // console.log('Connection established!')
         })
 
         con.query(query, params, (err, res) => {
