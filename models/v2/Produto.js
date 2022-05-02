@@ -94,7 +94,8 @@ class Produto {
             "    MARGEM_LUCRO = ?, " +
             "    PESAVEL = ?, " +
             "    ID_FORNECEDOR = ?, " +
-            "    DATA_ULTIMA_ALTERACAO = ? " +
+            "    DATA_ULTIMA_ALTERACAO = ?, " +
+            "    SINCRONIZADO = 'N' " +
             "WHERE ID = ?;"
 
         const results = await query.executeQueryMysql(execute_query, this.options,
