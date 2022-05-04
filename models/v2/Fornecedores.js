@@ -40,9 +40,9 @@ class Fornecedores {
     }
 
     async findOne() {
-        let execute_query = 'SELECT * FROM FORNECEDORES WHERE CODIGO = ?;'
+        let execute_query = 'SELECT * FROM FORNECEDORES WHERE MD5 = ?;'
 
-        const result = await query.executeQueryMysql(execute_query, this.options, [this.codigo]);
+        const result = await query.executeQueryMysql(execute_query, this.options, [this.MD5]);
 
         return result;
     }

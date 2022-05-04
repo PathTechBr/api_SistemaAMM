@@ -63,7 +63,7 @@ class FornecedoresController {
             const options = db(req.header('Token-Access'), "mysql")
             const param = req.params.code
 
-            const instance = new Fornecedores({ codigo: param, options: options });
+            const instance = new Fornecedores({ MD5: param, options: options });
 
             const fornecedores = await instance.findOne().catch(function (err) {
                 throw new ConnectionRefused()
@@ -92,7 +92,7 @@ class FornecedoresController {
             const options = db(req.header('Token-Access'), "mysql")
             const param = req.params.code
 
-            const instance = new Fornecedores({ codigo: param, options: options });
+            const instance = new Fornecedores({ MD5: param, options: options });
 
             let fornecedor = await instance.findOne().catch(function (err) {
                 throw new ConnectionRefused()
@@ -119,7 +119,7 @@ class FornecedoresController {
             next(erro)
         }
     }
-    
+
     static async update(req, res, next) {
         try {
             const options = db(req.header('Token-Access'), "mysql")
