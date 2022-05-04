@@ -96,6 +96,12 @@ class GenericController {
 
             var data = req.body;
             var data_length = data.length
+
+            if (!Array.isArray(data)) {
+                winston.error('Requisicao sem dados!')
+                throw new GenericError('Requisicao sem dados!')
+            }
+
             console.log('[' + tablename + '] - Tamanho recebido: ' + data_length)
 
             let fiedlSearch = 'ID'
@@ -120,10 +126,6 @@ class GenericController {
             // console.log('Connection established!')
 
             var filt = []
-
-            if (!Array.isArray(data)) {
-                next(new NotAcceptable())
-            }
 
             if (JSON.stringify(data) == '{}') {
                 winston.error('Requisicao sem dados!')

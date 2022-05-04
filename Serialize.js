@@ -111,7 +111,7 @@ class SerializeFornecedor extends Serialize {
     constructor(contentType, extraFields) {
         super()
         this.contentType = contentType
-        this.publicFields = ['CODIGO', 'NOME', 'EMAIL'].concat(extraFields || [])
+        this.publicFields = ['CODIGO', 'NOME', 'EMAIL', 'CNPJ_CPF', 'ENDERECO', 'UF', 'ATIVO'].concat(extraFields || [])
         this.tagSingular = 'fornecedor'
         this.tagPlural = 'fornecedores'
     }

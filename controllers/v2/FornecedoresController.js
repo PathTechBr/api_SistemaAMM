@@ -19,9 +19,11 @@ class FornecedoresController {
                 throw new ConnectionRefused()
             })
 
+            winston.info('Consulta Fornecedores - Tamanho: ' + fornecedores.length)
+
             console.log(fornecedores)
 
-            const serial = new SerializeFornecedor(res.getHeader('Content-Type'))
+            const serial = new SerializeFornecedor(res.getHeader('Content-Type'), ['MD5'])
             res.status(200).send(serial.serialzer(fornecedores))
 
         } catch (erro) {
@@ -34,17 +36,22 @@ class FornecedoresController {
             const options = db(req.header('Token-Access'), "mysql")
             const data = req.body;
 
-            const instance = new Fornecedores(data)
+            const instance = new Fornecedores(data["\x00yii\\db\\BaseActiveRecord\x00_attributes"])
             instance.options = options
 
-            winston.info("Cadastro fornecedor: " + instance.nome)
-
-            const fornecedores = await instance.insert().catch(function (err) {
+            winston.info("Cadastro fornecedor: " + instance.NOME)
+            await instance.delete().catch(function (err) {
                 throw new ConnectionRefused()
             })
 
-            const serial = new SerializeFornecedor(res.getHeader('Content-Type'))
-            res.status(201).send(serial.serialzer(fornecedores))
+            delete instance.options
+
+            await instance.insert(instance, options).catch(function (err) {
+                console.log(err)
+            })
+
+            // const serial = new SerializeFornecedor(res.getHeader('Content-Type'))
+            res.status(200).send()
 
         } catch (erro) {
             next(erro)
