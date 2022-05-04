@@ -36,7 +36,7 @@ class FornecedoresController {
             const options = db(req.header('Token-Access'), "mysql")
             const data = req.body;
 
-            const instance = new Fornecedores(data["\x00yii\\db\\BaseActiveRecord\x00_attributes"])
+            const instance = new Fornecedores(data)
             instance.options = options
 
             winston.info("Cadastro fornecedor: " + instance.NOME)
