@@ -23,7 +23,7 @@ class FornecedoresController {
 
             console.log(fornecedores)
 
-            const serial = new SerializeFornecedor(res.getHeader('Content-Type'), ['MD5'])
+            const serial = new SerializeFornecedor(res.getHeader('Content-Type'), ['MD5', 'ID'])
             res.status(200).send(serial.serialzer(fornecedores))
 
         } catch (erro) {

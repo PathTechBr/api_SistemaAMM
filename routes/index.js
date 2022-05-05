@@ -16,6 +16,7 @@ const produto_v2 = require('./v2/produto_v2')
 const grupo_v2 = require('./v2/grupo')
 const dashboard_v2 = require('./v2/dashboard')
 const util_v2 = require('./v2/util')
+const estoque_v2 = require('./v2/estoque')
 const generic = require('./v2/generic')
 
 module.exports = app => {
@@ -38,4 +39,5 @@ module.exports = app => {
         app.use('/api/v2/dashboard', dashboard_v2)
         app.use('/api/v2/util/', util_v2)
         app.use('/api/v2/generic/', generic)
+        app.use('/api/v2/estoque/', estoque_v2)
 }

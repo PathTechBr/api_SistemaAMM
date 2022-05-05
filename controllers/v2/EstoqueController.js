@@ -5,6 +5,7 @@ const db = require('../../config/database')
 
 const winston = require('../../util/Log');
 const ConnectionRefused = require("../../error/ConnectionRefused");
+const { SerializeFornecedor, SerializeEstoque, SerializeAjusteEstoque } = require("../../Serialize");
 
 
 class EstoqueController {
@@ -52,6 +53,46 @@ class EstoqueController {
         }
 
     }
+
+    static async find(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'), "mysql")
+
+            const instance = new Estoque({ options: options });
+            const estoque = await instance.findAll().catch(function (err) {
+                throw new ConnectionRefused()
+            })
+
+            winston.info('Consulta Estoque - Tamanho: ' + estoque.length)
+
+            console.log(estoque)
+
+            const serial = new SerializeEstoque(res.getHeader('Content-Type'))
+            res.status(200).send(serial.serialzer(estoque))
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
+    static async findAjusteEstoque(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'), "mysql")
+
+            const instance = new Estoque({ options: options });
+            const ajuste = await instance.findAjusteEstoque().catch(function (err) {
+                throw new ConnectionRefused()
+            })
+
+            winston.info('Consulta Estoque - Tamanho: ' + ajuste.length)
+
+            const serial = new SerializeAjusteEstoque(res.getHeader('Content-Type'))
+            res.status(200).send(serial.serialzer(ajuste))
+
+        } catch (erro) {
+            next(erro)
+        }
+    }    
 }
 
 module.exports = EstoqueController

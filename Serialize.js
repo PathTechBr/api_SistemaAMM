@@ -117,6 +117,27 @@ class SerializeFornecedor extends Serialize {
     }
 }
 
+class SerializeEstoque extends Serialize {
+    constructor(contentType, extraFields) {
+        super()
+        this.contentType = contentType
+        this.publicFields = ['ID', 'IDEMPRESA', 'IDPRODUTO', 'QUANTIDADE', 'MD5REGISTRO', 'MD5', 'SINCRONIZADO', 'DATA_ULTIMA_ALTERACAO'].concat(extraFields || [])
+        this.tagSingular = 'estoque'
+        this.tagPlural = 'estoques'
+    }
+}
+
+class SerializeAjusteEstoque extends Serialize {
+    constructor(contentType, extraFields) {
+        super()
+        this.contentType = contentType
+        this.publicFields = ['ID', 'DATALANCAMENTO', 'TIPONOTA', 'MODELONOTA', 'DATALANCNOTA', 'IDFORNECEDOR', 'FORNECEDOR', 'NUMNOTA', 'IDTIPOMOVIMENTO', 'TIPOMOVIMENTO', 'IDFUNCIONARIO', 'FUNCIONARIO', 'CANCELADO', 'IDCANCELADO', 'DATACANCELADO', 'OBSERVACAO', 'NUMDOC', 'LIBERARVOUCHER', 'IDAUTORIZADOR', 'NOMEAUTORIZADOR', 'DATAAUTORIZACAO', 'DATAUTILIZACAOVOUCHER',
+            'VALORNOTACOMPRA', 'VALORNOTAVENDA', 'LANCCONCLUIDO', 'DATA_ULTIMA_ALTERACAO', 'MD5', 'SINCRONIZADO'].concat(extraFields || [])
+        this.tagSingular = 'estoque'
+        this.tagPlural = 'estoques'
+    }
+}
+
 class SerializeGrupo extends Serialize {
     constructor(contentType, extraFields) {
         super()
@@ -159,5 +180,7 @@ module.exports = {
     SerializeGrupo: SerializeGrupo,
     SerializeCard: SerializeCard,
     SerializeGrupoVenda: SerializeGrupoVenda,
+    SerializeEstoque: SerializeEstoque,
+    SerializeAjusteEstoque: SerializeAjusteEstoque,
     formatAccepts: ['application/json', 'application/xml']
 }
