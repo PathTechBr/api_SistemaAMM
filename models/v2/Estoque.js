@@ -59,6 +59,13 @@ class Estoque {
 
         const result = await query.executeQueryMysql(execute_query, this.options);
         return result;
+    }
+
+    async findClassificao() {
+        let execute_query = 'SELECT CL.* FROM CLASSIFICAO CL;'
+
+        const result = await query.executeQueryMysql(execute_query, this.options);
+        return result;
     }    
 }
 

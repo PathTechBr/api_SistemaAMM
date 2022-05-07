@@ -21,8 +21,6 @@ class FornecedoresController {
 
             winston.info('Consulta Fornecedores - Tamanho: ' + fornecedores.length)
 
-            console.log(fornecedores)
-
             const serial = new SerializeFornecedor(res.getHeader('Content-Type'), ['MD5', 'ID'])
             res.status(200).send(serial.serialzer(fornecedores))
 

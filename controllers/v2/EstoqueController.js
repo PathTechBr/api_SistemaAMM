@@ -1,4 +1,5 @@
 const Estoque = require("../../models/v2/Estoque");
+const AjusteEstoque = require("../../models/v2/AjusteEstoque");
 const SQL_CONST = require("../../util/C_UTL").SQL_CONST;
 
 const db = require('../../config/database')
@@ -84,7 +85,7 @@ class EstoqueController {
                 throw new ConnectionRefused()
             })
 
-            winston.info('Consulta Estoque - Tamanho: ' + ajuste.length)
+            winston.info('Consulta AjusteEstoque - Tamanho: ' + ajuste.length)
 
             const serial = new SerializeAjusteEstoque(res.getHeader('Content-Type'))
             res.status(200).send(serial.serialzer(ajuste))
@@ -93,6 +94,50 @@ class EstoqueController {
             next(erro)
         }
     }    
+
+
+    static async findClassificao(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'), "mysql")
+
+            const instance = new Estoque({ options: options });
+            const classificacao = await instance.findClassificao().catch(function (err) {
+                throw new ConnectionRefused()
+            })
+
+            console.log('Entrei')
+
+            winston.info('Consulta Classificao - Tamanho: ' + classificacao.length)
+
+            const serial = new SerializeClassificao(res.getHeader('Content-Type'))
+            res.status(200).send(serial.serialzer(classificacao))
+
+        } catch (erro) {
+            next(erro)
+        }
+    }  
+
+    static async saveAjusteEstoque(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'), "mysql")
+            const data = req.body;
+
+            const ajusteEstoque = new AjusteEstoque(data)
+            delete ajusteEstoque.options
+            const ajuste = await ajusteEstoque.insert(ajusteEstoque, options).catch(function (err) {
+                console.log(err)
+                throw new ConnectionRefused()
+            })
+
+            winston.info('Cadastro ajusteEstoque')
+            console.log(ajusteEstoque)
+
+            res.status(200).send()
+
+        } catch (erro) {
+            next(erro)
+        }
+    }      
 }
 
 module.exports = EstoqueController

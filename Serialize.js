@@ -138,6 +138,16 @@ class SerializeAjusteEstoque extends Serialize {
     }
 }
 
+class SerializeClassificao extends Serialize {
+    constructor(contentType, extraFields) {
+        super()
+        this.contentType = contentType
+        this.publicFields = ['ID', 'DESCRICAO', 'TIPO', 'TIPO_MOVIMENTO', 'BAIXAR_ESTOQUE', 'GERAR_MOVIMENTO', 'MODELO', 'SERIE', 'DEVOLUCAO', 'NATOP', 'APROPRIAR_ICMS_AP', 'DATA_ULTIMA_ALTERACAO', 'MD5', 'SINCRONIZADO'].concat(extraFields || [])
+        this.tagSingular = 'estoque'
+        this.tagPlural = 'estoques'
+    }
+}
+
 class SerializeGrupo extends Serialize {
     constructor(contentType, extraFields) {
         super()
@@ -182,5 +192,6 @@ module.exports = {
     SerializeGrupoVenda: SerializeGrupoVenda,
     SerializeEstoque: SerializeEstoque,
     SerializeAjusteEstoque: SerializeAjusteEstoque,
+    SerializeClassificao: SerializeClassificao,
     formatAccepts: ['application/json', 'application/xml']
 }
