@@ -21,13 +21,13 @@ router.options('/ajuste', (req, resp, next) => {
 router.get('/ajuste', EstoqueController.findAjusteEstoque)
 router.post('/ajuste', EstoqueController.saveAjusteEstoque)
 
-router.options('/classificao', (req, resp, next) => {
+router.options('/classificacao', (req, resp, next) => {
     resp.setHeader('Access-Control-Allow-Methods', 'GET')
     resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')
     resp.status(204)
     resp.end()
 })
 
-router.get('/classificao', EstoqueController.findClassificao)
+router.get('/classificacao', EstoqueController.findClassificacao)
 
 module.exports = router

@@ -61,8 +61,8 @@ class Estoque {
         return result;
     }
 
-    async findClassificao() {
-        let execute_query = 'SELECT CL.* FROM CLASSIFICAO CL;'
+    async findClassificacao() {
+        let execute_query = 'SELECT CL.* FROM classificacao CL;'
 
         const result = await query.executeQueryMysql(execute_query, this.options);
         return result;

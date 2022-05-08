@@ -157,9 +157,11 @@ class GenericController {
 
                         // Se nao existir registro tem que inserir
                         if (isExists == 0) {
+                            winston.info('Registro nao existe: ' + obj.MD5)
+
                             obj.SINCRONIZADO = sincronizado
                             await generic.insert(obj).catch(function (err) {
-                                console.log(err)
+                                // console.log(err)
                                 next(new ConnectionRefused())
                             })
                         } else {
@@ -168,9 +170,11 @@ class GenericController {
                             //     item[0].ID = item[0].CODIGO
                             //     obj.ID = obj.CODIGO
                             // }
+                            winston.info('Registro existe REQ: ' + obj.ID)
+                            winston.info('Registro existe BD: ' + item[0].ID)
 
                             if (item[0].ID == obj.ID && obj.ID != undefined) { // Se forem iguais faz um delete e um insert
-
+                                winston.info('Registro possui o msm ID: ' + obj.ID)
                                 await generic.delete(obj.MD5).catch(function (err) {
                                     console.log(err)
                                     next(new ConnectionRefused())
@@ -183,6 +187,8 @@ class GenericController {
                                 })
 
                             } else if (item[0].CODIGO == obj.CODIGO && obj.CODIGO != undefined) {
+                                winston.info('Registro possui o msm CODIGO: ' + obj.CODIGO)
+
                                 await generic.delete(obj.MD5).catch(function (err) {
                                     console.log(err)
                                     next(new ConnectionRefused())
@@ -193,7 +199,21 @@ class GenericController {
                                     next(new ConnectionRefused())
                                 })
 
+                            } else if (item[0].MD5 == obj.MD5 && obj.MD5 != undefined) {
+                                winston.info('Registro possui o msm MD5: ' + obj.MD5)
+                                await generic.delete(obj.MD5).catch(function (err) {
+                                    console.log(err)
+                                    next(new ConnectionRefused())
+                                })
+
+                                obj.SINCRONIZADO = sincronizado
+                                await generic.insert(obj).catch(function (err) {
+                                    console.log(err)
+                                    next(new ConnectionRefused())
+                                })
                             } else { // Se for diferente tem que dar Update no id
+                                winston.info('Registro foi alterado: ' + item[0].ID)
+
                                 await generic.update(fiedlSearch, item[0].ID).catch(function (err) {
                                     console.log(err)
                                     next(new ConnectionRefused())

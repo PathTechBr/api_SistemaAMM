@@ -138,7 +138,7 @@ class SerializeAjusteEstoque extends Serialize {
     }
 }
 
-class SerializeClassificao extends Serialize {
+class SerializeClassificacao extends Serialize {
     constructor(contentType, extraFields) {
         super()
         this.contentType = contentType
@@ -192,6 +192,6 @@ module.exports = {
     SerializeGrupoVenda: SerializeGrupoVenda,
     SerializeEstoque: SerializeEstoque,
     SerializeAjusteEstoque: SerializeAjusteEstoque,
-    SerializeClassificao: SerializeClassificao,
+    SerializeClassificacao: SerializeClassificacao,
     formatAccepts: ['application/json', 'application/xml']
 }

@@ -54,7 +54,9 @@ class Generic {
 
     async update(filedname = 'ID', value) {
         let execute_query = 'UPDATE ' + this.TABLENAME + ' SET ' + filedname + ' = (SELECT MAX(' + filedname + ') + 1 FROM ' + this.TABLENAME + ') WHERE ' + filedname + ' = ?;'
-        const result = await query.executeQueryBasic(this.CONNECTION_DB, execute_query, [value]);
+        // const result = await query.executeQueryBasic(this.CONNECTION_DB, execute_query, [value]);
+        const result = await query.executeQueryMysql(execute_query, this.options, [value]);
+
 
         return result;
     }

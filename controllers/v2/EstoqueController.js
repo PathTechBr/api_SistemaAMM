@@ -6,7 +6,7 @@ const db = require('../../config/database')
 
 const winston = require('../../util/Log');
 const ConnectionRefused = require("../../error/ConnectionRefused");
-const { SerializeFornecedor, SerializeEstoque, SerializeAjusteEstoque } = require("../../Serialize");
+const { SerializeClassificacao, SerializeEstoque, SerializeAjusteEstoque } = require("../../Serialize");
 
 
 class EstoqueController {
@@ -96,20 +96,20 @@ class EstoqueController {
     }    
 
 
-    static async findClassificao(req, res, next) {
+    static async findClassificacao(req, res, next) {
         try {
             const options = db(req.header('Token-Access'), "mysql")
 
             const instance = new Estoque({ options: options });
-            const classificacao = await instance.findClassificao().catch(function (err) {
+            const classificacao = await instance.findClassificacao().catch(function (err) {
                 throw new ConnectionRefused()
             })
 
             console.log('Entrei')
 
-            winston.info('Consulta Classificao - Tamanho: ' + classificacao.length)
+            winston.info('Consulta Classificacao - Tamanho: ' + classificacao.length)
 
-            const serial = new SerializeClassificao(res.getHeader('Content-Type'))
+            const serial = new SerializeClassificacao(res.getHeader('Content-Type'))
             res.status(200).send(serial.serialzer(classificacao))
 
         } catch (erro) {
