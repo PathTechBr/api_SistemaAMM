@@ -120,6 +120,7 @@ const executeQueryMysql = async (query, options, params = []) => {
             // console.log('Connection established!')
         })
 
+
         con.query(query, params, (err, res) => {
             if (err) {
                 winston.error(err)

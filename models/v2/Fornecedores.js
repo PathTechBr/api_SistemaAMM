@@ -33,7 +33,7 @@ class Fornecedores {
     }
 
     async findAll() {
-        let execute_query = 'SELECT * FROM FORNECEDORES;'
+        let execute_query = 'SELECT * FROM FORNECEDORES ORDER BY NOME ASC;'
 
         const result = await query.executeQueryMysql(execute_query, this.options);
         return result;

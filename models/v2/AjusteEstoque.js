@@ -43,6 +43,29 @@ class AjusteEstoque {
 
         return result;
     }
+
+    async findAjusteEstoque() {
+        let execute_query = 'SELECT AE.* FROM ajusteestoque AE WHERE CANCELADO = "N" ORDER BY DATALANCAMENTO DESC;'
+
+        const result = await query.executeQueryMysql(execute_query, this.options);
+        return result;
+    }
+
+    async findNumNota() {
+        let execute_query = 'SELECT COUNT(1) AS EXIST FROM AJUSTEESTOQUE WHERE IDFORNECEDOR = ? AND NUMNOTA = ?'
+
+        const result = await query.executeQueryMysql(execute_query, this.options, [this.IDFORNECEDOR, this.NUMNOTA]);
+
+        return result;
+    }
+
+    async delete() {
+        let execute_query = 'DELETE FROM AJUSTEESTOQUE WHERE MD5 = ?;'
+
+        const result = await query.executeQueryMysql(execute_query, this.options, [this.MD5]);
+
+        return result;
+    }
 }
 
 module.exports = AjusteEstoque;

@@ -93,7 +93,7 @@ class EstoqueController {
         } catch (erro) {
             next(erro)
         }
-    }    
+    }
 
 
     static async findClassificacao(req, res, next) {
@@ -115,29 +115,62 @@ class EstoqueController {
         } catch (erro) {
             next(erro)
         }
-    }  
+    }
 
     static async saveAjusteEstoque(req, res, next) {
         try {
             const options = db(req.header('Token-Access'), "mysql")
             const data = req.body;
 
-            const ajusteEstoque = new AjusteEstoque(data)
-            delete ajusteEstoque.options
-            const ajuste = await ajusteEstoque.insert(ajusteEstoque, options).catch(function (err) {
+            let ajusteEstoque = new AjusteEstoque(data)
+            ajusteEstoque.options = options
+
+            await ajusteEstoque.delete().catch(function (err) {
                 console.log(err)
                 throw new ConnectionRefused()
             })
 
-            winston.info('Cadastro ajusteEstoque')
-            console.log(ajusteEstoque)
+            delete ajusteEstoque.options
+            ajusteEstoque = await ajusteEstoque.insert(ajusteEstoque, options).catch(function (err) {
+                console.log(err)
+                throw new ConnectionRefused()
+            })
 
-            res.status(200).send()
+            // await ajusteEstoque.insert(ajusteEstoque, options).catch(function (err) {
+            //     console.log(err)
+            //     throw new ConnectionRefused()
+            // })
+
+            winston.info('Cadastro AjusteEstoque: ' + ajusteEstoque.FORNECEDOR)
+
+            res.status(200).send(ajusteEstoque)
 
         } catch (erro) {
             next(erro)
         }
-    }      
+    }
+
+    static async findNumNota(req, res, next) {
+        try {
+            const options = db(req.header('Token-Access'), "mysql")
+            const data = req.query.numNota;
+
+            const instance = new AjusteEstoque({ NUMNOTA: req.query.numNota, IDFORNECEDOR: req.query.idfornecedor, options: options });
+            const numNota = await instance.findNumNota().catch(function (err) {
+                throw new ConnectionRefused()
+            })
+
+            // console.log('Entrei')
+
+            winston.info('Consulta Existencia - Nota: ' + numNota[0]['EXIST'])
+
+            // const serial = new SerializeClassificacao(res.getHeader('Content-Type'))
+            res.status(200).send(numNota)
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
 }
 
 module.exports = EstoqueController
