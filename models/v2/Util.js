@@ -23,12 +23,15 @@ class Util {
     descriptoDate(char) {
 
         const dic = [];
-
+        
         dic["$"] = "0";
         dic["%"] = "1";
         dic["&"] = "2";
         dic["'"] = "3";
+        dic[" "] = "4";
+        dic["!"] = "5";
         dic['"'] = "6";
+        dic['#'] = "7";
         dic[","] = "8";
         dic["-"] = "9";
 
@@ -46,6 +49,7 @@ class Util {
         dic["4"] = "P";
         dic["5"] = "Q";
         dic["6"] = "R";
+        dic["7"] = "S";
         dic["8"] = "\\";
         dic["9"] = "]";
         dic["-"] = "I";
