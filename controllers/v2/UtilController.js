@@ -207,17 +207,17 @@ class UtilController {
             const options = db(req.header('Token-Access'), "mysql")
             const instance = new Util({ options: options });
 
-            console.log('Criando banco de dados!')
+            winston.info('[NEW-DB] - Criando banco de dados')
             await instance.createDataBase('testando').catch(function (err) {
                 next(err)
             })
 
-            console.log('Banco de dados criado!')
+            winston.info('[NEW-DB] - Banco de dados criado')
             options.database = 'testando'
 
             var file = []
 
-            console.log('Preparando Banco de Dados!')
+            winston.info('[NEW-DB] - Preparando Banco de Dados')
             var data = await UtilController.readFile('./assets/script_new_client.sql')
             data = data.toString()
             file = data.split(";")

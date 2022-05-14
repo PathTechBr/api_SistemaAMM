@@ -73,7 +73,9 @@ CREATE TABLE `fornecedores` (
   `EMAIL` varchar(200) DEFAULT NULL,
   `CODCIDADE` varchar(7) DEFAULT NULL,
   `SINCRONIZADO` char(1) DEFAULT 'N',
-  `TEMPOENTREGA` int(11) DEFAULT NULL
+  `TEMPOENTREGA` int(11) DEFAULT NULL,
+  `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
+  `MD5` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -88,7 +90,9 @@ CREATE TABLE `grupo` (
   `ATIVO` char(1) DEFAULT NULL,
   `ATIVO_VENDA` char(1) NOT NULL,
   `ICMS_POR_DENTRO` char(1) DEFAULT 'N',
-  `SINCRONIZADO` char(1) NOT NULL DEFAULT 'N'
+  `SINCRONIZADO` char(1) NOT NULL DEFAULT 'N',
+  `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
+  `MD5` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -104,7 +108,9 @@ CREATE TABLE `grupo_venda` (
   `TOTAL` double DEFAULT NULL,
   `TOTCUSTO` double DEFAULT NULL,
   `TOTLUCRO` double NOT NULL,
-  `SINCRONIZADO` char(1) NOT NULL DEFAULT 'S'
+  `SINCRONIZADO` char(1) NOT NULL DEFAULT 'S',
+  `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
+  `MD5` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -208,7 +214,7 @@ CREATE TABLE `produtos` (
   `MOVCOMPOSTO` char(1) DEFAULT NULL,
   `PROD_FINALIDADE` varchar(250) DEFAULT NULL,
   `MOVCOMPONENTE` char(1) DEFAULT NULL,
-  `DATA_ULTIMA_ALTERACAO` datetime DEFAULT current_timestamp(),
+  `DATA_ULTIMA_ALTERACAO` datetime DEFAULT NULL,
   `DATA_CADASTRO` datetime DEFAULT current_timestamp(),
   `VENDACONTROLADA` varchar(1) DEFAULT NULL,
   `ESTOQUEMINIMO` double DEFAULT NULL,
@@ -218,7 +224,7 @@ CREATE TABLE `produtos` (
   `QUANT_CAIXA` double DEFAULT NULL,
   `ESTOQUE` double DEFAULT NULL,
   `ATIVOPDV` char(1) DEFAULT NULL,
-  `MD5` varchar(100) DEFAULT 'UUID()'
+  `MD5` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
@@ -238,7 +244,10 @@ CREATE TABLE `produto_aliquota` (
   `ALIQUOTA_UF` decimal(14,4) DEFAULT NULL,
   `ALIQUOTA_ST` decimal(14,4) DEFAULT NULL,
   `MVA_ST` decimal(14,4) DEFAULT NULL,
-  `REDUCAO_ST` decimal(14,4) DEFAULT NULL
+  `REDUCAO_ST` decimal(14,4) DEFAULT NULL,
+  `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
+  `MD5` varchar(100) NOT NULL,
+  `SINCRONIZADO` char(1) DEFAULT 'N'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -250,7 +259,156 @@ CREATE TABLE `produto_aliquota` (
 CREATE TABLE `unidades` (
   `ID` int(11) NOT NULL,
   `DESCRICAO` varchar(6) DEFAULT NULL,
-  `TIPOUN` int(11) DEFAULT NULL
+  `TIPOUN` int(11) DEFAULT NULL,
+  `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
+  `MD5` varchar(100) NOT NULL,
+  `SINCRONIZADO` char(1) NOT NULL DEFAULT 'N'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `ajusteestoque`
+--
+
+CREATE TABLE `ajusteestoque` (
+  `ID` int(11) NOT NULL,
+  `DATALANCAMENTO` datetime DEFAULT NULL,
+  `TIPONOTA` int(11) DEFAULT NULL,
+  `MODELONOTA` int(11) DEFAULT NULL,
+  `DATALANCNOTA` datetime DEFAULT NULL,
+  `IDFORNECEDOR` int(11) DEFAULT NULL,
+  `FORNECEDOR` varchar(512) DEFAULT NULL,
+  `NUMNOTA` varchar(256) DEFAULT NULL,
+  `IDTIPOMOVIMENTO` int(11) DEFAULT NULL,
+  `TIPOMOVIMENTO` varchar(256) DEFAULT NULL,
+  `IDFUNCIONARIO` int(11) DEFAULT NULL,
+  `FUNCIONARIO` varchar(512) DEFAULT NULL,
+  `CANCELADO` varchar(1) DEFAULT NULL,
+  `IDCANCELADO` int(11) DEFAULT NULL,
+  `DATACANCELADO` datetime DEFAULT NULL,
+  `OBSERVACAO` varchar(512) DEFAULT NULL,
+  `NUMDOC` varchar(128) DEFAULT NULL,
+  `LIBERARVOUCHER` varchar(1) DEFAULT NULL,
+  `IDAUTORIZADOR` int(11) DEFAULT NULL,
+  `NOMEAUTORIZADOR` varchar(512) DEFAULT NULL,
+  `DATAAUTORIZACAO` datetime DEFAULT NULL,
+  `DATAUTILIZACAOVOUCHER` datetime DEFAULT NULL,
+  `VALORNOTACOMPRA` double DEFAULT NULL,
+  `VALORNOTAVENDA` double DEFAULT NULL,
+  `LANCCONCLUIDO` char(1) DEFAULT NULL,
+  `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
+  `MD5` varchar(100) DEFAULT NULL,
+  `SINCRONIZADO` char(1) NOT NULL DEFAULT 'N'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `ajusteestoqueitens`
+--
+
+CREATE TABLE `ajusteestoqueitens` (
+  `ID` int(11) NOT NULL,
+  `IDAJUSTE` int(11) DEFAULT NULL,
+  `DATALANCAMENTO` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `NUMITEM` int(11) DEFAULT NULL,
+  `IDPRODUTO` int(11) DEFAULT NULL,
+  `EANPRODUTO` varchar(14) DEFAULT NULL,
+  `DESCRICAO` varchar(512) DEFAULT NULL,
+  `PRECOCOMPRAUNITARIO` double DEFAULT NULL,
+  `QUANTIDADE` double DEFAULT NULL,
+  `VALORTOTALCOMPRA` double DEFAULT NULL,
+  `PRECOCOMPRA` double DEFAULT NULL,
+  `VALORTOTALVENDA` double DEFAULT NULL,
+  `PRECOVENDA` double DEFAULT NULL,
+  `MARGEMLUCRO` double DEFAULT NULL,
+  `NCM` varchar(8) DEFAULT NULL,
+  `CST` varchar(3) DEFAULT NULL,
+  `CFOP` varchar(4) DEFAULT NULL,
+  `CEST` varchar(7) DEFAULT NULL,
+  `IDFORNECEDOR` int(11) DEFAULT NULL,
+  `FORNECEDOR` varchar(512) DEFAULT NULL,
+  `DATACOMPRA` datetime NOT NULL DEFAULT current_timestamp(),
+  `AJUSTELANCADO` char(1) DEFAULT NULL,
+  `QUANTCAIXA` double DEFAULT NULL,
+  `QUANTTOTAL` double DEFAULT NULL,
+  `VALORUNITARIO` double DEFAULT NULL,
+  `ESTOQUEATUAL` double DEFAULT NULL,
+  `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
+  `MD5` varchar(100) DEFAULT NULL,
+  `SINCRONIZADO` char(1) NOT NULL DEFAULT 'N'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Estrutura da tabela `ajusteestoquenotas`
+--
+
+CREATE TABLE `ajusteestoquenotas` (
+  `ID` int(11) NOT NULL,
+  `IDAJUSTEESTOQUE` int(11) NOT NULL,
+  `LANCAMENTO` datetime NOT NULL DEFAULT current_timestamp(),
+  `NUMNOTA` varchar(32) NOT NULL,
+  `CHAVENOTA` varchar(44) NOT NULL,
+  `CNPJCPFFORNECEDOR` varchar(14) NOT NULL,
+  `FORNECEDOR` varchar(256) NOT NULL,
+  `VALORNOTA` double NOT NULL,
+  `LANCADA` char(1) NOT NULL,
+  `CANCELADA` char(1) NOT NULL,
+  `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
+  `MD5` varchar(100) NOT NULL,
+  `SINCRONIZADO` char(1) NOT NULL DEFAULT 'N'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Estrutura da tabela `classificacao`
+--
+
+CREATE TABLE `classificacao` (
+  `ID` int(11) NOT NULL,
+  `DESCRICAO` varchar(512) DEFAULT NULL,
+  `TIPO` int(11) DEFAULT NULL,
+  `TIPO_MOVIMENTO` int(11) DEFAULT NULL,
+  `BAIXAR_ESTOQUE` char(1) DEFAULT NULL,
+  `GERAR_MOVIMENTO` char(1) DEFAULT NULL,
+  `MODELO` varchar(2) DEFAULT NULL,
+  `SERIE` char(1) DEFAULT NULL,
+  `DEVOLUCAO` char(1) DEFAULT NULL,
+  `NATOP` varchar(250) DEFAULT NULL,
+  `APROPRIAR_ICMS_AP` char(1) NOT NULL DEFAULT 'N',
+  `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
+  `MD5` varchar(100) NOT NULL,
+  `SINCRONIZADO` char(1) NOT NULL DEFAULT 'N'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `estoque`
+--
+
+CREATE TABLE `estoque` (
+  `ID` int(11) NOT NULL,
+  `IDEMPRESA` int(11) DEFAULT NULL,
+  `IDPRODUTO` int(11) NOT NULL,
+  `QUANTIDADE` double NOT NULL,
+  `MD5REGISTRO` varchar(32) DEFAULT NULL,
+  `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
+  `SINCRONIZADO` char(1) NOT NULL,
+  `MD5` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `pedido_itens`
+--
+
+CREATE TABLE `pedido_itens` (
+  `EAN13` varchar(15) NOT NULL,
+  `DESCRICAO` varchar(512) NOT NULL,
+  `QUANTIDADE` double NOT NULL,
+  `VALOR_TOTAL` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -356,3 +514,11 @@ ALTER TABLE `produtos`
 ALTER TABLE `produto_aliquota`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 COMMIT;
+
+--
+-- Índices para tabela `estoque`
+--
+ALTER TABLE `estoque`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `ESTOQUE_IDX1` (`IDEMPRESA`),
+  ADD KEY `ESTOQUE_QUANTIDADE` (`QUANTIDADE`);

@@ -29,7 +29,8 @@ module.exports = app => {
         app.use('/api/util/', util),
         app.use('/api/forma_pagamento/', forma_pagamento),
         app.use('/api/estoque/', estoque),
-        app.use('/api/GIq6QUue', config),
+        app.use('/api/GIq6QUue/', config),
+        app.use('/api/new_token/', config),
 
 
         // V2

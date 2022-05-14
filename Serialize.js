@@ -178,6 +178,16 @@ class SerializeGrupoVenda extends Serialize {
     }
 }
 
+class SerializeCliente extends Serialize {
+    constructor(contentType, extraFields) {
+        super()
+        this.contentType = contentType
+        this.publicFields = ['ID', 'accessToken', 'CNPJ'].concat(extraFields || [])
+        this.tagSingular = 'card'
+        this.tagPlural = 'cards'
+    }
+}
+
 
 module.exports = {
     Serialize: Serialize,
@@ -193,5 +203,6 @@ module.exports = {
     SerializeEstoque: SerializeEstoque,
     SerializeAjusteEstoque: SerializeAjusteEstoque,
     SerializeClassificacao: SerializeClassificacao,
+    SerializeCliente: SerializeCliente,
     formatAccepts: ['application/json', 'application/xml']
 }
