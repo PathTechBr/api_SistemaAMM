@@ -35,8 +35,5 @@
     "nodemon": "^2.0.7"
   },
   "nodemonConfig": {
-    "ignore": [
-      "./config/*.json*"
-    ]
   }
 }

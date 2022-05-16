@@ -3,6 +3,10 @@ const C_VARIABLE = require('../../util/C_UTL').VARIABLE_CONST
 
 const environmentsAccepts = config.get('tokens')
 
+function setEnvironmentsAccept() {
+    return config.get('tokens')
+}
+
 function getEnvironmentsAccept(token) {
 
     if (token.localeCompare(C_VARIABLE.C_TOKEN_MASTER) === 0) {
@@ -16,6 +20,6 @@ function getEnvironmentsAccept(token) {
 
 
 module.exports = {
-    environmentsAccepts: environmentsAccepts,
+    environmentsAccepts: setEnvironmentsAccept,
     tokenAccepts: getEnvironmentsAccept
 }

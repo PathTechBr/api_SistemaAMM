@@ -7,7 +7,7 @@ START TRANSACTION;
 --
 
 CREATE TABLE `config` (
-  `SBT` char(1) NOT NULL DEFAULT 'S'
+  `SBT` char(1) NOT NULL DEFAULT 'Y'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -15,7 +15,7 @@ CREATE TABLE `config` (
 --
 
 INSERT INTO `config` (`SBT`) VALUES
-('S');
+('Y');
 
 -- --------------------------------------------------------
 
