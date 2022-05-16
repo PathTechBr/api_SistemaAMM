@@ -23,7 +23,14 @@ class FileController {
         new_env.forEach(element => {
             const token = new Token(element)
             token.port = Number.parseInt(token.port)
-            if (!ValidateController.validate([token.database, token.token, token.host, token.port])) {
+            token.timezone = "-03:00"
+            token.port = 3050
+            token.user = 'root'
+            token.dialectOptions = {
+                'useUTC': false
+            }
+
+            if (!ValidateController.validate([token.database, token.token, token.host])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')
                 return res.status(error.idError).send(
@@ -33,7 +40,7 @@ class FileController {
                     }))
             }
 
-            tokens_body.push(element)
+            tokens_body.push(token)
 
         });
 
@@ -47,7 +54,7 @@ class FileController {
 
                 // Escreve as novas propriedades de conexão no arquivo de config
                 FileController.writeFile(data)
-
+                console.log('Sucess')
                 res.status(200).send(data)
             })
             .catch(function (err) {

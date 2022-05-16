@@ -46,8 +46,8 @@ class Generic {
     async delete(md5) {
         let execute_query = 'DELETE FROM ' + this.TABLENAME + ' WHERE MD5 = ?;'
 
-        // const result = await query.executeQueryBasic(this.CONNECTION_DB, execute_query, [this.MD5]);
-        const result = await query.executeQueryMysql(execute_query, this.options, [md5]);
+        const result = await query.executeQueryBasic(this.CONNECTION_DB, execute_query, [md5]);
+        // const result = await query.executeQueryMysql(execute_query, this.options, [md5]);
 
         return result;
     }

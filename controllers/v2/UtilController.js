@@ -9,7 +9,8 @@ const Forbidden = require('../../error/Forbidden')
 const ConnectionRefused = require('../../error/ConnectionRefused')
 const NoConfigurationDB = require('../../error/NoConfigurationDB')
 const { spawn } = require('child_process')
-const fs = require('fs')
+const fs = require('fs');
+const Token = require('../../models/Token');
 
 
 
@@ -205,49 +206,54 @@ class UtilController {
     static async setNewDataBase(req, res, next) {
         try {
             const options = db(req.header('Token-Access'), "mysql")
-            const instance = new Util({ options: options });
+            let instance = new Util({ options: options });
 
-            winston.info('[NEW-DB] - Criando banco de dados')
-            await instance.createDataBase('testando').catch(function (err) {
-                next(err)
-            })
+            const new_env = JSON.parse(req.body[0]);
 
-            winston.info('[NEW-DB] - Banco de dados criado')
-            options.database = 'testando'
+            const promises = new_env.map(async (element, idx) => {
+                const token = new Token(element)
+                console.log(token)
 
-            var file = []
+                winston.info('[NEW-DB] - Criando banco de dados - ' + token.database)
+                await instance.createDataBase(token.database).catch(function (err) {
+                    next(err)
+                    throw err
+                });
 
-            winston.info('[NEW-DB] - Preparando Banco de Dados')
-            var data = await UtilController.readFile('./assets/script_new_client.sql')
-            data = data.toString()
-            file = data.split(";")
+                winston.info('[NEW-DB] - Banco de dados criado')
+                options.database = token.database
 
+                var file = []
 
-            const con_db = Mysql.createConnection(options)
-            // console.log('Connection established!')
+                winston.info('[NEW-DB] - Preparando Banco de Dados')
+                var data = await UtilController.readFile('./assets/script_new_client.sql')
+                data = data.toString()
+                file = data.split(";")
 
-            const promises = file.map(async (element, idx) => {
-                if (element != "") {
-                    await instance.prepareDataBase(con_db, element)
-                }
+                const con_db = Mysql.createConnection(options)
+                // console.log('Connection established!')
+
+                const promises = file.map(async (element, idx) => {
+                    if (element != "") {
+                        await instance.prepareDataBase(con_db, element)
+                    }
+                });
+
+                await Promise.all(promises);
+
+                console.log('Banco de Dados preparado!')
+
+                con_db.end((err) => {
+                    if (err) {
+                        winston.error(err)
+                        reject(new NoConfigurationDB())
+                        return new NoConfigurationDB()
+                    }
+                    console.log('Connection closed!')
+                })
             });
 
-            await Promise.all(promises);
-
-            console.log('Banco de Dados preparado!')
-
-            con_db.end((err) => {
-                if (err) {
-                    winston.error(err)
-                    reject(new NoConfigurationDB())
-                    return new NoConfigurationDB()
-                }
-                console.log('Connection closed!')
-            })
-
-
-            res.status(201).send()
-
+            res.status(200).send()
 
         } catch (erro) {
             console.log(erro)

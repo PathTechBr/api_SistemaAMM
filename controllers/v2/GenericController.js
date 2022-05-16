@@ -32,7 +32,6 @@ class GenericController {
 
             const instance = new Generic({ TABLENAME: tablename, DATA_ULTIMA_ALTERACAO: data_ultima_alteracao, options: options });
 
-            let operator = 'AND'
             if (cargatotal == 'S') { // Se for carga total coloca todos os registros como sincronizado N
                 await instance.updateSINCNot().catch(function (err) {
                     console.log(err)
@@ -170,8 +169,7 @@ class GenericController {
                             //     item[0].ID = item[0].CODIGO
                             //     obj.ID = obj.CODIGO
                             // }
-                            winston.info('Registro existe REQ: ' + obj.ID)
-                            winston.info('Registro existe BD: ' + item[0].ID)
+                            winston.info('Registro existe: ' + obj.ID)
 
                             if (item[0].ID == obj.ID && obj.ID != undefined) { // Se forem iguais faz um delete e um insert
                                 winston.info('Registro possui o msm ID: ' + obj.ID)
@@ -194,6 +192,7 @@ class GenericController {
                                     next(new ConnectionRefused())
                                 })
 
+                                obj.SINCRONIZADO = sincronizado
                                 await generic.insert(obj).catch(function (err) {
                                     console.log(err)
                                     next(new ConnectionRefused())
@@ -213,6 +212,7 @@ class GenericController {
                                 })
                             } else { // Se for diferente tem que dar Update no id
                                 winston.info('Registro foi alterado: ' + item[0].ID)
+                                
 
                                 await generic.update(fiedlSearch, item[0].ID).catch(function (err) {
                                     console.log(err)

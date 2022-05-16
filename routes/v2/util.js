@@ -60,12 +60,12 @@ router.options('/lammerlic', (req, resp, next) => {
 router.post('/lammerlic', UtilController.setLammerLicenca)
 
 router.options('/new_client', (req, resp, next) => {
-    resp.setHeader('Access-Control-Allow-Methods', 'GET')
+    resp.setHeader('Access-Control-Allow-Methods', 'POST')
     resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')
     resp.status(200)
     resp.end()
 })
-router.get('/new_client', UtilController.setNewDataBase)
+router.post('/new_client', UtilController.setNewDataBase)
 
 
 module.exports = router
