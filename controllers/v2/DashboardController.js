@@ -61,7 +61,8 @@ class DashboardController {
         try {
             const options = db(req.header('Token-Access'), "mysql")
 
-            winston.info("Request listar cards")
+            winston.info(['[DASH] Listar Cards'])
+
             const dash = new DashboardCard({ options: options });
 
             var itemsProcessed = 0;
@@ -122,7 +123,8 @@ class DashboardController {
                         throw new ConnectionRefused()
                     });
                 } else {
-                    winston.info("Save forma pagamento")
+                    winston.info(['[DASH] Fornma de Pagamento'])
+
                     await dash.insert().catch(function () {
                         throw new ConnectionRefused()
                     });
@@ -161,7 +163,7 @@ class DashboardController {
     static async setGroupGrupoItens(req, res, next) {
         try {
             const data = req.body;
-            const grupo = new DashboardPedidoItens({options: db(req.header('Token-Access'), "mysql")})
+            const grupo = new DashboardPedidoItens({ options: db(req.header('Token-Access'), "mysql") })
 
             // Limpando valores para o ranking ficar atualizado
             await grupo.clearValues()
@@ -183,7 +185,8 @@ class DashboardController {
                         throw new ConnectionRefused()
                     });
                 } else {
-                    winston.info("Save grupo vendas")
+                    winston.info(['[DASH] Save Grupo Vendas'])
+
                     await grupo.insert().catch(function () {
                         throw new ConnectionRefused()
                     });
@@ -222,7 +225,7 @@ class DashboardController {
     static async setProdutosVendido(req, res, next) {
         try {
             const data = req.body;
-            const produto = new DashboardProduto({options: db(req.header('Token-Access'), "mysql")})
+            const produto = new DashboardProduto({ options: db(req.header('Token-Access'), "mysql") })
 
             // Limpando valores para o ranking ficar atualizado
             await produto.clearValues()
@@ -242,7 +245,8 @@ class DashboardController {
                         throw new ConnectionRefused()
                     });
                 } else {
-                    winston.info("Save produto mais vendidos")
+                    winston.info(['[DASH] Salve Produtos Vendido'])
+
                     await produto.insert().catch(function () {
                         throw new ConnectionRefused()
                     });
@@ -262,7 +266,7 @@ class DashboardController {
             const options = db(req.header('Token-Access'), "mysql")
             const limite = req.params.limite
 
-            console.log('get Produtos Vendido')
+            winston.info(['[DASH] Produtos Vendido'])
 
             const dash = new DashboardProduto({ options: options, limite: limite })
 
