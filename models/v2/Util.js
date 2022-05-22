@@ -121,6 +121,13 @@ class Util {
         return results;
     }
 
+    async insertToken(obj) {
+        let execute_query = "INSERT INTO all_tokens(`token`, `name_db`, `host`) VALUES (?, ?, ?)"
+
+        const results = await query.executeQueryMysql(execute_query, this.options, [obj.token, obj.name_db, obj.host]);
+        return results;
+    }    
+
     async prepareDataBase(conexion, execsql) {
 
         await query.executeQueryBasic(conexion, execsql, []);
