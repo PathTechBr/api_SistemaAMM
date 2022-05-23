@@ -121,10 +121,10 @@ class Util {
         return results;
     }
 
-    async insertToken(obj) {
-        let execute_query = "INSERT INTO all_tokens(`token`, `name_db`, `host`) VALUES (?, ?, ?)"
+    async insertToken(obj, cnpj) {
+        let execute_query = "INSERT INTO all_tokens(`token`, `name_db`, `host`, `cnpj`) VALUES (?, ?, ?, ?)"
 
-        const results = await query.executeQueryMysql(execute_query, this.options, [obj.token, obj.name_db, obj.host]);
+        const results = await query.executeQueryMysql(execute_query, this.options, [obj.token, obj.name_db, obj.host, cnpj]);
         return results;
     }    
 

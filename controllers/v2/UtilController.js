@@ -212,6 +212,7 @@ class UtilController {
 
             const promises = new_env.map(async (element, idx) => {
                 const token = new Token(element)
+                let cnpj = token.database;
 
                 // Estrutura para a criacao do DB
                 token.database = token.database.replace(".", "_")
@@ -223,7 +224,7 @@ class UtilController {
                 console.log(token)
 
                 winston.info('[' + token.database + '] - Registro na tabela de Tokens')
-                await instance.insertToken(token).catch(function (err) {
+                await instance.insertToken(token, cnpj).catch(function (err) {
                     next(err)
                     throw err
                 });
