@@ -13,6 +13,13 @@ function getEnvironmentsAccept(token) {
         return 1;
     }
 
+    // Se for o token master de acesso, deixar passar pois irá criar/consultar cliente
+    if (token.localeCompare(C_VARIABLE.C_TOKEN_MASTER) === 0) {
+        return environmentsAccepts.filter(
+            function (environmentsAccepts) { return environmentsAccepts.token === token }
+        );
+    }
+
     return environmentsAccepts.filter(
         function (environmentsAccepts) { return environmentsAccepts.token === token }
     );

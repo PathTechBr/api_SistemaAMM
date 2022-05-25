@@ -121,6 +121,13 @@ class Util {
         return results;
     }
 
+    async setPermissionDataBase(database) {
+        let execute_query = "GRANT SELECT, INSERT, UPDATE, DELETE ON ??.* TO 'user_client'@'localhost';"
+
+        const results = await query.executeQueryMysql(execute_query, this.options, [database]);
+        return results;
+    }    
+
     async insertToken(obj, cnpj) {
         let execute_query = "INSERT INTO all_tokens(`token`, `name_db`, `host`, `cnpj`) VALUES (?, ?, ?, ?)"
 

@@ -1,43 +1,133 @@
 {
-    "api": {
-      "port": 3000
+  "api": {
+    "port": 3000
+  },
+  "tokens": [
+    {
+      "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd2",
+      "database": "C:\\xampp7\\database\\Firebird\\DADOS.MG06.FDB",
+      "host": "127.0.0.1",
+      "port": 3050
     },
-    "tokens": [
-      {
-        "token": "RU4QBurPUAOkq8s6EukoKelSjaJOBtbA",
-        "database": "C:\\xampp7\\database\\Firebird\\DADOS.001.FDB",
-        "host": "127.0.0.1",
-        "port": 3050
-      },
-      {
-        "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd",
-        "database": "C:\\xampp7\\database\\Firebird\\DADOS.002.FDB",
-        "host": "127.0.0.1",
-        "port": 3050
-      },
-      {
-        "token": "token-loja_3",
-        "database": "C:\\Lammer\\Dados\\DADOS.MG06.FDB",
-        "host": "ammsolucoes.duckdns.org",
-        "port": 3050
-      },
-      {
-        "token": "6P9tpHP2_7NdxLEh6grnCH_guqdg7A7P",
-        "database": "C:\\Lammer\\Dados\\DADOS.MG06.FDB",
-        "host": "ammsolucoes.duckdns.org",
-        "port": 3050
-      },
-      {
-        "token": "",
-        "database": "C:\\Lammer\\Dados\\DADOS.DESENVOLVIMENTO.FDB",
-        "host": "ammsolucoes.duckdns.org",
-        "port": 3050
-      },
-      {
-        "token": "",
-        "database": "C:\\Lammer\\Dados\\DADOS.MG06.FDB",
-        "host": "ammsolucoes.duckdns.org",
-        "port": 3050
+    {
+      "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd1",
+      "database": "C:\\Lammer\\Dados\\DADOS.BOMPRECIN.FDB",
+      "host": "http://novaerasrv.ddns.me",
+      "port": 3050
+    },
+    {
+      "token": "testeV2",
+      "database": "db-teste",
+      "host": "localhost",
+      "user": "root",
+      "password": "",
+      "timezone": "UTC"
+    },
+    {
+      "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd",
+      "database": "db-teste",
+      "host": "localhost",
+      "user": "root",
+      "password": ""
+    },
+    {
+      "token": "BQJke2eeBj5PcN7IZRgN5U4eZT0U69hy",
+      "database": "db-teste",
+      "host": "localhost",
+      "port": 3050,
+      "user": "root",
+      "password": ""
+    },
+    {
+      "token": "NlA0ZDqsQMS7IvARFdEozbkbHPx6kF0k",
+      "database": "bd2",
+      "host": "localhost",
+      "port": 3050,
+      "user": "root",
+      "password": ""
+    },
+    {
+      "token": "RU4QBurPUAOkq8s6EukoKelSjaJOBtbA",
+      "database": "webservice",
+      "host": "localhost",
+      "port": 3050,
+      "user": "root",
+      "password": ""
+    },
+    {
+      "token": "qaH7WJBB34HT352BWOwpTrwdVbV6rxq4",
+      "database": "123",
+      "host": "localhost",
+      "port": 3050,
+      "timezone": "-03:00",
+      "user": "root",
+      "dialectOptions": {
+        "useUTC": false
       }
-    ]
-  }
+    },
+    {
+      "token": "6P9tpHP2_7NdxLEh6grnCH_guqdg57P",
+      "database": "lammer-solution",
+      "host": "localhost",
+      "port": 3050,
+      "user": "root",
+      "password": ""
+    },
+    {
+      "token": "CybbC5PuvQGt7LHIQJB3YuYI_1DiBD29",
+      "database": "456",
+      "host": "localhost",
+      "port": 3050,
+      "timezone": "-03:00",
+      "user": "root",
+      "dialectOptions": {
+        "useUTC": false
+      }
+    },
+    {
+      "token": "zc-cF_rE9LNZGYIB0EpQ3DGX7qSgSiC3",
+      "database": "456",
+      "host": "localhost",
+      "port": 3050,
+      "timezone": "-03:00",
+      "user": "root",
+      "dialectOptions": {
+        "useUTC": false
+      }
+    },
+    {
+      "token": "ctbLpuEJuBdhDWyKShakP0yVLE_yN7Z5",
+      "database": "76.220.212/0001-46",
+      "host": "localhost",
+      "port": 3050,
+      "timezone": "-03:00",
+      "user": "root",
+      "dialectOptions": {
+        "useUTC": false
+      }
+    },
+    {
+      "token": "BCnb0LQYDLZvFMXgwOIo3Zy2CDLBNr-x",
+      "database": "76.220.212/0001-45",
+      "host": "localhost",
+      "port": 3050,
+      "timezone": "-03:00",
+      "user": "root",
+      "dialectOptions": {
+        "useUTC": false
+      }
+    },
+    {
+      "token": "6P9tpHP2_7NdxLEh6grnCH_guqdg7A7P",
+      "database": "db-tokens",
+      "host": "localhost",
+      "port": 3050,
+      "user": "root",
+      "password": "",
+      "timezone": "-03:00",
+      "dialectOptions": {
+        "useUTC": false
+      }
+    }
+  ]
+}

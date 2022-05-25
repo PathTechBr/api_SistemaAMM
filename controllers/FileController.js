@@ -30,6 +30,11 @@ class FileController {
                 'useUTC': false
             }
 
+            // Estrutura para a criacao do DB
+            token.database = token.database.replace(".", "_")
+            token.database = token.database.replace(".", "_")
+            token.database = token.database.replace("/", "_")
+
             if (!ValidateController.validate([token.database, token.token, token.host])) {
                 let error = new DataNotProvided()
                 const serial = new SerializeError(res.getHeader('Content-Type') || 'application/json')

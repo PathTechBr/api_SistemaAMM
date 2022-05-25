@@ -19,6 +19,11 @@ class SQL_CONST {
 }
 
 class VARIABLE_CONST {
-    static C_TOKEN_MASTER = '4y0h9WnLw'
+    static C_TOKEN_MASTER   = '4y0h9WnLw'
+    static C_TOKEN_ACCESS   = '6P9tpHP2_7NdxLEh6grnCH_guqdg7A7P'
+    static C_TOKEN_CREATE   = 'e0366a8c31882df4337293b198cdf1ef'
+    static C_TOKEN_USER     = '4529452ec228e9cbfcd3afa163f9a5f1'
+    static C_TOKEN_PERM     = '9f8833ad5e7a59ba3964884a45b949f7'
+
 }
 module.exports = { SQL_CONST, VARIABLE_CONST }

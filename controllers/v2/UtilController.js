@@ -1,5 +1,7 @@
 const Util = require('../../models/v2/Util')
 const SerializeUtil = require('../../Serialize').SerializeUtil
+const C_VARIABLE = require('../../util/C_UTL').VARIABLE_CONST
+
 
 const db = require('../../config/database')
 const winston = require('../../util/Log')
@@ -8,7 +10,6 @@ const Mysql = require('mysql');
 const Forbidden = require('../../error/Forbidden')
 const ConnectionRefused = require('../../error/ConnectionRefused')
 const NoConfigurationDB = require('../../error/NoConfigurationDB')
-const { spawn } = require('child_process')
 const fs = require('fs');
 const Token = require('../../models/Token');
 
@@ -205,7 +206,7 @@ class UtilController {
 
     static async setNewDataBase(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            let options = db(req.header('Token-Access'), "mysql")
             let instance = new Util({ options: options });
 
             const new_env = JSON.parse(req.body[0]);
@@ -221,22 +222,37 @@ class UtilController {
 
                 token.name_db = token.database
 
-                console.log(token)
-
                 winston.info('[' + token.database + '] - Registro na tabela de Tokens')
                 await instance.insertToken(token, cnpj).catch(function (err) {
                     next(err)
                     throw err
                 });
 
+                // Set user for create new data base
+                options = db(C_VARIABLE.C_TOKEN_CREATE, "mysql")
+                instance.options = options
                 winston.info('[NEW-DB] - Criando banco de dados - ' + token.database)
                 await instance.createDataBase(token.database).catch(function (err) {
                     next(err)
                     throw err
                 });
-
                 winston.info('[NEW-DB] - Banco de dados criado')
+
+                // Set user for set permission
+                options = db(C_VARIABLE.C_TOKEN_PERM, "mysql")
+                instance.options = options
+                winston.info('[NEW-DB] - Liberando Permissao')
+                await instance.setPermissionDataBase(token.database).catch(function (err) {
+                    next(err)
+                    throw err
+                });
+
+                winston.info('[NEW-DB] - Permissao Liberada')
+
+                // Set user for create new data base
+                // options = db(C_VARIABLE.C_TOKEN_USER, "mysql")
                 options.database = token.database
+                instance.options = options
 
                 var file = []
 
@@ -245,18 +261,23 @@ class UtilController {
                 data = data.toString()
                 file = data.split(";")
 
-                const con_db = Mysql.createConnection(options)
+                var con_db = Mysql.createConnection(instance.options)
                 // console.log('Connection established!')
 
-                const promises = file.map(async (element, idx) => {
+                var promises = file.map(async (element, idx) => {
                     if (element != "") {
                         await instance.prepareDataBase(con_db, element)
                     }
                 });
 
-                await Promise.all(promises);
+                winston.info('[NEW-DB] - Criacao Triggers')
+                var trigger = await UtilController.readFile('./assets/triggers.sql')
+                trigger = trigger.toString()
+                promises.push(await instance.prepareDataBase(con_db, trigger))
+                winston.info('[NEW-DB] - Triggers criada')
 
-                console.log('Banco de Dados preparado!')
+                await Promise.all(promises);
+                winston.info('[NEW-DB] - Banco de Dados preparado')
 
                 con_db.end((err) => {
                     if (err) {

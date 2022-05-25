@@ -4,78 +4,64 @@
   },
   "tokens": [
     {
-      "token": "token-loja_1",
-      "database": "C:\\xampp7\\database\\Firebird\\DADOS.001.FDB",
-      "host": "127.0.0.1",
-      "port": 3050
-    },
-    {
-      "token": "token-loja_2",
-      "database": "C:\\xampp7\\database\\Firebird\\DADOS.002.FDB",
-      "host": "127.0.0.1",
-      "port": 3050
-    },
-    {
-      "token": "token-loja_3",
-      "database": "C:\\Lammer\\Dados\\DADOS.MG06.FDB",
-      "host": "ammsolucoes.duckdns.org",
-      "port": 3050
-    },
-    {
       "token": "6P9tpHP2_7NdxLEh6grnCH_guqdg7A7P",
-      "database": "C:\\Lammer\\Dados\\DADOS.MG06.FDB",
-      "host": "ammsolucoes.duckdns.org",
-      "port": 3050
-    },
-    {
-      "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd2",
-      "database": "C:\\xampp7\\database\\Firebird\\DADOS.MG06.FDB",
-      "host": "127.0.0.1",
-      "port": 3050
-    },
-    {
-      "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd1",
-      "database": "C:\\Lammer\\Dados\\DADOS.BOMPRECIN.FDB",
-      "host": "http://novaerasrv.ddns.me",
-      "port": 3050
-    },
-    {
-      "token": "testeV2",
-      "database": "db-teste",
-      "host": "localhost",
-      "user": "root",
-      "password": ""
-    },
-    {
-      "token": "_ZFQAwjr5eKKjzlAS5vFn4B5yv9zOBrd",
-      "database": "db-teste",
-      "host": "localhost",
-      "user": "root",
-      "password": ""
-    },
-    {
-      "token": "BQJke2eeBj5PcN7IZRgN5U4eZT0U69hy",
-      "database": "db-teste",
+      "database": "db-tokens",
       "host": "localhost",
       "port": 3050,
-      "user": "root",
-      "password": ""
+      "user": "select_tokens",
+      "password": "Etit3gd5V1_cdRLA",
+      "timezone": "-03:00",
+      "dialectOptions": {
+        "useUTC": false
+      }
     },
     {
-      "token": "NlA0ZDqsQMS7IvARFdEozbkbHPx6kF0k",
-      "database": "bd2",
+      "token": "22c1212dd6c635689ef9bc80a1c386b2",
+      "database": "db-tokens",
       "host": "localhost",
       "port": 3050,
-      "user": "root",
-      "password": ""
+      "user": "insert_tokens",
+      "password": "33x*SCBeVxC*3ReM",
+      "timezone": "-03:00",
+      "dialectOptions": {
+        "useUTC": false
+      }
     },
     {
-      "token": "RU4QBurPUAOkq8s6EukoKelSjaJOBtbA",
-      "database": "webservice",
+      "token": "e0366a8c31882df4337293b198cdf1ef",
+      "database": "db-tokens",
       "host": "localhost",
       "port": 3050,
-      "user": "root",
-      "password": ""
+      "user": "create_tokens",
+      "password": "gm/GX)hZZwbeM-ov",
+      "timezone": "-03:00",
+      "dialectOptions": {
+        "useUTC": false
+      }
+    },
+    {
+      "token": "4529452ec228e9cbfcd3afa163f9a5f1",
+      "database": "db-tokens",
+      "host": "localhost",
+      "port": 3050,
+      "user": "user_client",
+      "password": "YYnP4eXH1.gMrF8*",
+      "timezone": "-03:00",
+      "dialectOptions": {
+        "useUTC": false
+      }
+    },
+    {
+      "token": "9f8833ad5e7a59ba3964884a45b949f7",
+      "database": "db-tokens",
+      "host": "localhost",
+      "port": 3050,
+      "user": "permission_table",
+      "password": "M3oZKMh65O-0rQXw",
+      "timezone": "-03:00",
+      "dialectOptions": {
+        "useUTC": false
+      }
     }
   ]
 }

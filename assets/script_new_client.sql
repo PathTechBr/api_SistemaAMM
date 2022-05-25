@@ -469,6 +469,11 @@ ALTER TABLE `produto_aliquota`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Índices para tabela `ajusteestoque`
+--
+ALTER TABLE `ajusteestoque`
+  ADD PRIMARY KEY (`ID`);
+--
 -- AUTO_INCREMENT de tabelas despejadas
 --
 
@@ -512,6 +517,12 @@ ALTER TABLE `produtos`
 -- AUTO_INCREMENT de tabela `produto_aliquota`
 --
 ALTER TABLE `produto_aliquota`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
+-- AUTO_INCREMENT de tabela `ajusteestoque`
+--
+ALTER TABLE `ajusteestoque`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 COMMIT;
 
