@@ -19,7 +19,7 @@ class GrupoController {
             const data = req.body;
             const grupo = new Grupo(data)
 
-            grupo.options = db(req.header('Token-Access'), "mysql")
+            grupo.options = await db(req.header('Token-Access'), "mysql")
 
             if (!ValidateController.validate([grupo.DESCRICAO, grupo.ATIVO, grupo.ATIVO_VENDA, grupo.ICMS_POR_DENTRO])) {
                 let error = new DataNotProvided()
@@ -54,7 +54,7 @@ class GrupoController {
 
     static async findAll(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             winston.info("Request listar todos os grupos")
             const limite = req.query.limite;

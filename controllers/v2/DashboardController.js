@@ -30,7 +30,7 @@ class DashboardController {
                 dash[key] = value
             }
 
-            dash.options = db(req.header('Token-Access'), "mysql")
+            dash.options = await db(req.header('Token-Access'), "mysql")
 
             Object.keys(dash).forEach(async function (key, index) {
                 if ((dash[key] != null) && (key != 'options' && key != 'limite')) {
@@ -59,7 +59,7 @@ class DashboardController {
 
     static async getCard(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             winston.info(['[DASH] Listar Cards'])
 
@@ -142,7 +142,7 @@ class DashboardController {
     static async getFormaPag(req, res, next) {
         try {
 
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const limite = req.query.limite
 
             const dash = new DashboardFormaPag({ options: options, limite: limite })
@@ -204,7 +204,7 @@ class DashboardController {
     static async getGroupGrupoItens(req, res, next) {
         try {
 
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const limite = req.query.limite
 
             const dash = new DashboardPedidoItens({ options: options, limite: limite })
@@ -263,7 +263,7 @@ class DashboardController {
     static async getProdutosVendido(req, res, next) {
         try {
 
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const limite = req.params.limite
 
             winston.info(['[DASH] Produtos Vendido'])

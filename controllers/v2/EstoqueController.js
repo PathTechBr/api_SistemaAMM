@@ -57,7 +57,7 @@ class EstoqueController {
 
     static async find(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             const instance = new Estoque({ options: options });
             const estoque = await instance.findAll().catch(function (err) {
@@ -78,7 +78,7 @@ class EstoqueController {
 
     static async findAjusteEstoque(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             const instance = new Estoque({ options: options });
             const ajuste = await instance.findAjusteEstoque().catch(function (err) {
@@ -98,7 +98,7 @@ class EstoqueController {
 
     static async findClassificacao(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             const instance = new Estoque({ options: options });
             const classificacao = await instance.findClassificacao().catch(function (err) {
@@ -119,7 +119,7 @@ class EstoqueController {
 
     static async saveAjusteEstoque(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const data = req.body;
 
             let ajusteEstoque = new AjusteEstoque(data)
@@ -152,7 +152,7 @@ class EstoqueController {
 
     static async findNumNota(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const data = req.query.numNota;
 
             const instance = new AjusteEstoque({ NUMNOTA: req.query.numNota, IDFORNECEDOR: req.query.idfornecedor, options: options });

@@ -25,6 +25,14 @@ class Config {
         
         return results;
     }
+
+    async findTokenEnabled(tokenAccess) {
+        let execute_query = 'SELECT * FROM ALL_TOKENS WHERE token = ?; '
+
+        const results = await query.executeQueryMysql(execute_query, this.options, [tokenAccess]);
+        
+        return results;
+    }    
 }
 
 module.exports = Config;

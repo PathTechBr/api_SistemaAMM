@@ -22,7 +22,7 @@ class ProdutoController {
     static async saveModel(req, res, next) {
         try {
             const data = req.body;
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const produto = new Produto(data)
 
             if (!ValidateController.validate([produto.PRECO_COMPRA, produto.PRECO_VENDA, produto.MARGEM_LUCRO, produto.GRUPO, produto.ALIQUOTA_ICMS, produto.ATIVO, produto.PESAVEL])) {
@@ -99,8 +99,7 @@ class ProdutoController {
 
     static async findAll(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
-
+            const options = await db(req.header('Token-Access'), "mysql")
             winston.info("Request listar todos os produtos")
             const limite = req.query.limite;
             const instance = new Produto({ options: options, limite: limite });
@@ -120,7 +119,7 @@ class ProdutoController {
     static async findOne(req, res, next) {
         try {
             const id = req.params.code;
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             winston.info("Find one produto: " + id)
             if (!ValidateController.validate([id])) {
@@ -169,7 +168,7 @@ class ProdutoController {
 
             console.log(data)
 
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             winston.info("Update produto: " + id)
             if (!ValidateController.validate([id])) {
@@ -231,7 +230,7 @@ class ProdutoController {
             const id = req.params.code;
             const ean13 = req.body['0']
 
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             winston.info("Delete Produto: " + id)
             if (!ValidateController.validate([id, ean13])) {
@@ -286,7 +285,7 @@ class ProdutoController {
 
     static async findSearchAll(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const q = req.params._q;
 
 
@@ -309,7 +308,7 @@ class ProdutoController {
 
     static async findAtivado(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             winston.info("Request listar todos os produtos ativados")
 
@@ -336,7 +335,7 @@ class ProdutoController {
 
         try {
             const data = req.body
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             const arr = [];
 

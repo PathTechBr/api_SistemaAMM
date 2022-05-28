@@ -12,7 +12,7 @@ class FornecedoresController {
 
     static async find(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             const instance = new Fornecedores({ options: options });
             const fornecedores = await instance.findAll().catch(function (err) {
@@ -31,7 +31,7 @@ class FornecedoresController {
 
     static async insert(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const data = req.body;
 
             const instance = new Fornecedores(data)
@@ -58,7 +58,7 @@ class FornecedoresController {
 
     static async findOne(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const param = req.params.code
 
             const instance = new Fornecedores({ MD5: param, options: options });
@@ -87,7 +87,7 @@ class FornecedoresController {
 
     static async delete(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const param = req.params.code
 
             const instance = new Fornecedores({ MD5: param, options: options });
@@ -120,7 +120,7 @@ class FornecedoresController {
 
     static async update(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             const data = req.body;
             const instance = new Fornecedores(data)

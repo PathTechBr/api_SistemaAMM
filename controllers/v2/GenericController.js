@@ -20,7 +20,7 @@ class GenericController {
 
     static async find(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             const tablename = req.query.tablename
             let data_ultima_alteracao = req.query.data_ultima_alteracao
@@ -88,7 +88,7 @@ class GenericController {
 
     static async insert(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             const tablename = req.query.tablename
             let cargatotal = req.query.cargatotal
@@ -276,7 +276,7 @@ class GenericController {
 
     static async findOne(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const tablename = req.query.tablename
             let md5 = req.params._id
 
@@ -306,7 +306,7 @@ class GenericController {
 
     static async findOneExternal(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const tablename = req.query.tablename
             const fieldSearch = req.query.fieldSearch
             let field = req.params._id
@@ -339,7 +339,7 @@ class GenericController {
 
     // static async delete(req, res, next) {
     //     try {
-    //         const options = db(req.header('Token-Access'), "mysql")
+    //         const options = await db(req.header('Token-Access'), "mysql")
     //         const param = req.params.code
 
     //         const instance = new Fornecedores({ codigo: param, options: options });
@@ -372,7 +372,7 @@ class GenericController {
 
     // static async update(req, res, next) {
     //     try {
-    //         const options = db(req.header('Token-Access'), "mysql")
+    //         const options = await db(req.header('Token-Access'), "mysql")
 
     //         const data = req.body;
     //         const instance = new Fornecedores(data)

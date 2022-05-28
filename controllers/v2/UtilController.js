@@ -18,7 +18,7 @@ const Token = require('../../models/Token');
 class UtilController {
     static async getUnidadeMedida(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             const instance = new Util({ options: options });
 
@@ -37,7 +37,7 @@ class UtilController {
 
     static async getGrupos(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             const instance = new Util({ options: options });
 
@@ -56,7 +56,7 @@ class UtilController {
 
     static async getFornecedor(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
 
             const instance = new Util({ options: options });
 
@@ -75,7 +75,7 @@ class UtilController {
 
     static async getEnabled(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const instance = new Util({ options: options });
 
             const config = await instance.getEnabledDB().catch(function (err) {
@@ -100,7 +100,7 @@ class UtilController {
 
     static async setEnabled(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const instance = new Util({ options: options });
 
             const data = JSON.parse(req.body[0]);
@@ -119,7 +119,7 @@ class UtilController {
 
     static async getLicenca(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const instance = new Util({ options: options });
 
             const vencimento = await instance.getLicencaDB().catch(function (err) {
@@ -137,7 +137,7 @@ class UtilController {
 
     static async setLammerLicenca(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const data = req.body;
 
             const licenca = new Util(data)
@@ -158,7 +158,7 @@ class UtilController {
 
     static async setLicenca(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const data = req.body
 
             const licenca = new Util(JSON.parse(data[0]));
@@ -206,7 +206,7 @@ class UtilController {
 
     static async setNewDataBase(req, res, next) {
         try {
-            let options = db(req.header('Token-Access'), "mysql")
+            let options = await db(req.header('Token-Access'), "mysql")
             let instance = new Util({ options: options });
 
             const new_env = JSON.parse(req.body[0]);

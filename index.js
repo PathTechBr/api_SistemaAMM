@@ -39,9 +39,9 @@ app.use((request, response, next) => {
 
     winston.info('[' + d.toISOString() + ']  -   [ ' + tokenAccess + ' ]    -   [' + request.originalUrl + ']');
     // console.log()
-    if (env.tokenAccepts(tokenAccess).length === 0) {
-        throw new Forbidden()
-    }
+    // if (env.tokenAccepts(tokenAccess).length === 0) {
+    //     throw new Forbidden()
+    // }
 
     if (request.originalUrl.indexOf('GIq6QUue') !== -1 && tokenAccess.localeCompare(C_VARIABLE.C_TOKEN_MASTER) !== 0) {
         throw new Forbidden()
