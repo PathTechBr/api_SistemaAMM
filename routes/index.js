@@ -8,6 +8,7 @@ const produto_aliquota = require('./produto_aliquota')
 const util = require('./util')
 const estoque = require('./estoque')
 const config = require('./config')
+const download = require('./download')
 
 
 // V2
@@ -31,6 +32,8 @@ module.exports = app => {
         app.use('/api/estoque/', estoque),
         app.use('/api/GIq6QUue/', config),
         app.use('/api/new_token/', config),
+
+        app.use('/download/', download),
 
 
         // V2
