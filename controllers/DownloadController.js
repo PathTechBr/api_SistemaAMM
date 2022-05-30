@@ -16,6 +16,7 @@ class DownloadController {
             res.download(filePath, function(err) {
                 if(err) {
                     winston.error(err)
+                    next(err)
                 }
             })
 
