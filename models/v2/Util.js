@@ -135,9 +135,10 @@ class Util {
         return results;
     }    
 
-    async prepareDataBase(conexion, execsql) {
+    async prepareDataBase(database, execsql) {
 
-        await query.executeQueryBasic(conexion, execsql, []);
+        this.options.database = database
+        await query.executeQueryMysql(execsql, this.options, []);
 
         return true;
     }

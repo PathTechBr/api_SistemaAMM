@@ -14,7 +14,7 @@ class EstoqueController {
     static async teste(req, res, next) {
         try {
 
-            const options = db(req.header('Token-Access'))
+            const options = await db(req.header('Token-Access'))
             EstoqueController.atualizarEstoque(options, 35180, 20, next)
 
             return res.status(200).send(SQL_CONST.SQL_ESTOQUE_FIND);

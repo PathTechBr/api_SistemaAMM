@@ -10,13 +10,6 @@ CREATE TABLE `config` (
   `SBT` char(1) NOT NULL DEFAULT 'Y'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Extraindo dados da tabela `config`
---
-
-INSERT INTO `config` (`SBT`) VALUES
-('Y');
-
 -- --------------------------------------------------------
 
 --
@@ -40,7 +33,9 @@ CREATE TABLE `forma_pag` (
   `TIPO_DOCUMENTO` int(11) NOT NULL,
   `DESCRICAO` varchar(20) NOT NULL,
   `QTD` int(11) NOT NULL,
-  `TOTVENDA` double NOT NULL
+  `TOTVENDA` double NOT NULL,
+  PRIMARY KEY (`TIPO_DOCUMENTO`),
+  UNIQUE KEY (`DESCRICAO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
@@ -75,7 +70,8 @@ CREATE TABLE `fornecedores` (
   `SINCRONIZADO` char(1) DEFAULT 'N',
   `TEMPOENTREGA` int(11) DEFAULT NULL,
   `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
-  `MD5` varchar(100) NOT NULL
+  `MD5` varchar(100) NOT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -92,8 +88,9 @@ CREATE TABLE `grupo` (
   `ICMS_POR_DENTRO` char(1) DEFAULT 'N',
   `SINCRONIZADO` char(1) NOT NULL DEFAULT 'N',
   `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
-  `MD5` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `MD5` varchar(100) NOT NULL,
+   PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
 
 -- --------------------------------------------------------
 
@@ -110,7 +107,8 @@ CREATE TABLE `grupo_venda` (
   `TOTLUCRO` double NOT NULL,
   `SINCRONIZADO` char(1) NOT NULL DEFAULT 'S',
   `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
-  `MD5` varchar(100) NOT NULL
+  `MD5` varchar(100) NOT NULL,
+  UNIQUE KEY (`IDGRUPO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -131,8 +129,9 @@ CREATE TABLE `lammer_lic` (
   `DATA_PAGAMENTO` varchar(10) DEFAULT NULL,
   `DATA_ULTIMA_ALTERACAO` timestamp NOT NULL DEFAULT current_timestamp(),
   `MD5` varchar(100) NOT NULL,
-  `SINCRONIZADO` char(1) DEFAULT 'N'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `SINCRONIZADO` char(1) DEFAULT 'N',
+   PRIMARY KEY (`CODIGO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
 
 -- --------------------------------------------------------
 
@@ -151,8 +150,9 @@ CREATE TABLE `movimento_est` (
   `IDCAIXA` int(11) DEFAULT NULL,
   `IDPEDIDO` int(11) DEFAULT NULL,
   `IDUSUARIO` int(11) DEFAULT NULL,
-  `USUARIO` varchar(512) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `USUARIO` varchar(512) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
 
 -- --------------------------------------------------------
 
@@ -164,8 +164,10 @@ CREATE TABLE `param` (
   `ID` int(11) NOT NULL,
   `NAME` varchar(64) NOT NULL,
   `VALUE` varchar(64) DEFAULT NULL,
-  `DESCRICAO` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Tabela de parametrizacao';
+  `DESCRICAO` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY (`NAME`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Tabela de parametrizacao' AUTO_INCREMENT=1;
 
 -- --------------------------------------------------------
 
@@ -224,8 +226,9 @@ CREATE TABLE `produtos` (
   `QUANT_CAIXA` double DEFAULT NULL,
   `ESTOQUE` double DEFAULT NULL,
   `ATIVOPDV` char(1) DEFAULT NULL,
-  `MD5` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `MD5` varchar(100) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
 
 
 --
@@ -247,8 +250,9 @@ CREATE TABLE `produto_aliquota` (
   `REDUCAO_ST` decimal(14,4) DEFAULT NULL,
   `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
   `MD5` varchar(100) NOT NULL,
-  `SINCRONIZADO` char(1) DEFAULT 'N'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `SINCRONIZADO` char(1) DEFAULT 'N',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
 
 -- --------------------------------------------------------
 
@@ -299,8 +303,9 @@ CREATE TABLE `ajusteestoque` (
   `LANCCONCLUIDO` char(1) DEFAULT NULL,
   `DATA_ULTIMA_ALTERACAO` datetime NOT NULL DEFAULT current_timestamp(),
   `MD5` varchar(100) DEFAULT NULL,
-  `SINCRONIZADO` char(1) NOT NULL DEFAULT 'N'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `SINCRONIZADO` char(1) NOT NULL DEFAULT 'N',
+   PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
 
 -- --------------------------------------------------------
 
@@ -410,126 +415,3 @@ CREATE TABLE `pedido_itens` (
   `QUANTIDADE` double NOT NULL,
   `VALOR_TOTAL` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Índices para tabelas despejadas
---
-
---
--- Índices para tabela `forma_pag`
---
-ALTER TABLE `forma_pag`
-  ADD PRIMARY KEY (`TIPO_DOCUMENTO`),
-  ADD UNIQUE KEY `DESCRICAO` (`DESCRICAO`);
-
---
--- Índices para tabela `grupo`
---
-ALTER TABLE `grupo`
-  ADD PRIMARY KEY (`ID`),
-  ADD UNIQUE KEY `ID` (`ID`);
-
---
--- Índices para tabela `grupo_venda`
---
-ALTER TABLE `grupo_venda`
-  ADD UNIQUE KEY `IDGRUPO` (`IDGRUPO`);
-
---
--- Índices para tabela `lammer_lic`
---
-ALTER TABLE `lammer_lic`
-  ADD PRIMARY KEY (`CODIGO`),
-  ADD UNIQUE KEY `CODIGO` (`CODIGO`);
-
---
--- Índices para tabela `movimento_est`
---
-ALTER TABLE `movimento_est`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Índices para tabela `param`
---
-ALTER TABLE `param`
-  ADD PRIMARY KEY (`ID`),
-  ADD UNIQUE KEY `NAME` (`NAME`);
-
-
---
--- Índices para tabela `produtos`
---
-ALTER TABLE `produtos`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Índices para tabela `produto_aliquota`
---
-ALTER TABLE `produto_aliquota`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Índices para tabela `ajusteestoque`
---
-ALTER TABLE `ajusteestoque`
-  ADD PRIMARY KEY (`ID`);
---
--- AUTO_INCREMENT de tabelas despejadas
---
-
---
--- AUTO_INCREMENT de tabela `forma_pag`
---
-ALTER TABLE `forma_pag`
-  MODIFY `TIPO_DOCUMENTO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
-
---
--- AUTO_INCREMENT de tabela `grupo`
---
-ALTER TABLE `grupo`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
-
---
--- AUTO_INCREMENT de tabela `lammer_lic`
---
-ALTER TABLE `lammer_lic`
-  MODIFY `CODIGO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
-
---
--- AUTO_INCREMENT de tabela `movimento_est`
---
-ALTER TABLE `movimento_est`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
-
---
--- AUTO_INCREMENT de tabela `param`
---
-ALTER TABLE `param`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
-
---
--- AUTO_INCREMENT de tabela `produtos`
---
-ALTER TABLE `produtos`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
-
---
--- AUTO_INCREMENT de tabela `produto_aliquota`
---
-ALTER TABLE `produto_aliquota`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
-
---
--- AUTO_INCREMENT de tabela `ajusteestoque`
---
-ALTER TABLE `ajusteestoque`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
-COMMIT;
-
---
--- Índices para tabela `estoque`
---
-ALTER TABLE `estoque`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `ESTOQUE_IDX1` (`IDEMPRESA`),
-  ADD KEY `ESTOQUE_QUANTIDADE` (`QUANTIDADE`);

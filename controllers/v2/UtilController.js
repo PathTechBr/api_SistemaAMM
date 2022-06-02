@@ -79,14 +79,14 @@ class UtilController {
             const instance = new Util({ options: options });
 
             const config = await instance.getEnabledDB().catch(function (err) {
-                throw err
+                next(err)
             })
 
             if (config[0].CONFIG === null || config[0].CONFIG.includes('N')) {
-                throw new Forbidden()
+                next(new Forbidden())
             }
 
-            console.log('CONFIG - ' + JSON.stringify(config[0].CONFIG))
+            winston.info('[CONFIG] - ' + JSON.stringify(config[0].CONFIG))
 
 
             const serial = new SerializeUtil(res.getHeader('Content-Type'), ['CONFIG'])
@@ -163,7 +163,6 @@ class UtilController {
 
             const licenca = new Util(JSON.parse(data[0]));
             licenca.options = options
-            console.log(licenca)
 
             // Get id_terminal
             const terminal = await licenca.getLicencaDB().catch(function (err) {
@@ -171,8 +170,6 @@ class UtilController {
             })
 
             var id_terminal = (terminal[0]['ID_TERMINAL']).split("");
-            console.log(id_terminal.length)
-            // console.log(licenca.descriptoDate(id_terminal))
 
             var parteA = ""
             var ultimo_serialCripto = ""
@@ -211,7 +208,7 @@ class UtilController {
 
             const new_env = JSON.parse(req.body[0]);
 
-            const promises = new_env.map(async (element, idx) => {
+            const structure = new_env.map(async (element, idx) => {
                 const token = new Token(element)
                 let cnpj = token.database;
 
@@ -229,7 +226,7 @@ class UtilController {
                 });
 
                 // Set user for create new data base
-                options = db(C_VARIABLE.C_TOKEN_CREATE, "mysql")
+                options = await db(C_VARIABLE.C_TOKEN_CREATE, "mysql")
                 instance.options = options
                 winston.info('[NEW-DB] - Criando banco de dados - ' + token.database)
                 await instance.createDataBase(token.database).catch(function (err) {
@@ -239,7 +236,7 @@ class UtilController {
                 winston.info('[NEW-DB] - Banco de dados criado')
 
                 // Set user for set permission
-                options = db(C_VARIABLE.C_TOKEN_PERM, "mysql")
+                options = await db(C_VARIABLE.C_TOKEN_PERM, "mysql")
                 instance.options = options
                 winston.info('[NEW-DB] - Liberando Permissao')
                 await instance.setPermissionDataBase(token.database).catch(function (err) {
@@ -250,7 +247,7 @@ class UtilController {
                 winston.info('[NEW-DB] - Permissao Liberada')
 
                 // Set user for create new data base
-                // options = db(C_VARIABLE.C_TOKEN_USER, "mysql")
+                // options = await db(C_VARIABLE.C_TOKEN_USER, "mysql")
                 options.database = token.database
                 instance.options = options
 
@@ -261,39 +258,69 @@ class UtilController {
                 data = data.toString()
                 file = data.split(";")
 
-                var con_db = Mysql.createConnection(instance.options)
-                // console.log('Connection established!')
+                // var con_db = Mysql.createConnection(instance.options)
 
-                var promises = file.map(async (element, idx) => {
+                file.map(async (element, idx) => {
                     if (element != "") {
-                        await instance.prepareDataBase(con_db, element)
+                        await instance.prepareDataBase(token.database, element)
                     }
                 });
+                winston.info('[NEW-DB] - Banco de Dados preparado')
+
+            });
+
+            // for(const promise of promises) {
+            //     await promise;
+            // }
+            await Promise.all(structure);
+
+            const triggers = new_env.map(async (element, idx) => {
+                const token = new Token(element)
+
+                // Estrutura para a criacao do DB
+                token.database = token.database.replace(".", "_")
+                token.database = token.database.replace(".", "_")
+                token.database = token.database.replace("/", "_")
 
                 winston.info('[NEW-DB] - Criacao Triggers')
                 var trigger = await UtilController.readFile('./assets/triggers.sql')
                 trigger = trigger.toString()
-                promises.push(await instance.prepareDataBase(con_db, trigger))
+                await instance.prepareDataBase(token.database, trigger)
                 winston.info('[NEW-DB] - Triggers criada')
-
-                await Promise.all(promises);
-                winston.info('[NEW-DB] - Banco de Dados preparado')
-
-                con_db.end((err) => {
-                    if (err) {
-                        winston.error(err)
-                        reject(new NoConfigurationDB())
-                        return new NoConfigurationDB()
-                    }
-                    console.log('Connection closed!')
-                })
             });
+
+            await Promise.all(triggers);
+
+            const indexes = new_env.map(async (element, idx) => {
+                const token = new Token(element)
+
+                // Estrutura para a criacao do DB
+                token.database = token.database.replace(".", "_")
+                token.database = token.database.replace(".", "_")
+                token.database = token.database.replace("/", "_")
+
+                var file = []
+
+                winston.info('[NEW-DB] - Criacao Indexes')
+                var trigger = await UtilController.readFile('./assets/indexes.sql')
+                trigger = trigger.toString()
+                file = trigger.split(";")
+                file.map(async (element, idx) => {
+                    if (element != "") {
+                        await instance.prepareDataBase(token.database, element)
+                    }
+                });
+                winston.info('[NEW-DB] - Indexes criada')
+            });
+
+            await Promise.all(indexes);
+
 
             res.status(200).send()
 
-        } catch (erro) {
-            console.log(erro)
-            next(erro)
+        } catch (err) {
+            winston.error(err)
+            next(err)
         }
     }
 
