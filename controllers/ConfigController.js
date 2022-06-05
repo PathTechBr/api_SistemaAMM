@@ -10,7 +10,7 @@ class ConfigController {
 
     static async getToken(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'), "mysql")
+            const options = await db(req.header('Token-Access'), "mysql")
             const cnpj_64 = req.query.cnpj
 
             var cnpj = Buffer.from(cnpj_64, 'base64').toString('ascii')
@@ -20,6 +20,8 @@ class ConfigController {
             let result = await config.findToken(cnpj).catch(function () {
                 throw new ConnectionRefused()
             });
+
+            console.log(result)
 
             if (result.length === 0) { // Se estiver vazio (Não existir) cadastrar um novo registro vinculado ao produto
                 throw new NotFound('Cliente')

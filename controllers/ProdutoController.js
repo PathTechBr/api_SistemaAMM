@@ -25,7 +25,7 @@ class ProdutoController {
     static async rankingBestSellers(req, res, next) {
         try {
             const limite = req.params.limite;
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
             const date_start = req.query.date_start;
             const date_end = req.query.date_end;
 
@@ -56,7 +56,7 @@ class ProdutoController {
 
     static async findAll(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             winston.info("Request listar todos os produtos")
             const limite = req.query.limite;
@@ -76,7 +76,7 @@ class ProdutoController {
 
     static async findSearchAll(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
             const q = req.params._q;
 
 
@@ -98,7 +98,7 @@ class ProdutoController {
 
     static async findAtivado(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             winston.info("Request listar todos os produtos ativados")
 
@@ -123,7 +123,7 @@ class ProdutoController {
     static async findOne(req, res, next) {
         try {
             const id = req.params._id;
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             winston.info("Find one produto: " + id)
             if (!ValidateController.validate([id])) {
@@ -166,7 +166,7 @@ class ProdutoController {
     static async saveModel(req, res, next) {
         try {
             const data = req.body;
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             winston.info(data)
 
@@ -239,7 +239,7 @@ class ProdutoController {
     static async findOneByEan13(req, res, next) {
         try {
             const ean13 = req.params._ean13;
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             winston.info("Find one produto: " + ean13)
             if (!ValidateController.validate([ean13]) || ean13.length > 13) {
@@ -278,7 +278,7 @@ class ProdutoController {
 
             const id = req.params._id;
 
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             winston.info("Update produto: " + id)
             if (!ValidateController.validate([id])) {
@@ -340,7 +340,7 @@ class ProdutoController {
             const id = req.params._id;
             const ean13 = req.body['0']
 
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             winston.info("Delte Produto: " + id)
             if (!ValidateController.validate([id, ean13])) {
@@ -395,7 +395,7 @@ class ProdutoController {
 
         try {
             const data = req.body
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             const arr = [];
 

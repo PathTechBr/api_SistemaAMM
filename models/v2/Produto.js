@@ -139,7 +139,7 @@ class Produto {
 
     async updateFast(atributo, value) {
         try {
-            let execute_query = "UPDATE PRODUTOS SET " + atributo + " = '" + value + "', DATA_ULTIMA_ALTERACAO = ? WHERE ID = ?;"
+            let execute_query = "UPDATE PRODUTOS SET " + atributo + " = '" + value + "', DATA_ULTIMA_ALTERACAO = ?, SINCRONIZADO = 'N' WHERE ID = ?;"
             const result = await query.executeQueryMysql(execute_query, this.options, [this.DATA_ULTIMA_ALTERACAO, this.ID])
             winston.info(result);
         } catch (e) {

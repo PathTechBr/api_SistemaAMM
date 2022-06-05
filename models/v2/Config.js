@@ -19,7 +19,7 @@ class Config {
     }
 
     async findToken(cnpj) {
-        let execute_query = 'SELECT * FROM CLIENTE WHERE CNPJ = ?; '
+        let execute_query = 'SELECT * FROM ALL_TOKENS WHERE CNPJ = ?; '
 
         const results = await query.executeQueryMysql(execute_query, this.options, [cnpj]);
         

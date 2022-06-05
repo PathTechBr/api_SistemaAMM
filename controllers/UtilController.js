@@ -13,7 +13,7 @@ const NoConfigurationDB = require('../error/NoConfigurationDB')
 class UtilController {
     static async getUnidadeMedida(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             const instance = new Util({ options: options });
 
@@ -32,7 +32,7 @@ class UtilController {
 
     static async getGrupos(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             const instance = new Util({ options: options });
 
@@ -51,7 +51,7 @@ class UtilController {
 
     static async getFornecedor(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             const instance = new Util({ options: options });
 
@@ -70,7 +70,7 @@ class UtilController {
 
     static async getEnabled(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
             const instance = new Util({ options: options });
 
             const config = await instance.getEnabledDB().catch(function(err) {
@@ -93,7 +93,7 @@ class UtilController {
 
     static async getLicenca(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
             const instance = new Util({ options: options });
 
             const vencimento = await instance.getLicencaDB().catch(function(err) {
@@ -111,7 +111,7 @@ class UtilController {
 
     static async setLicenca(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
             const data = req.body
 
             const instance = new Util(JSON.parse(data[0]));

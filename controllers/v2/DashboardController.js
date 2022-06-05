@@ -101,7 +101,7 @@ class DashboardController {
         try {
             const data = req.body;
 
-            const dash = new DashboardFormaPag({ options: db(req.header('Token-Access'), "mysql") })
+            const dash = new DashboardFormaPag({ options:await db(req.header('Token-Access'), "mysql") })
 
             // Limpando valores para o ranking ficar atualizado
             await dash.clearValues()
@@ -163,7 +163,7 @@ class DashboardController {
     static async setGroupGrupoItens(req, res, next) {
         try {
             const data = req.body;
-            const grupo = new DashboardPedidoItens({ options: db(req.header('Token-Access'), "mysql") })
+            const grupo = new DashboardPedidoItens({ options: await db(req.header('Token-Access'), "mysql") })
 
             // Limpando valores para o ranking ficar atualizado
             await grupo.clearValues()
@@ -225,7 +225,7 @@ class DashboardController {
     static async setProdutosVendido(req, res, next) {
         try {
             const data = req.body;
-            const produto = new DashboardProduto({ options: db(req.header('Token-Access'), "mysql") })
+            const produto = new DashboardProduto({ options: await db(req.header('Token-Access'), "mysql") })
 
             // Limpando valores para o ranking ficar atualizado
             await produto.clearValues()

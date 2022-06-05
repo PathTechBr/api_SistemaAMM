@@ -182,7 +182,7 @@ class SerializeCliente extends Serialize {
     constructor(contentType, extraFields) {
         super()
         this.contentType = contentType
-        this.publicFields = ['ID', 'accessToken', 'CNPJ'].concat(extraFields || [])
+        this.publicFields = ['token', 'cnpj'].concat(extraFields || [])
         this.tagSingular = 'card'
         this.tagPlural = 'cards'
     }

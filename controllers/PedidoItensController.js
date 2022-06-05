@@ -15,7 +15,7 @@ class PedidoItensController {
     static async total_vendido_Diario(req, res, next) {
         try {
             const data_lancamento = req.query.data_lancamento;
-            const options = db(req.header('Token-Access'), "mysql")
+            const options =  await db(req.header('Token-Access'), "mysql")
 
             winston.info("Request Total Vendido Diario")
             if (!ValidateController.validate([data_lancamento])) {
@@ -47,7 +47,7 @@ class PedidoItensController {
     static async total_cliente(req, res, next) {
         try {
             const data_lancamento = req.query.data_lancamento;
-            const options = db(req.header('Token-Access'), "mysql")
+            const options =  await db(req.header('Token-Access'), "mysql")
 
             winston.info("Request Total Vendido Diario")
             if (!ValidateController.validate([data_lancamento])) {
@@ -82,7 +82,7 @@ class PedidoItensController {
             let data_inicio = (req.query.data_inicio).split('.');
             data_inicio = '01.' + data_inicio[1] + '.' + data_inicio[2]
 
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             winston.info("Request Grupo Itens")
             if (!ValidateController.validate([data_inicio])) {

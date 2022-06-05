@@ -13,7 +13,7 @@ class FormaPagamentoController {
 
     static async rankingPayments(req, res, next) {
         try {
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
             const date_start = req.query.date_start;
             const date_end = req.query.date_end;
 

@@ -14,7 +14,12 @@ class Generic {
     }
 
     async findDate() {
-        let execute_query = 'SELECT * FROM ' + this.TABLENAME + ' WHERE DATA_ULTIMA_ALTERACAO > ? AND SINCRONIZADO = "N";'
+        let execute_query = 'SELECT * FROM ' + this.TABLENAME + ' WHERE (DATA_ULTIMA_ALTERACAO > ? AND SINCRONIZADO = "N") OR (SINCRONIZADO = "N");'
+
+        if (this.TABLENAME == 'PRODUTO_ALIQUOTA') {
+            execute_query = 'SELECT pa.*, p.md5 as md5Produto FROM ' + this.TABLENAME + ' pa JOIN produtos p ON (p.ID = pa.IDPRODUTO) '
+                + ' WHERE ((pa.DATA_ULTIMA_ALTERACAO > ? AND pa.SINCRONIZADO = "N") OR (pa.SINCRONIZADO = "N")) AND p.SINCRONIZADO = "S";'
+        }
         // console.log(md5('').toString())
         const result = await query.executeQueryMysql(execute_query, this.options, [this.DATA_ULTIMA_ALTERACAO]);
         return result;

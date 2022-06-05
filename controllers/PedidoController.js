@@ -15,7 +15,7 @@ class PedidoController {
     static async bestSeller(req, res, next) {
         try {
 
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             const date_start = req.query.date_start;
             const date_end = req.query.date_end;
@@ -47,7 +47,7 @@ class PedidoController {
     static async valuesMonths(req, res, next) {
         try {
 
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             const limite = req.query.limite;
 
@@ -77,7 +77,7 @@ class PedidoController {
     static async getValuesCancelados(req, res, next) {
         try {
 
-            const options = db(req.header('Token-Access'), "mysql")
+            const options =  await db(req.header('Token-Access'), "mysql")
 
             const limite = req.query.limite;
 
@@ -109,7 +109,7 @@ class PedidoController {
     static async getTicketMedio(req, res, next) {
         try {
 
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             winston.info("Request Ticket Medio")
 
@@ -129,7 +129,7 @@ class PedidoController {
     static async getItensCancelados(req, res, next) {
         try {
 
-            const options = db(req.header('Token-Access'))
+            const options =  await db(req.header('Token-Access'))
 
             winston.info("Request itens cancelados")
 
