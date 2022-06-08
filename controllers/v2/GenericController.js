@@ -34,12 +34,12 @@ class GenericController {
 
             if (cargatotal == 'S') { // Se for carga total coloca todos os registros como sincronizado N
                 await instance.updateSINCNot().catch(function (err) {
-                    console.log(err)
+                    winston.info(err)
                     next(new ConnectionRefused())
                 })
             } else { // Se nao for carga total coloca todos os registros como sincronizado de C para S
                 await instance.updateSINCCarga().catch(function (err) {
-                    console.log(err)
+                    winston.info(err)
                     next(new ConnectionRefused())
                 })
 
@@ -50,7 +50,7 @@ class GenericController {
                 throw new ConnectionRefused()
             })
 
-            console.log('[' + tablename + '] - Tamanho enviado: ' + data.length)
+            winston.info('[' + tablename + '] - Tamanho enviado: ' + data.length)
 
             // const serial = new SerializeFornecedor(res.getHeader('Content-Type'))
 
@@ -62,7 +62,7 @@ class GenericController {
 
                 data[idx].SINCRONIZADO = 'S'
                 await instance.updateSINC(obj.MD5).catch(function (err) {
-                    console.log(err)
+                    winston.info(err)
                     next(new ConnectionRefused())
                 })
             });
@@ -78,7 +78,7 @@ class GenericController {
                     reject(new NoConfigurationDB())
                     return new NoConfigurationDB()
                 }
-                console.log('Connection closed!')
+                winston.info('Connection closed!')
             })
 
         } catch (erro) {
@@ -101,7 +101,7 @@ class GenericController {
                 throw new GenericError('Requisicao sem dados!')
             }
 
-            console.log('[' + tablename + '] - Tamanho recebido: ' + data_length)
+            winston.info('[' + tablename + '] - Tamanho recebido: ' + data_length)
 
             let fiedlSearch = 'ID'
             let sincronizado = 'S'
@@ -115,14 +115,14 @@ class GenericController {
 
             // Coleta os campos da tabela para não dar erro de coluna inexistente
             let fields = await generic.getFieldName().catch(function (err) {
-                console.log(err)
+                winston.info(err)
                 next(new ConnectionRefused)
             })
 
             const con_db = Mysql.createConnection(options)
             generic.CONNECTION_DB = con_db
 
-            // console.log('Connection established!')
+            // winston.info('Connection established!')
 
             var filt = []
 
@@ -160,7 +160,7 @@ class GenericController {
 
                             obj.SINCRONIZADO = sincronizado
                             await generic.insert(obj).catch(function (err) {
-                                // console.log(err)
+                                // winston.info(err)
                                 next(new ConnectionRefused())
                             })
                         } else {
@@ -174,13 +174,13 @@ class GenericController {
                             if (item[0].ID == obj.ID && obj.ID != undefined) { // Se forem iguais faz um delete e um insert
                                 winston.info('Registro possui o msm ID: ' + obj.ID)
                                 await generic.delete(obj.MD5).catch(function (err) {
-                                    console.log(err)
+                                    winston.info(err)
                                     next(new ConnectionRefused())
                                 })
 
                                 obj.SINCRONIZADO = sincronizado
                                 await generic.insert(obj).catch(function (err) {
-                                    console.log(err)
+                                    winston.info(err)
                                     next(new ConnectionRefused())
                                 })
 
@@ -188,26 +188,26 @@ class GenericController {
                                 winston.info('Registro possui o msm CODIGO: ' + obj.CODIGO)
 
                                 await generic.delete(obj.MD5).catch(function (err) {
-                                    console.log(err)
+                                    winston.info(err)
                                     next(new ConnectionRefused())
                                 })
 
                                 obj.SINCRONIZADO = sincronizado
                                 await generic.insert(obj).catch(function (err) {
-                                    console.log(err)
+                                    winston.info(err)
                                     next(new ConnectionRefused())
                                 })
 
                             } else if (item[0].MD5 == obj.MD5 && obj.MD5 != undefined) {
                                 winston.info('Registro possui o msm MD5: ' + obj.MD5)
                                 await generic.delete(obj.MD5).catch(function (err) {
-                                    console.log(err)
+                                    winston.info(err)
                                     next(new ConnectionRefused())
                                 })
 
                                 obj.SINCRONIZADO = sincronizado
                                 await generic.insert(obj).catch(function (err) {
-                                    console.log(err)
+                                    winston.info(err)
                                     next(new ConnectionRefused())
                                 })
                             } else { // Se for diferente tem que dar Update no id
@@ -215,27 +215,27 @@ class GenericController {
                                 
 
                                 await generic.update(fiedlSearch, item[0].ID).catch(function (err) {
-                                    console.log(err)
+                                    winston.info(err)
                                     next(new ConnectionRefused())
                                 })
 
                                 obj.SINCRONIZADO = sincronizado
                                 await generic.insert(obj).catch(function (err) {
-                                    console.log(err)
+                                    winston.info(err)
                                     next(new ConnectionRefused())
                                 })
 
                             }
                         }
                     }).catch(function (err) {
-                        console.log(err)
+                        winston.info(err)
                         next(new ConnectionRefused())
                     })
             });
 
             await Promise.all(promises);
 
-            console.log('Finished!');
+            winston.info('Finished!');
             // Fechar conexao
             con_db.end((err) => {
                 if (err) {
@@ -243,7 +243,7 @@ class GenericController {
                     reject(new NoConfigurationDB())
                     return new NoConfigurationDB()
                 }
-                console.log('Connection closed!')
+                winston.info('Connection closed!')
             })
 
 
@@ -251,7 +251,7 @@ class GenericController {
             res.status(200).send()
 
         } catch (erro) {
-            console.log(erro)
+            winston.info(erro)
             next(erro)
         }
     }

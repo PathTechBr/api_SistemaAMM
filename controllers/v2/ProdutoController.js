@@ -443,6 +443,34 @@ class ProdutoController {
         }
     }
 
+    static async findOneByEan13(req, res, next) {
+        try {
+            const ean13 = req.params._ean13;
+            const options = await db(req.header('Token-Access'), "mysql")
+
+            if (!ValidateController.validate([ean13]) || ean13.length > 13) {
+                next(new DataNotProvided())
+            }
+            winston.info('[PRODUTO] - Find EAN13: ' + ean13)
+
+            const instance = new Produto({ EAN13: ean13, options: options });
+
+            const produtos = await instance.getModelProdutoByEan13().catch(function () {
+                next(new ConnectionRefused())
+            })
+
+            if (produtos.length === 0 || produtos[0].COUNT === 0) {
+                next(new NotFound('Produto'))
+            } else {
+                const serial = new SerializeProduto(res.getHeader('Content-Type'))
+                res.status(200).send(serial.serialzer(produtos))
+            }
+
+        } catch (erro) {
+            next(erro)
+        }
+    }
+
 }
 
 module.exports = ProdutoController

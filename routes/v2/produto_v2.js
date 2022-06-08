@@ -47,4 +47,13 @@ router.options('/search/:_q', (req, resp, next) => {
 })
 router.get('/search/:_q', ProdutoController.findSearchAll)
 
+
+router.options('/ean13/:_ean13', (req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Methods', 'GET')
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+    resp.status(202)
+    resp.end()
+})
+router.get('/ean13/:_ean13', ProdutoController.findOneByEan13)
+
 module.exports = router
