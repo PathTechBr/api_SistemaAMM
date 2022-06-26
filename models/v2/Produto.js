@@ -49,9 +49,13 @@ class Produto {
     }
 
     async getModelProdutoByEan13() {
-        let execute_query = "SELECT * FROM PRODUTOS WHERE EAN13 = ? OR EAN13 = ?"
-
-        const results = await query.executeQueryMysql(execute_query, this.options, [this.EAN13, Number.parseInt(this.EAN13)]);
+        let execute_query = "SELECT * FROM PRODUTOS WHERE EAN13 = ?"
+        var params = [this.EAN13]
+        if (!isNaN(this.EAN13)) {
+            execute_query = execute_query.concat(' OR EAN13 = ?')
+            params.push(Number.parseInt(this.EAN13))
+        }
+        const results = await query.executeQueryMysql(execute_query, this.options, params);
         return results;
     }
 
