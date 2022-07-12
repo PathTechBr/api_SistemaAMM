@@ -4,6 +4,8 @@ const Generic = require('../../models/v2/Generic');
 const { SerializeFornecedor } = require('../../Serialize');
 const { SerializeError } = require('../../Serialize');
 
+const C_VARIABLE = require('../../util/C_UTL').VARIABLE_CONST
+
 const winston = require('../../util/Log')
 
 const NotFound = require('../../error/NotFound');
@@ -20,7 +22,8 @@ class GenericController {
 
     static async find(req, res, next) {
         try {
-            const options = await db(req.header('Token-Access'), "mysql")
+            let options = await db(req.header('Token-Access'), "mysql")
+            const token = req.header('Token-Access')
 
             const tablename = req.query.tablename
             let data_ultima_alteracao = req.query.data_ultima_alteracao
@@ -30,7 +33,13 @@ class GenericController {
                 data_ultima_alteracao = 'NULL'
             }
 
-            const instance = new Generic({ TABLENAME: tablename, DATA_ULTIMA_ALTERACAO: data_ultima_alteracao, options: options });
+            // const serial = new SerializeFornecedor(res.getHeader('Content-Type'))
+            if (tablename == 'SET_ORDERS') {
+                options = await db(C_VARIABLE.C_TOKEN_PERM, "mysql")
+                options.database = 'lammer-solution'
+            }
+
+            const instance = new Generic({ TABLENAME: tablename, TOKEN_ACCESS: token, DATA_ULTIMA_ALTERACAO: data_ultima_alteracao, options: options });
 
             if (cargatotal == 'S') { // Se for carga total coloca todos os registros como sincronizado N
                 await instance.updateSINCNot().catch(function (err) {
@@ -52,8 +61,6 @@ class GenericController {
 
             winston.info('[' + tablename + '] - Tamanho enviado: ' + data.length)
 
-            // const serial = new SerializeFornecedor(res.getHeader('Content-Type'))
-
             const con_db = Mysql.createConnection(options)
             instance.CONNECTION_DB = con_db
 
@@ -61,10 +68,10 @@ class GenericController {
                 var obj = JSON.parse(JSON.stringify(element))
 
                 data[idx].SINCRONIZADO = 'S'
-                await instance.updateSINC(obj.MD5).catch(function (err) {
-                    winston.info(err)
-                    next(new ConnectionRefused())
-                })
+                // await instance.updateSINC(obj.MD5).catch(function (err) {
+                //     winston.info(err)
+                //     next(new ConnectionRefused())
+                // })
             });
 
             let data_send = JSON.stringify(data)
@@ -88,7 +95,7 @@ class GenericController {
 
     static async insert(req, res, next) {
         try {
-            const options = await db(req.header('Token-Access'), "mysql")
+            let options = await db(req.header('Token-Access'), "mysql")
 
             const tablename = req.query.tablename
             let cargatotal = req.query.cargatotal
@@ -108,6 +115,10 @@ class GenericController {
 
             if (cargatotal == 'S') {
                 sincronizado = 'X'
+            }
+
+            if (tablename == 'set_orders') {
+                options = await db(C_VARIABLE.C_TOKEN_PERM, "mysql")
             }
 
 
@@ -212,7 +223,7 @@ class GenericController {
                                 })
                             } else { // Se for diferente tem que dar Update no id
                                 winston.info('Registro foi alterado: ' + item[0].ID)
-                                
+
 
                                 await generic.update(fiedlSearch, item[0].ID).catch(function (err) {
                                     winston.info(err)

@@ -3,25 +3,31 @@ const query = require("../../tables/Query")
 
 class Generic {
 
-    constructor({ TABLENAME, DATA_ULTIMA_ALTERACAO, MD5, FIELDSEARCH, CONNECTION_DB, options }) {
+    constructor({ TABLENAME, DATA_ULTIMA_ALTERACAO, MD5, FIELDSEARCH, CONNECTION_DB, TOKEN_ACCESS, options }) {
         this.TABLENAME = TABLENAME
         this.DATA_ULTIMA_ALTERACAO = DATA_ULTIMA_ALTERACAO
         this.MD5 = MD5
         this.FIELDSEARCH = FIELDSEARCH
         this.CONNECTION_DB = CONNECTION_DB
+        this.TOKEN_ACCESS = TOKEN_ACCESS
         this.options = options
 
     }
 
     async findDate() {
         let execute_query = 'SELECT * FROM ' + this.TABLENAME + ' WHERE (DATA_ULTIMA_ALTERACAO > ? AND SINCRONIZADO = "N") OR (SINCRONIZADO = "N");'
+        var params = [this.DATA_ULTIMA_ALTERACAO]
 
         if (this.TABLENAME == 'PRODUTO_ALIQUOTA') {
             execute_query = 'SELECT pa.*, p.md5 as md5Produto FROM ' + this.TABLENAME + ' pa JOIN produtos p ON (p.ID = pa.IDPRODUTO) '
                 + ' WHERE ((pa.DATA_ULTIMA_ALTERACAO > ? AND pa.SINCRONIZADO = "N") OR (pa.SINCRONIZADO = "N")) AND p.SINCRONIZADO = "S";'
+        } else if (this.TABLENAME == 'SET_ORDERS') {
+            execute_query = 'SELECT * FROM ' + this.TABLENAME + ' WHERE (DATA_ULTIMA_ALTERACAO > ? AND SINCRONIZADO = "N" AND CLIENT_TOKEN = ?) OR (SINCRONIZADO = "N" AND CLIENT_TOKEN = ?)'
+            params.push(this.TOKEN_ACCESS)
+            params.push(this.TOKEN_ACCESS)
         }
         // console.log(md5('').toString())
-        const result = await query.executeQueryMysql(execute_query, this.options, [this.DATA_ULTIMA_ALTERACAO]);
+        const result = await query.executeQueryMysql(execute_query, this.options, params);
         return result;
     }
 
