@@ -68,10 +68,10 @@ class GenericController {
                 var obj = JSON.parse(JSON.stringify(element))
 
                 data[idx].SINCRONIZADO = 'S'
-                // await instance.updateSINC(obj.MD5).catch(function (err) {
-                //     winston.info(err)
-                //     next(new ConnectionRefused())
-                // })
+                await instance.updateSINC(obj.MD5).catch(function (err) {
+                    winston.info(err)
+                    next(new ConnectionRefused())
+                })
             });
 
             let data_send = JSON.stringify(data)
